@@ -3,79 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Informasi SDIT Aladzievie</title>
-    <!-- Tailwind CSS & Supabase SDK -->
+    <title>Aplikasi SDIT Aladzievie</title>
+    <!-- Tailwind CSS & Supabase JS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .active-tab {
+            border-bottom: 3px solid #1e40af;
+            color: #1e40af;
+            font-weight: bold;
+        }
+    </style>
 </head>
-<body class="bg-gray-50 font-sans min-h-screen text-gray-800">
+<body class="bg-gray-100 min-h-screen font-sans">
 
-    <!-- 1. HALAMAN LOGIN -->
+    <!-- 1. HALAMAN LOGIN (Sama Persis Tampilan Apps Script) -->
     <div id="sec-login" class="min-h-screen flex items-center justify-center p-4">
-        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
+        <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md border border-gray-200">
             <div class="text-center mb-6">
-                <h1 class="text-2xl font-bold text-blue-900">SDIT ALADZIEVIE</h1>
-                <p class="text-sm text-gray-500">Sistem Presensi & Monitor Hafalan</p>
+                <div class="w-16 h-16 bg-blue-900 text-white font-bold text-2xl flex items-center justify-center rounded-full mx-auto mb-3">
+                    SDIT
+                </div>
+                <h1 class="text-2xl font-bold text-gray-800">SDIT ALADZIEVIE</h1>
+                <p class="text-xs text-gray-500">Sistem Presensi, Tahfidz & Kedisiplinan</p>
             </div>
             
-            <div id="login-error" class="hidden bg-red-50 border border-red-200 text-red-600 px-4 py-2 rounded-lg text-sm mb-4"></div>
+            <div id="login-alert" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm"></div>
 
-            <form onsubmit="doLogin(event)" class="space-y-4">
+            <form onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Username</label>
-                    <input type="text" id="log-user" class="w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm" placeholder="Masukkan username" required>
+                    <label class="block text-gray-700 text-sm font-bold mb-1">Username</label>
+                    <input type="text" id="input-username" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm" placeholder="Masukkan username" required>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Password</label>
-                    <input type="password" id="log-pass" class="w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm" placeholder="Masukkan password" required>
+                    <label class="block text-gray-700 text-sm font-bold mb-1">Password</label>
+                    <input type="password" id="input-password" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm" placeholder="Masukkan password" required>
                 </div>
-                <button type="submit" id="btn-login" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-xl text-sm transition shadow-md">
-                    Masuk ke Aplikasi
+                <button type="submit" id="btn-login-submit" class="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-2.5 px-4 rounded-lg transition duration-200 text-sm shadow">
+                    Masuk
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- 2. UTAMA / DASHBOARD -->
-    <div id="sec-app" class="hidden min-h-screen flex flex-col">
-        <!-- NAVBAR -->
-        <header class="bg-blue-900 text-white shadow-md">
-            <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-                <div>
-                    <h2 class="font-bold text-lg leading-tight">SDIT Aladzievie</h2>
-                    <p id="app-user-role" class="text-xs text-blue-200"></p>
+    <!-- 2. DASHBOARD UTAMA (UI Persis Versi Apps Script) -->
+    <div id="sec-dashboard" class="hidden min-h-screen flex flex-col">
+        
+        <!-- HEADER / NAVBAR -->
+        <nav class="bg-blue-900 text-white shadow-md">
+            <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <span class="font-bold text-lg tracking-wide">SDIT ALADZIEVIE</span>
                 </div>
-                <button onclick="doLogout()" class="bg-red-500 hover:bg-red-600 text-xs px-3 py-1.5 rounded-lg transition font-medium">
-                    Keluar
-                </button>
+                <div class="flex items-center space-x-4 text-sm">
+                    <span id="user-display-name" class="font-medium bg-blue-800 px-3 py-1 rounded-full text-xs"></span>
+                    <button onclick="handleLogout()" class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1.5 rounded transition">
+                        Keluar
+                    </button>
+                </div>
             </div>
-        </header>
+        </nav>
 
-        <!-- NAVIGATION TABS -->
+        <!-- SUB NAV / NAVIGATION TABS -->
         <div class="bg-white border-b shadow-sm sticky top-0 z-10">
-            <div class="max-w-6xl mx-auto px-4 flex space-x-2 overflow-x-auto text-sm font-medium">
-                <button onclick="switchTab('absensi')" id="tab-btn-absensi" class="py-3 px-4 border-b-2 border-blue-600 text-blue-600 font-bold whitespace-nowrap">📌 Absensi</button>
-                <button onclick="switchTab('tahfidz')" id="tab-btn-tahfidz" class="py-3 px-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">📖 Tahfidz & Tahsin</button>
-                <button onclick="switchTab('kedisiplinan')" id="tab-btn-kedisiplinan" class="py-3 px-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">⭐ Kedisiplinan</button>
-                <button onclick="switchTab('rekap')" id="tab-btn-rekap" class="py-3 px-4 border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">📊 Rekap Data</button>
+            <div class="max-w-7xl mx-auto px-4 flex space-x-4 overflow-x-auto text-sm">
+                <button onclick="openTab('absensi')" id="tab-nav-absensi" class="py-3 px-3 text-gray-600 hover:text-blue-900 active-tab">📌 Absensi Siswa</button>
+                <button onclick="openTab('tahfidz')" id="tab-nav-tahfidz" class="py-3 px-3 text-gray-600 hover:text-blue-900">📖 Tahfidz / Tahsin</button>
+                <button onclick="openTab('kedisiplinan')" id="tab-nav-kedisiplinan" class="py-3 px-3 text-gray-600 hover:text-blue-900">⭐ Kedisiplinan</button>
+                <button onclick="openTab('rekap')" id="tab-nav-rekap" class="py-3 px-3 text-gray-600 hover:text-blue-900">📊 Rekap Data</button>
             </div>
         </div>
 
-        <!-- MAIN CONTENT AREA -->
-        <main class="flex-grow max-w-6xl w-full mx-auto p-4">
-            
+        <!-- MAIN CONTAINER -->
+        <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6">
+
             <!-- TAB 1: ABSENSI -->
-            <section id="tab-absensi" class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                <h3 class="text-lg font-bold mb-4 text-gray-800">Input Absensi Harian</h3>
-                <form onsubmit="saveAbsensi(event)" class="space-y-4 max-w-lg">
-                    <div class="grid grid-cols-2 gap-4">
+            <section id="content-absensi" class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                <h2 class="text-xl font-bold text-gray-800 mb-4 pb-2 border-b">Form Presensi Harian Siswa</h2>
+                <form onsubmit="submitAbsensi(event)" class="space-y-4 max-w-xl">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1">Tanggal</label>
-                            <input type="date" id="abs-tgl" class="w-full px-3 py-2 border rounded-lg text-sm" required>
+                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Tanggal</label>
+                            <input type="date" id="abs-tanggal" class="w-full px-3 py-2 border rounded-md text-sm" required>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1">Kelas</label>
-                            <select id="abs-kelas" class="w-full px-3 py-2 border rounded-lg text-sm" required>
+                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Kelas</label>
+                            <select id="abs-kelas" class="w-full px-3 py-2 border rounded-md text-sm" required>
+                                <option value="">-- Pilih Kelas --</option>
                                 <option value="Kelas 1">Kelas 1</option>
                                 <option value="Kelas 2">Kelas 2</option>
                                 <option value="Kelas 3">Kelas 3</option>
@@ -86,116 +100,132 @@
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">ID Siswa</label>
-                        <input type="number" id="abs-siswap-id" placeholder="ID Siswa (Contoh: 1)" class="w-full px-3 py-2 border rounded-lg text-sm" required>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">ID / NIS Siswa</label>
+                        <input type="number" id="abs-siswa-id" placeholder="Masukkan ID Siswa" class="w-full px-3 py-2 border rounded-md text-sm" required>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">Status Kehadiran</label>
-                        <select id="abs-status" class="w-full px-3 py-2 border rounded-lg text-sm" required>
-                            <option value="Hadir">Hadir</option>
-                            <option value="Izin">Izin</option>
-                            <option value="Sakit">Sakit</option>
-                            <option value="Alfa">Alfa</option>
-                        </select>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Status Kehadiran</label>
+                        <div class="grid grid-cols-4 gap-2">
+                            <label class="flex items-center justify-center p-2 border rounded cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="abs-status" value="Hadir" checked class="mr-1"> Hadir
+                            </label>
+                            <label class="flex items-center justify-center p-2 border rounded cursor-pointer hover:bg-yellow-50">
+                                <input type="radio" name="abs-status" value="Izin" class="mr-1"> Izin
+                            </label>
+                            <label class="flex items-center justify-center p-2 border rounded cursor-pointer hover:bg-blue-50">
+                                <input type="radio" name="abs-status" value="Sakit" class="mr-1"> Sakit
+                            </label>
+                            <label class="flex items-center justify-center p-2 border rounded cursor-pointer hover:bg-red-50">
+                                <input type="radio" name="abs-status" value="Alfa" class="mr-1"> Alfa
+                            </label>
+                        </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">Keterangan (Opsional)</label>
-                        <input type="text" id="abs-ket" placeholder="Catatan tambahan..." class="w-full px-3 py-2 border rounded-lg text-sm">
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Keterangan</label>
+                        <textarea id="abs-keterangan" rows="2" placeholder="Catatan tambahan (opsional)..." class="w-full px-3 py-2 border rounded-md text-sm"></textarea>
                     </div>
-                    <button type="submit" class="bg-blue-600 text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-blue-700 transition">Simpan Absensi</button>
+                    <button type="submit" class="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-6 rounded-md text-sm shadow">
+                        Simpan Presensi
+                    </button>
                 </form>
             </section>
 
-            <!-- TAB 2: TAHFIDZ & TAHSIN -->
-            <section id="tab-tahfidz" class="hidden bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                <h3 class="text-lg font-bold mb-4 text-gray-800">Setoran Tahfidz & Tahsin</h3>
-                <form onsubmit="saveTahfidz(event)" class="space-y-4 max-w-lg">
-                    <div class="grid grid-cols-2 gap-4">
+            <!-- TAB 2: TAHFIDZ -->
+            <section id="content-tahfidz" class="hidden bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                <h2 class="text-xl font-bold text-gray-800 mb-4 pb-2 border-b">Input Setoran Tahfidz & Tahsin</h2>
+                <form onsubmit="submitTahfidz(event)" class="space-y-4 max-w-xl">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1">Tanggal</label>
-                            <input type="date" id="tah-tgl" class="w-full px-3 py-2 border rounded-lg text-sm" required>
+                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Tanggal</label>
+                            <input type="date" id="tah-tanggal" class="w-full px-3 py-2 border rounded-md text-sm" required>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1">Jenis Setoran</label>
-                            <select id="tah-jenis" class="w-full px-3 py-2 border rounded-lg text-sm" required>
+                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Jenis Setoran</label>
+                            <select id="tah-jenis" class="w-full px-3 py-2 border rounded-md text-sm" required>
                                 <option value="Tahfidz">Tahfidz (Hafalan)</option>
                                 <option value="Tahsin">Tahsin (Bacaan)</option>
                             </select>
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">ID Siswa</label>
-                        <input type="number" id="tah-siswa-id" placeholder="ID Siswa" class="w-full px-3 py-2 border rounded-lg text-sm" required>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">ID / NIS Siswa</label>
+                        <input type="number" id="tah-siswa-id" placeholder="Masukkan ID Siswa" class="w-full px-3 py-2 border rounded-md text-sm" required>
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1">Surah / Jilid</label>
-                            <input type="text" id="tah-surah" placeholder="An-Naba / Jilid 3" class="w-full px-3 py-2 border rounded-lg text-sm" required>
+                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Surah / Jilid</label>
+                            <input type="text" id="tah-surah" placeholder="Contoh: An-Naba / Iqro 3" class="w-full px-3 py-2 border rounded-md text-sm" required>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1">Ayat / Halaman</label>
-                            <input type="text" id="tah-ayat" placeholder="1-15 / Hal 12" class="w-full px-3 py-2 border rounded-lg text-sm" required>
+                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Ayat / Halaman</label>
+                            <input type="text" id="tah-ayat" placeholder="Contoh: 1-15 / Hal 12" class="w-full px-3 py-2 border rounded-md text-sm" required>
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">Nilai / Predikat</label>
-                        <select id="tah-nilai" class="w-full px-3 py-2 border rounded-lg text-sm" required>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Nilai / Predikat</label>
+                        <select id="tah-nilai" class="w-full px-3 py-2 border rounded-md text-sm" required>
                             <option value="A (Mumtaz)">A (Mumtaz)</option>
                             <option value="B (Jayyid)">B (Jayyid)</option>
                             <option value="C (Maqbul)">C (Maqbul)</option>
                         </select>
                     </div>
-                    <button type="submit" class="bg-green-600 text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-green-700 transition">Simpan Setoran</button>
+                    <button type="submit" class="bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-6 rounded-md text-sm shadow">
+                        Simpan Setoran
+                    </button>
                 </form>
             </section>
 
             <!-- TAB 3: KEDISIPLINAN -->
-            <section id="tab-kedisiplinan" class="hidden bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                <h3 class="text-lg font-bold mb-4 text-gray-800">Catatan Kedisiplinan / Prestasi</h3>
-                <form onsubmit="saveKedisiplinan(event)" class="space-y-4 max-w-lg">
-                    <div class="grid grid-cols-2 gap-4">
+            <section id="content-kedisiplinan" class="hidden bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                <h2 class="text-xl font-bold text-gray-800 mb-4 pb-2 border-b">Catatan Kedisiplinan & Prestasi</h2>
+                <form onsubmit="submitKedisiplinan(event)" class="space-y-4 max-w-xl">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1">Tanggal</label>
-                            <input type="date" id="ked-tgl" class="w-full px-3 py-2 border rounded-lg text-sm" required>
+                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Tanggal</label>
+                            <input type="date" id="ked-tanggal" class="w-full px-3 py-2 border rounded-md text-sm" required>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-gray-600 mb-1">Kategori</label>
-                            <select id="ked-jenis" class="w-full px-3 py-2 border rounded-lg text-sm" required>
+                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Kategori</label>
+                            <select id="ked-jenis" class="w-full px-3 py-2 border rounded-md text-sm" required>
                                 <option value="Prestasi">Prestasi (+)</option>
                                 <option value="Pelanggaran">Pelanggaran (-)</option>
                             </select>
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">ID Siswa</label>
-                        <input type="number" id="ked-siswa-id" placeholder="ID Siswa" class="w-full px-3 py-2 border rounded-lg text-sm" required>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">ID / NIS Siswa</label>
+                        <input type="number" id="ked-siswa-id" placeholder="Masukkan ID Siswa" class="w-full px-3 py-2 border rounded-md text-sm" required>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">Catatan Detail</label>
-                        <textarea id="ked-catatan" rows="3" placeholder="Deskripsi kejadian..." class="w-full px-3 py-2 border rounded-lg text-sm" required></textarea>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Catatan Event / Detail</label>
+                        <textarea id="ked-catatan" rows="3" placeholder="Tuliskan catatan detail kedisiplinan atau prestasi..." class="w-full px-3 py-2 border rounded-md text-sm" required></textarea>
                     </div>
-                    <button type="submit" class="bg-purple-600 text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-purple-700 transition">Simpan Catatan</button>
+                    <button type="submit" class="bg-purple-800 hover:bg-purple-900 text-white font-bold py-2 px-6 rounded-md text-sm shadow">
+                        Simpan Catatan
+                    </button>
                 </form>
             </section>
 
             <!-- TAB 4: REKAP DATA -->
-            <section id="tab-rekap" class="hidden bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-bold text-gray-800">Data Presensi Terbaru</h3>
-                    <button onclick="loadRekapData()" class="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg border font-medium">🔄 Refresh Data</button>
+            <section id="content-rekap" class="hidden bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                <div class="flex justify-between items-center mb-4 pb-2 border-b">
+                    <h2 class="text-xl font-bold text-gray-800">Rekap Presensi Harian</h2>
+                    <button onclick="fetchRekapData()" class="bg-gray-100 hover:bg-gray-200 border px-3 py-1.5 rounded text-xs font-medium">
+                        🔄 Refresh Data
+                    </button>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-left border-collapse">
                         <thead>
-                            <tr class="bg-gray-50 border-b text-gray-600 text-xs uppercase">
+                            <tr class="bg-gray-100 text-gray-700 text-xs uppercase border-b">
                                 <th class="p-3">Tanggal</th>
                                 <th class="p-3">Kelas</th>
                                 <th class="p-3">ID Siswa</th>
                                 <th class="p-3">Status</th>
-                                <th class="p-3">Ket</th>
+                                <th class="p-3">Keterangan</th>
                             </tr>
                         </thead>
-                        <tbody id="rekap-table-body">
+                        <tbody id="table-rekap-body">
                             <tr><td colspan="5" class="p-4 text-center text-gray-400">Klik Refresh Data untuk memuat...</td></tr>
                         </tbody>
                     </table>
@@ -205,36 +235,33 @@
         </main>
     </div>
 
-    <!-- SCRIPT UTAMA KONEKSI SUPABASE -->
+    <!-- JAVASCRIPT SUPABASE BACKEND -->
     <script>
-        // ============================================================
-        // 🔑 KONFIGURASI SUPABASE (SUDAH DISESUAIKAN)
-        // ============================================================
         const SUPABASE_URL = "https://tavoxawaparjahyldecc.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRhdm94YXdhcGFyamFoeWxkZWNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4OTc4MzgsImV4cCI6MjEwMTQ3MzgzOH0.21A23nlVJ9gaF1u86W3tQCcNggPOi1Wvaj4awaV0nEI";
-        
-        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        let currentUser = null;
 
-        // Set default Tanggal Hari Ini ke Input Date
-        document.querySelectorAll('input[type="date"]').forEach(inp => {
-            inp.value = new Date().toISOString().split('T')[0];
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        let loggedUser = null;
+
+        // Auto Set Today's Date
+        document.querySelectorAll('input[type="date"]').forEach(el => {
+            el.value = new Date().toISOString().split('T')[0];
         });
 
-        // 1. FUNGSI LOGIN
-        async function doLogin(e) {
+        // Login Handler
+        async function handleLogin(e) {
             e.preventDefault();
-            const u = document.getElementById('log-user').value.trim();
-            const p = document.getElementById('log-pass').value.trim();
-            const errBox = document.getElementById('login-error');
-            const btn = document.getElementById('btn-login');
+            const u = document.getElementById('input-username').value.trim();
+            const p = document.getElementById('input-password').value.trim();
+            const alertBox = document.getElementById('login-alert');
+            const btn = document.getElementById('btn-login-submit');
 
-            errBox.classList.add('hidden');
+            alertBox.classList.add('hidden');
             btn.innerText = 'Memproses...';
             btn.disabled = true;
 
             try {
-                const { data, error } = await db
+                const { data, error } = await supabaseClient
                     .from('users')
                     .select('*')
                     .eq('username', u)
@@ -243,100 +270,97 @@
 
                 if (error || !data) throw new Error("Username atau Password salah!");
 
-                currentUser = data;
+                loggedUser = data;
                 document.getElementById('sec-login').classList.add('hidden');
-                document.getElementById('sec-app').classList.remove('hidden');
-                document.getElementById('app-user-role').innerText = `${data.nama} (${data.role.toUpperCase()})`;
+                document.getElementById('sec-dashboard').classList.remove('hidden');
+                document.getElementById('user-display-name').innerText = `${data.nama} (${data.role.toUpperCase()})`;
 
             } catch (err) {
-                errBox.innerText = err.message;
-                errBox.classList.remove('hidden');
+                alertBox.innerText = err.message;
+                alertBox.classList.remove('hidden');
             } finally {
-                btn.innerText = 'Masuk ke Aplikasi';
+                btn.innerText = 'Masuk';
                 btn.disabled = false;
             }
         }
 
-        // 2. FUNGSI LOGOUT
-        function doLogout() {
-            currentUser = null;
-            document.getElementById('sec-app').classList.add('hidden');
+        // Logout Handler
+        function handleLogout() {
+            loggedUser = null;
+            document.getElementById('sec-dashboard').classList.add('hidden');
             document.getElementById('sec-login').classList.remove('hidden');
         }
 
-        // 3. NAVIGASI TAB
-        function switchTab(tabName) {
+        // Tab Navigation
+        function openTab(tabName) {
             ['absensi', 'tahfidz', 'kedisiplinan', 'rekap'].forEach(t => {
-                document.getElementById(`tab-${t}`).classList.add('hidden');
-                const btn = document.getElementById(`tab-btn-${t}`);
-                btn.classList.remove('border-blue-600', 'text-blue-600', 'font-bold');
-                btn.classList.add('border-transparent', 'text-gray-500');
+                document.getElementById(`content-${t}`).classList.add('hidden');
+                document.getElementById(`tab-nav-${t}`).classList.remove('active-tab');
             });
 
-            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
-            const activeBtn = document.getElementById(`tab-btn-${tabName}`);
-            activeBtn.classList.remove('border-transparent', 'text-gray-500');
-            activeBtn.classList.add('border-blue-600', 'text-blue-600', 'font-bold');
+            document.getElementById(`content-${tabName}`).classList.remove('hidden');
+            document.getElementById(`tab-nav-${tabName}`).classList.add('active-tab');
 
-            if(tabName === 'rekap') loadRekapData();
+            if (tabName === 'rekap') fetchRekapData();
         }
 
-        // 4. SIMPAN ABSENSI KE SUPABASE
-        async function saveAbsensi(e) {
+        // Save Absensi
+        async function submitAbsensi(e) {
             e.preventDefault();
+            const statusVal = document.querySelector('input[name="abs-status"]:checked').value;
             const payload = {
-                tanggal: document.getElementById('abs-tgl').value,
+                tanggal: document.getElementById('abs-tanggal').value,
                 kelas: document.getElementById('abs-kelas').value,
-                siswa_id: document.getElementById('abs-siswap-id').value,
-                status: document.getElementById('abs-status').value,
-                keterangan: document.getElementById('abs-ket').value
+                siswa_id: document.getElementById('abs-siswa-id').value,
+                status: statusVal,
+                keterangan: document.getElementById('abs-keterangan').value
             };
 
-            const { error } = await db.from('absensi').insert([payload]);
-            if (error) alert("Gagal menyimpan: " + error.message);
-            else { alert("✅ Presensi berhasil disimpan!"); e.target.reset(); }
+            const { error } = await supabaseClient.from('absensi').insert([payload]);
+            if (error) alert("Error: " + error.message);
+            else { alert("✅ Data Presensi Berhasil Disimpan!"); e.target.reset(); }
         }
 
-        // 5. SIMPAN TAHFIDZ KE SUPABASE
-        async function saveTahfidz(e) {
+        // Save Tahfidz
+        async function submitTahfidz(e) {
             e.preventDefault();
             const payload = {
-                tanggal: document.getElementById('tah-tgl').value,
+                tanggal: document.getElementById('tah-tanggal').value,
                 jenis: document.getElementById('tah-jenis').value,
                 siswa_id: document.getElementById('tah-siswa-id').value,
                 surah_jilid: document.getElementById('tah-surah').value,
                 ayat_halaman: document.getElementById('tah-ayat').value,
                 nilai: document.getElementById('tah-nilai').value,
-                penerima: currentUser ? currentUser.nama : 'Guru'
+                penerima: loggedUser ? loggedUser.nama : 'Guru'
             };
 
-            const { error } = await db.from('tahfidz').insert([payload]);
-            if (error) alert("Gagal menyimpan setoran: " + error.message);
-            else { alert("✅ Setoran berhasil disimpan!"); e.target.reset(); }
+            const { error } = await supabaseClient.from('tahfidz').insert([payload]);
+            if (error) alert("Error: " + error.message);
+            else { alert("✅ Data Setoran Berhasil Disimpan!"); e.target.reset(); }
         }
 
-        // 6. SIMPAN KEDISIPLINAN KE SUPABASE
-        async function saveKedisiplinan(e) {
+        // Save Kedisiplinan
+        async function submitKedisiplinan(e) {
             e.preventDefault();
             const payload = {
-                tanggal: document.getElementById('ked-tgl').value,
+                tanggal: document.getElementById('ked-tanggal').value,
                 jenis: document.getElementById('ked-jenis').value,
                 siswa_id: document.getElementById('ked-siswa-id').value,
                 catatan: document.getElementById('ked-catatan').value,
-                pencatat: currentUser ? currentUser.nama : 'Guru'
+                pencatat: loggedUser ? loggedUser.nama : 'Guru'
             };
 
-            const { error } = await db.from('kedisiplinan').insert([payload]);
-            if (error) alert("Gagal menyimpan catatan: " + error.message);
-            else { alert("✅ Catatan kedisiplinan disimpan!"); e.target.reset(); }
+            const { error } = await supabaseClient.from('kedisiplinan').insert([payload]);
+            if (error) alert("Error: " + error.message);
+            else { alert("✅ Catatan Kedisiplinan Berhasil Disimpan!"); e.target.reset(); }
         }
 
-        // 7. MEMUAT REKAP DATA ABSENSI
-        async function loadRekapData() {
-            const tbody = document.getElementById('rekap-table-body');
+        // Fetch Rekap
+        async function fetchRekapData() {
+            const tbody = document.getElementById('table-rekap-body');
             tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-400">Memuat data...</td></tr>';
 
-            const { data, error } = await db.from('absensi').select('*').order('created_at', { ascending: false }).limit(20);
+            const { data, error } = await supabaseClient.from('absensi').select('*').order('created_at', { ascending: false }).limit(20);
 
             if (error || !data || data.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-400">Belum ada data presensi.</td></tr>';
@@ -348,7 +372,7 @@
                     <td class="p-3">${item.tanggal}</td>
                     <td class="p-3 font-semibold">${item.kelas}</td>
                     <td class="p-3">Siswa #${item.siswa_id}</td>
-                    <td class="p-3"><span class="px-2 py-1 rounded text-xs font-bold ${item.status === 'Hadir' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${item.status}</span></td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded text-xs font-bold ${item.status === 'Hadir' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${item.status}</span></td>
                     <td class="p-3 text-gray-500">${item.keterangan || '-'}</td>
                 </tr>
             `).join('');
