@@ -3,379 +3,322 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplikasi SDIT Aladzievie</title>
-    <!-- Tailwind CSS & Supabase JS -->
+    <title>SDIT Aladzievie - Aplikasi Data Siswa</title>
+    <!-- Font Inter & FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        .active-tab {
-            border-bottom: 3px solid #1e40af;
-            color: #1e40af;
-            font-weight: bold;
-        }
+        body { font-family: 'Inter', sans-serif; }
+        .bg-sky-custom { background-color: #199BFF; }
+        .gradient-banner { background: linear-gradient(135deg, #1877F2 0%, #1557bf 100%); }
+        .active-bottom-nav { color: #199BFF; font-weight: 700; }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen font-sans">
+<body class="bg-slate-50 min-h-screen text-slate-800 flex flex-col justify-between">
 
-    <!-- 1. HALAMAN LOGIN (Sama Persis Tampilan Apps Script) -->
-    <div id="sec-login" class="min-h-screen flex items-center justify-center p-4">
-        <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md border border-gray-200">
-            <div class="text-center mb-6">
-                <div class="w-16 h-16 bg-blue-900 text-white font-bold text-2xl flex items-center justify-center rounded-full mx-auto mb-3">
-                    SDIT
+    <!-- ================= HALAMAN LOGIN ================= -->
+    <div id="sec-login" class="min-h-screen bg-sky-custom flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-8 w-full max-w-sm shadow-2xl text-center">
+            <!-- LOGO SDIT ALADZIEVIE -->
+            <div class="mb-4 flex justify-center">
+                <div class="w-16 h-16 relative flex items-center justify-center">
+                    <i class="fa-solid fa-book-quran text-4xl text-slate-900"></i>
                 </div>
-                <h1 class="text-2xl font-bold text-gray-800">SDIT ALADZIEVIE</h1>
-                <p class="text-xs text-gray-500">Sistem Presensi, Tahfidz & Kedisiplinan</p>
             </div>
             
-            <div id="login-alert" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm"></div>
+            <h1 class="text-xl font-extrabold text-slate-900 mb-0.5 tracking-tight">SDIT Aladzievie</h1>
+            <p class="text-xs font-semibold text-sky-500 mb-6">Aplikasi Data Siswa</p>
 
-            <form onsubmit="handleLogin(event)" class="space-y-4">
+            <div id="login-error" class="hidden bg-red-50 text-red-600 border border-red-200 text-xs p-3 rounded-xl mb-4 text-left"></div>
+
+            <form onsubmit="doLogin(event)" class="space-y-4 text-left">
                 <div>
-                    <label class="block text-gray-700 text-sm font-bold mb-1">Username</label>
-                    <input type="text" id="input-username" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm" placeholder="Masukkan username" required>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Username</label>
+                    <input type="text" id="log-u" placeholder="Masukkan username" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-400" required>
                 </div>
                 <div>
-                    <label class="block text-gray-700 text-sm font-bold mb-1">Password</label>
-                    <input type="password" id="input-password" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm" placeholder="Masukkan password" required>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Password</label>
+                    <input type="password" id="log-p" placeholder="Masukkan password" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-400" required>
                 </div>
-                <button type="submit" id="btn-login-submit" class="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-2.5 px-4 rounded-lg transition duration-200 text-sm shadow">
-                    Masuk
+                <button type="submit" id="btn-login" class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-sky-200 transition text-sm flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-lock text-xs"></i> Masuk
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- 2. DASHBOARD UTAMA (UI Persis Versi Apps Script) -->
-    <div id="sec-dashboard" class="hidden min-h-screen flex flex-col">
+    <!-- ================= DASHBOARD UTAMA ================= -->
+    <div id="sec-app" class="hidden min-h-screen flex flex-col">
         
-        <!-- HEADER / NAVBAR -->
-        <nav class="bg-blue-900 text-white shadow-md">
-            <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-                <div class="flex items-center space-x-3">
-                    <span class="font-bold text-lg tracking-wide">SDIT ALADZIEVIE</span>
+        <!-- TOP NAVBAR -->
+        <header class="bg-sky-custom text-white px-4 py-3 shadow-sm sticky top-0 z-20">
+            <div class="max-w-md mx-auto flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                        <i class="fa-solid fa-book-quran text-sm"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-sm font-bold leading-tight">SDIT Aladzievie</h2>
+                        <p id="user-display" class="text-[10px] text-sky-100">Ustadz Admin (Admin Utama)</p>
+                    </div>
                 </div>
-                <div class="flex items-center space-x-4 text-sm">
-                    <span id="user-display-name" class="font-medium bg-blue-800 px-3 py-1 rounded-full text-xs"></span>
-                    <button onclick="handleLogout()" class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1.5 rounded transition">
-                        Keluar
-                    </button>
+                <div class="flex items-center gap-2">
+                    <span class="text-[11px] bg-white/20 px-2.5 py-1 rounded-full font-medium" id="current-date">5 Agu 2026</span>
+                    <button class="w-7 h-7 bg-white/20 rounded-lg flex items-center justify-center text-xs"><i class="fa-solid fa-key"></i></button>
+                    <button onclick="doLogout()" class="w-7 h-7 bg-white/20 rounded-lg flex items-center justify-center text-xs"><i class="fa-solid fa-right-from-bracket"></i></button>
                 </div>
             </div>
-        </nav>
+        </header>
 
-        <!-- SUB NAV / NAVIGATION TABS -->
-        <div class="bg-white border-b shadow-sm sticky top-0 z-10">
-            <div class="max-w-7xl mx-auto px-4 flex space-x-4 overflow-x-auto text-sm">
-                <button onclick="openTab('absensi')" id="tab-nav-absensi" class="py-3 px-3 text-gray-600 hover:text-blue-900 active-tab">📌 Absensi Siswa</button>
-                <button onclick="openTab('tahfidz')" id="tab-nav-tahfidz" class="py-3 px-3 text-gray-600 hover:text-blue-900">📖 Tahfidz / Tahsin</button>
-                <button onclick="openTab('kedisiplinan')" id="tab-nav-kedisiplinan" class="py-3 px-3 text-gray-600 hover:text-blue-900">⭐ Kedisiplinan</button>
-                <button onclick="openTab('rekap')" id="tab-nav-rekap" class="py-3 px-3 text-gray-600 hover:text-blue-900">📊 Rekap Data</button>
+        <!-- MAIN CONTENT CONTAINER CONTAINER (Max-Width HP/Tablet) -->
+        <main class="flex-grow max-w-md w-full mx-auto p-4 pb-24 space-y-4">
+            
+            <!-- BERANDA TAB -->
+            <div id="tab-beranda" class="space-y-4">
+                <!-- HERO BANNER -->
+                <div class="gradient-banner text-white rounded-3xl p-5 shadow-lg relative overflow-hidden">
+                    <div class="relative z-10 space-y-1">
+                        <span class="inline-block bg-amber-400 text-slate-900 font-extrabold text-[10px] px-2.5 py-0.5 rounded-full uppercase">SDIT ALADZIEVIE</span>
+                        <h2 class="text-xl font-extrabold pt-1">Selamat Datang! 👋</h2>
+                        <p id="welcome-user" class="text-xs text-sky-100">Ustadz Admin (Admin Utama)</p>
+                    </div>
+                    <div class="mt-6 flex justify-between items-end relative z-10 text-[11px] text-sky-200 border-t border-white/10 pt-2">
+                        <span><i class="fa-solid fa-building text-[10px] mr-1"></i> Gedung Utama</span>
+                        <span>Versi 2.0</span>
+                    </div>
+                    <!-- Decorative BG Mosque Silhouette -->
+                    <i class="fa-solid fa-mosque absolute -bottom-4 -right-2 text-7xl text-white/10 pointer-events-none"></i>
+                </div>
+
+                <!-- KUTIPAN HADITS -->
+                <div class="bg-sky-50/60 border border-sky-100 rounded-2xl p-4 flex gap-3 items-start">
+                    <i class="fa-solid fa-quote-left text-sky-400 text-base mt-0.5"></i>
+                    <div class="text-xs space-y-1">
+                        <p class="font-semibold text-slate-800 italic">"Khairukum man ta'allamal Qur'ana wa 'allamah."</p>
+                        <p class="text-slate-500 text-[11px]">- Sebaik-baik kalian adalah yang mempelajari Al-Qur'an dan mengajarkannya. (HR. Bukhari)</p>
+                    </div>
+                </div>
+
+                <!-- PINTASAN UTAMA -->
+                <div class="space-y-2">
+                    <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Pintasan Utama</h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <!-- CARD 1 -->
+                        <div onclick="switchTab('absensi')" class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col items-center justify-center text-center cursor-pointer hover:shadow-md transition">
+                            <div class="w-11 h-11 bg-sky-100 text-sky-500 rounded-2xl flex items-center justify-center text-lg mb-2">
+                                <i class="fa-solid fa-address-card"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-700">Absensi Harian</span>
+                        </div>
+                        <!-- CARD 2 -->
+                        <div onclick="switchTab('setoran')" class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col items-center justify-center text-center cursor-pointer hover:shadow-md transition">
+                            <div class="w-11 h-11 bg-amber-100 text-amber-500 rounded-2xl flex items-center justify-center text-lg mb-2">
+                                <i class="fa-solid fa-trophy"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-700">Input Setoran</span>
+                        </div>
+                        <!-- CARD 3 -->
+                        <div onclick="switchTab('kedisiplinan')" class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col items-center justify-center text-center cursor-pointer hover:shadow-md transition">
+                            <div class="w-11 h-11 bg-rose-100 text-rose-500 rounded-2xl flex items-center justify-center text-lg mb-2">
+                                <i class="fa-solid fa-shield-halved"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-700">Kedisiplinan</span>
+                        </div>
+                        <!-- CARD 4 -->
+                        <div onclick="switchTab('cekdata')" class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col items-center justify-center text-center cursor-pointer hover:shadow-md transition">
+                            <div class="w-11 h-11 bg-indigo-100 text-indigo-500 rounded-2xl flex items-center justify-center text-lg mb-2">
+                                <i class="fa-solid fa-chart-simple"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-700">Rekap Bulanan</span>
+                        </div>
+                        <!-- CARD 5 -->
+                        <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col items-center justify-center text-center cursor-pointer hover:shadow-md transition">
+                            <div class="w-11 h-11 bg-sky-100 text-sky-500 rounded-2xl flex items-center justify-center text-lg mb-2">
+                                <i class="fa-solid fa-file-lines"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-700">Laporan WA & Rapor</span>
+                        </div>
+                        <!-- CARD 6 -->
+                        <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col items-center justify-center text-center cursor-pointer hover:shadow-md transition">
+                            <div class="w-11 h-11 bg-purple-100 text-purple-500 rounded-2xl flex items-center justify-center text-lg mb-2">
+                                <i class="fa-solid fa-user-gear"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-700">Kelola Akun</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <!-- MAIN CONTAINER -->
-        <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6">
-
-            <!-- TAB 1: ABSENSI -->
-            <section id="content-absensi" class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                <h2 class="text-xl font-bold text-gray-800 mb-4 pb-2 border-b">Form Presensi Harian Siswa</h2>
-                <form onsubmit="submitAbsensi(event)" class="space-y-4 max-w-xl">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Tanggal</label>
-                            <input type="date" id="abs-tanggal" class="w-full px-3 py-2 border rounded-md text-sm" required>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Kelas</label>
-                            <select id="abs-kelas" class="w-full px-3 py-2 border rounded-md text-sm" required>
-                                <option value="">-- Pilih Kelas --</option>
-                                <option value="Kelas 1">Kelas 1</option>
-                                <option value="Kelas 2">Kelas 2</option>
-                                <option value="Kelas 3">Kelas 3</option>
-                                <option value="Kelas 4">Kelas 4</option>
-                                <option value="Kelas 5">Kelas 5</option>
-                                <option value="Kelas 6">Kelas 6</option>
-                            </select>
-                        </div>
+            <!-- DYNAMIC FORM SECTIONS (ABSENSI / SETORAN / REKAP) -->
+            <div id="tab-absensi" class="hidden bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+                <h3 class="font-bold text-sm text-slate-800 border-b pb-2">Form Presensi Harian</h3>
+                <form onsubmit="saveAbsensi(event)" class="space-y-3 text-xs">
+                    <div>
+                        <label class="block font-semibold mb-1">Tanggal</label>
+                        <input type="date" id="abs-tgl" class="w-full p-2.5 border rounded-xl" required>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">ID / NIS Siswa</label>
-                        <input type="number" id="abs-siswa-id" placeholder="Masukkan ID Siswa" class="w-full px-3 py-2 border rounded-md text-sm" required>
+                        <label class="block font-semibold mb-1">ID Siswa</label>
+                        <input type="number" id="abs-id" placeholder="ID Siswa" class="w-full p-2.5 border rounded-xl" required>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Status Kehadiran</label>
-                        <div class="grid grid-cols-4 gap-2">
-                            <label class="flex items-center justify-center p-2 border rounded cursor-pointer hover:bg-blue-50">
-                                <input type="radio" name="abs-status" value="Hadir" checked class="mr-1"> Hadir
-                            </label>
-                            <label class="flex items-center justify-center p-2 border rounded cursor-pointer hover:bg-yellow-50">
-                                <input type="radio" name="abs-status" value="Izin" class="mr-1"> Izin
-                            </label>
-                            <label class="flex items-center justify-center p-2 border rounded cursor-pointer hover:bg-blue-50">
-                                <input type="radio" name="abs-status" value="Sakit" class="mr-1"> Sakit
-                            </label>
-                            <label class="flex items-center justify-center p-2 border rounded cursor-pointer hover:bg-red-50">
-                                <input type="radio" name="abs-status" value="Alfa" class="mr-1"> Alfa
-                            </label>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Keterangan</label>
-                        <textarea id="abs-keterangan" rows="2" placeholder="Catatan tambahan (opsional)..." class="w-full px-3 py-2 border rounded-md text-sm"></textarea>
-                    </div>
-                    <button type="submit" class="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-6 rounded-md text-sm shadow">
-                        Simpan Presensi
-                    </button>
-                </form>
-            </section>
-
-            <!-- TAB 2: TAHFIDZ -->
-            <section id="content-tahfidz" class="hidden bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                <h2 class="text-xl font-bold text-gray-800 mb-4 pb-2 border-b">Input Setoran Tahfidz & Tahsin</h2>
-                <form onsubmit="submitTahfidz(event)" class="space-y-4 max-w-xl">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Tanggal</label>
-                            <input type="date" id="tah-tanggal" class="w-full px-3 py-2 border rounded-md text-sm" required>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Jenis Setoran</label>
-                            <select id="tah-jenis" class="w-full px-3 py-2 border rounded-md text-sm" required>
-                                <option value="Tahfidz">Tahfidz (Hafalan)</option>
-                                <option value="Tahsin">Tahsin (Bacaan)</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">ID / NIS Siswa</label>
-                        <input type="number" id="tah-siswa-id" placeholder="Masukkan ID Siswa" class="w-full px-3 py-2 border rounded-md text-sm" required>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Surah / Jilid</label>
-                            <input type="text" id="tah-surah" placeholder="Contoh: An-Naba / Iqro 3" class="w-full px-3 py-2 border rounded-md text-sm" required>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Ayat / Halaman</label>
-                            <input type="text" id="tah-ayat" placeholder="Contoh: 1-15 / Hal 12" class="w-full px-3 py-2 border rounded-md text-sm" required>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Nilai / Predikat</label>
-                        <select id="tah-nilai" class="w-full px-3 py-2 border rounded-md text-sm" required>
-                            <option value="A (Mumtaz)">A (Mumtaz)</option>
-                            <option value="B (Jayyid)">B (Jayyid)</option>
-                            <option value="C (Maqbul)">C (Maqbul)</option>
+                        <label class="block font-semibold mb-1">Status Kehadiran</label>
+                        <select id="abs-status" class="w-full p-2.5 border rounded-xl">
+                            <option value="Hadir">Hadir</option>
+                            <option value="Izin">Izin</option>
+                            <option value="Sakit">Sakit</option>
+                            <option value="Alfa">Alfa</option>
                         </select>
                     </div>
-                    <button type="submit" class="bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-6 rounded-md text-sm shadow">
-                        Simpan Setoran
-                    </button>
+                    <button type="submit" class="w-full bg-sky-500 text-white font-bold py-2.5 rounded-xl">Simpan Absensi</button>
                 </form>
-            </section>
+            </div>
 
-            <!-- TAB 3: KEDISIPLINAN -->
-            <section id="content-kedisiplinan" class="hidden bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                <h2 class="text-xl font-bold text-gray-800 mb-4 pb-2 border-b">Catatan Kedisiplinan & Prestasi</h2>
-                <form onsubmit="submitKedisiplinan(event)" class="space-y-4 max-w-xl">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Tanggal</label>
-                            <input type="date" id="ked-tanggal" class="w-full px-3 py-2 border rounded-md text-sm" required>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Kategori</label>
-                            <select id="ked-jenis" class="w-full px-3 py-2 border rounded-md text-sm" required>
-                                <option value="Prestasi">Prestasi (+)</option>
-                                <option value="Pelanggaran">Pelanggaran (-)</option>
-                            </select>
-                        </div>
+            <div id="tab-setoran" class="hidden bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+                <h3 class="font-bold text-sm text-slate-800 border-b pb-2">Form Input Setoran Tahfidz</h3>
+                <form onsubmit="saveSetoran(event)" class="space-y-3 text-xs">
+                    <div>
+                        <label class="block font-semibold mb-1">ID Siswa</label>
+                        <input type="number" id="set-id" placeholder="ID Siswa" class="w-full p-2.5 border rounded-xl" required>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">ID / NIS Siswa</label>
-                        <input type="number" id="ked-siswa-id" placeholder="Masukkan ID Siswa" class="w-full px-3 py-2 border rounded-md text-sm" required>
+                        <label class="block font-semibold mb-1">Surah / Jilid</label>
+                        <input type="text" id="set-surah" placeholder="An-Naba / Jilid 2" class="w-full p-2.5 border rounded-xl" required>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Catatan Event / Detail</label>
-                        <textarea id="ked-catatan" rows="3" placeholder="Tuliskan catatan detail kedisiplinan atau prestasi..." class="w-full px-3 py-2 border rounded-md text-sm" required></textarea>
+                        <label class="block font-semibold mb-1">Ayat / Halaman</label>
+                        <input type="text" id="set-ayat" placeholder="1-15 / Hal 10" class="w-full p-2.5 border rounded-xl" required>
                     </div>
-                    <button type="submit" class="bg-purple-800 hover:bg-purple-900 text-white font-bold py-2 px-6 rounded-md text-sm shadow">
-                        Simpan Catatan
-                    </button>
+                    <button type="submit" class="w-full bg-amber-500 text-white font-bold py-2.5 rounded-xl">Simpan Setoran</button>
                 </form>
-            </section>
+            </div>
 
-            <!-- TAB 4: REKAP DATA -->
-            <section id="content-rekap" class="hidden bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                <div class="flex justify-between items-center mb-4 pb-2 border-b">
-                    <h2 class="text-xl font-bold text-gray-800">Rekap Presensi Harian</h2>
-                    <button onclick="fetchRekapData()" class="bg-gray-100 hover:bg-gray-200 border px-3 py-1.5 rounded text-xs font-medium">
-                        🔄 Refresh Data
-                    </button>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left border-collapse">
-                        <thead>
-                            <tr class="bg-gray-100 text-gray-700 text-xs uppercase border-b">
-                                <th class="p-3">Tanggal</th>
-                                <th class="p-3">Kelas</th>
-                                <th class="p-3">ID Siswa</th>
-                                <th class="p-3">Status</th>
-                                <th class="p-3">Keterangan</th>
-                            </tr>
-                        </thead>
-                        <tbody id="table-rekap-body">
-                            <tr><td colspan="5" class="p-4 text-center text-gray-400">Klik Refresh Data untuk memuat...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
+            <div id="tab-cekdata" class="hidden bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+                <h3 class="font-bold text-sm text-slate-800 border-b pb-2">Rekap Absensi Terakhir</h3>
+                <div id="rekap-list" class="text-xs space-y-2">Memuat data...</div>
+            </div>
 
         </main>
+
+        <!-- BOTTOM NAVIGATION BAR -->
+        <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 py-2 z-30">
+            <div class="max-w-md mx-auto flex justify-around items-center text-[10px]">
+                <button onclick="switchTab('beranda')" id="nav-beranda" class="flex flex-col items-center gap-1 active-bottom-nav">
+                    <i class="fa-solid fa-house text-base"></i>
+                    <span>Beranda</span>
+                </button>
+                <button onclick="switchTab('absensi')" id="nav-absensi" class="flex flex-col items-center gap-1 text-slate-400">
+                    <i class="fa-solid fa-address-card text-base"></i>
+                    <span>Absensi</span>
+                </button>
+                <button onclick="switchTab('setoran')" id="nav-setoran" class="flex flex-col items-center gap-1 text-slate-400">
+                    <i class="fa-solid fa-star text-base"></i>
+                    <span>Setoran</span>
+                </button>
+                <button onclick="switchTab('cekdata')" id="nav-cekdata" class="flex flex-col items-center gap-1 text-slate-400">
+                    <i class="fa-solid fa-chart-pie text-base"></i>
+                    <span>Cek Data</span>
+                </button>
+                <button class="flex flex-col items-center gap-1 text-slate-400">
+                    <i class="fa-solid fa-file-invoice text-base"></i>
+                    <span>Laporan</span>
+                </button>
+                <button class="flex flex-col items-center gap-1 text-slate-400">
+                    <i class="fa-solid fa-user-gear text-base"></i>
+                    <span>Akun</span>
+                </button>
+            </div>
+        </nav>
     </div>
 
-    <!-- JAVASCRIPT SUPABASE BACKEND -->
+    <!-- SUPABASE ENGINE -->
     <script>
         const SUPABASE_URL = "https://tavoxawaparjahyldecc.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRhdm94YXdhcGFyamFoeWxkZWNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4OTc4MzgsImV4cCI6MjEwMTQ3MzgzOH0.21A23nlVJ9gaF1u86W3tQCcNggPOi1Wvaj4awaV0nEI";
 
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        let loggedUser = null;
+        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        let currentUser = null;
 
-        // Auto Set Today's Date
-        document.querySelectorAll('input[type="date"]').forEach(el => {
-            el.value = new Date().toISOString().split('T')[0];
-        });
-
-        // Login Handler
-        async function handleLogin(e) {
+        async function doLogin(e) {
             e.preventDefault();
-            const u = document.getElementById('input-username').value.trim();
-            const p = document.getElementById('input-password').value.trim();
-            const alertBox = document.getElementById('login-alert');
-            const btn = document.getElementById('btn-login-submit');
+            const u = document.getElementById('log-u').value.trim();
+            const p = document.getElementById('log-p').value.trim();
+            const err = document.getElementById('login-error');
+            const btn = document.getElementById('btn-login');
 
-            alertBox.classList.add('hidden');
-            btn.innerText = 'Memproses...';
-            btn.disabled = true;
+            err.classList.add('hidden');
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Memproses...`;
 
             try {
-                const { data, error } = await supabaseClient
-                    .from('users')
-                    .select('*')
-                    .eq('username', u)
-                    .eq('password', p)
-                    .single();
+                const { data, error } = await db.from('users').select('*').eq('username', u).eq('password', p).single();
+                if (error || !data) throw new Error("Username/password salah!");
 
-                if (error || !data) throw new Error("Username atau Password salah!");
-
-                loggedUser = data;
+                currentUser = data;
                 document.getElementById('sec-login').classList.add('hidden');
-                document.getElementById('sec-dashboard').classList.remove('hidden');
-                document.getElementById('user-display-name').innerText = `${data.nama} (${data.role.toUpperCase()})`;
-
-            } catch (err) {
-                alertBox.innerText = err.message;
-                alertBox.classList.remove('hidden');
+                document.getElementById('sec-app').classList.remove('hidden');
+                document.getElementById('user-display').innerText = `${data.nama} (${data.role})`;
+                document.getElementById('welcome-user').innerText = `${data.nama} (${data.role})`;
+            } catch (ex) {
+                err.innerText = ex.message;
+                err.classList.remove('hidden');
             } finally {
-                btn.innerText = 'Masuk';
-                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-lock text-xs"></i> Masuk`;
             }
         }
 
-        // Logout Handler
-        function handleLogout() {
-            loggedUser = null;
-            document.getElementById('sec-dashboard').classList.add('hidden');
+        function doLogout() {
+            document.getElementById('sec-app').classList.add('hidden');
             document.getElementById('sec-login').classList.remove('hidden');
         }
 
-        // Tab Navigation
-        function openTab(tabName) {
-            ['absensi', 'tahfidz', 'kedisiplinan', 'rekap'].forEach(t => {
-                document.getElementById(`content-${t}`).classList.add('hidden');
-                document.getElementById(`tab-nav-${t}`).classList.remove('active-tab');
+        function switchTab(tab) {
+            ['beranda', 'absensi', 'setoran', 'cekdata'].forEach(t => {
+                const el = document.getElementById(`tab-${t}`);
+                const nav = document.getElementById(`nav-${t}`);
+                if(el) el.classList.add('hidden');
+                if(nav) { nav.classList.remove('active-bottom-nav'); nav.classList.add('text-slate-400'); }
             });
 
-            document.getElementById(`content-${tabName}`).classList.remove('hidden');
-            document.getElementById(`tab-nav-${tabName}`).classList.add('active-tab');
+            document.getElementById(`tab-${tab}`).classList.remove('hidden');
+            const activeNav = document.getElementById(`nav-${tab}`);
+            if(activeNav) { activeNav.classList.add('active-bottom-nav'); activeNav.classList.remove('text-slate-400'); }
 
-            if (tabName === 'rekap') fetchRekapData();
+            if(tab === 'cekdata') loadCekData();
         }
 
-        // Save Absensi
-        async function submitAbsensi(e) {
-            e.preventDefault();
-            const statusVal = document.querySelector('input[name="abs-status"]:checked').value;
-            const payload = {
-                tanggal: document.getElementById('abs-tanggal').value,
-                kelas: document.getElementById('abs-kelas').value,
-                siswa_id: document.getElementById('abs-siswa-id').value,
-                status: statusVal,
-                keterangan: document.getElementById('abs-keterangan').value
-            };
-
-            const { error } = await supabaseClient.from('absensi').insert([payload]);
-            if (error) alert("Error: " + error.message);
-            else { alert("✅ Data Presensi Berhasil Disimpan!"); e.target.reset(); }
-        }
-
-        // Save Tahfidz
-        async function submitTahfidz(e) {
+        async function saveAbsensi(e) {
             e.preventDefault();
             const payload = {
-                tanggal: document.getElementById('tah-tanggal').value,
-                jenis: document.getElementById('tah-jenis').value,
-                siswa_id: document.getElementById('tah-siswa-id').value,
-                surah_jilid: document.getElementById('tah-surah').value,
-                ayat_halaman: document.getElementById('tah-ayat').value,
-                nilai: document.getElementById('tah-nilai').value,
-                penerima: loggedUser ? loggedUser.nama : 'Guru'
+                tanggal: document.getElementById('abs-tgl').value,
+                siswa_id: document.getElementById('abs-id').value,
+                status: document.getElementById('abs-status').value,
+                kelas: 'Kelas 1'
             };
-
-            const { error } = await supabaseClient.from('tahfidz').insert([payload]);
-            if (error) alert("Error: " + error.message);
-            else { alert("✅ Data Setoran Berhasil Disimpan!"); e.target.reset(); }
+            const { error } = await db.from('absensi').insert([payload]);
+            if(error) alert(error.message); else { alert("✅ Presensi Tersimpan!"); e.target.reset(); }
         }
 
-        // Save Kedisiplinan
-        async function submitKedisiplinan(e) {
+        async function saveSetoran(e) {
             e.preventDefault();
             const payload = {
-                tanggal: document.getElementById('ked-tanggal').value,
-                jenis: document.getElementById('ked-jenis').value,
-                siswa_id: document.getElementById('ked-siswa-id').value,
-                catatan: document.getElementById('ked-catatan').value,
-                pencatat: loggedUser ? loggedUser.nama : 'Guru'
+                tanggal: new Date().toISOString().split('T')[0],
+                jenis: 'Tahfidz',
+                siswa_id: document.getElementById('set-id').value,
+                surah_jilid: document.getElementById('set-surah').value,
+                ayat_halaman: document.getElementById('set-ayat').value,
+                nilai: 'A (Mumtaz)'
             };
-
-            const { error } = await supabaseClient.from('kedisiplinan').insert([payload]);
-            if (error) alert("Error: " + error.message);
-            else { alert("✅ Catatan Kedisiplinan Berhasil Disimpan!"); e.target.reset(); }
+            const { error } = await db.from('tahfidz').insert([payload]);
+            if(error) alert(error.message); else { alert("✅ Setoran Tersimpan!"); e.target.reset(); }
         }
 
-        // Fetch Rekap
-        async function fetchRekapData() {
-            const tbody = document.getElementById('table-rekap-body');
-            tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-400">Memuat data...</td></tr>';
-
-            const { data, error } = await supabaseClient.from('absensi').select('*').order('created_at', { ascending: false }).limit(20);
-
-            if (error || !data || data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-400">Belum ada data presensi.</td></tr>';
-                return;
-            }
-
-            tbody.innerHTML = data.map(item => `
-                <tr class="border-b hover:bg-gray-50">
-                    <td class="p-3">${item.tanggal}</td>
-                    <td class="p-3 font-semibold">${item.kelas}</td>
-                    <td class="p-3">Siswa #${item.siswa_id}</td>
-                    <td class="p-3"><span class="px-2 py-0.5 rounded text-xs font-bold ${item.status === 'Hadir' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${item.status}</span></td>
-                    <td class="p-3 text-gray-500">${item.keterangan || '-'}</td>
-                </tr>
-            `).join('');
+        async function loadCekData() {
+            const container = document.getElementById('rekap-list');
+            const { data } = await db.from('absensi').select('*').limit(10);
+            if(!data || data.length === 0) { container.innerHTML = 'Belum ada data.'; return; }
+            container.innerHTML = data.map(d => `<div class="p-2 border-b flex justify-between"><span>Siswa #${d.siswa_id}</span><span class="font-bold text-sky-500">${d.status}</span></div>`).join('');
         }
     </script>
 </body>
