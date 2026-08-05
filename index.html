@@ -254,7 +254,7 @@
       </div>
     </div>
 
-    <!-- TAB 4: CATATAN KEDISIPLINAN (SUDAH DITAMBAH TOMBOL HARI INI TERTIB) -->
+    <!-- TAB 4: CATATAN KEDISIPLINAN -->
     <div id="view-disiplin" class="hidden space-y-4">
       <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
         <h3 class="font-bold text-sm text-gray-800"><i class="fa-solid fa-shield-halved text-amber-500 mr-2"></i>Form Catatan Kedisiplinan Siswa</h3>
@@ -316,7 +316,6 @@
             💾 Simpan Catatan Kedisiplinan
           </button>
           
-          <!-- TOMBOL BARU: SATU KELAS TERTIB -->
           <button type="button" onclick="simpanSatuKelasTertib()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs shadow flex items-center justify-center gap-1.5">
             <i class="fa-solid fa-circle-check"></i> Satu Kelas Tertib (Nihil)
           </button>
@@ -815,7 +814,6 @@
       }
     }
 
-    // FUNGSI BARU: SIMPAN SATU KELAS TERTIB SEKALIGUS
     async function simpanSatuKelasTertib() {
       var kls = document.getElementById('disiplin-kelas').value;
       var tgl = document.getElementById('disiplin-tgl').value;
@@ -924,7 +922,7 @@
       }
     }
 
-    // 9. LAPORAN INDIVIDUAL & WA
+    // 9. LAPORAN INDIVIDUAL & FORMAT WA PRESISI
     async function buatLaporanSantri() {
       var valSiswa = document.getElementById('lap-nama').value.split('|');
       var sId = valSiswa[0];
@@ -976,20 +974,82 @@
         });
       }
 
-      currentLaporanData = { nama: sNama, kls: kls, periode: tglAwal+" s/d "+tglAkhir, set: set, ked: ked };
+      currentLaporanData = { 
+        nama: sNama, 
+        kls: kls, 
+        periode: tglAwal + " s/d " + tglAkhir, 
+        absen: {
+          Hadir: abs ? abs.filter(a => a.status==='Hadir').length : 0,
+          Izin: abs ? abs.filter(a => a.status==='Izin').length : 0,
+          Sakit: abs ? abs.filter(a => a.status==='Sakit').length : 0,
+          Alpha: abs ? abs.filter(a => a.status==='Alfa'||a.status==='Alpha').length : 0
+        },
+        set: set, 
+        ked: ked 
+      };
     }
 
+    // FORMAT PESAN WHATSAPP SESUAI SCREENSHOT
     function kirimWaOrtu() {
-      if (!currentLaporanData) { alert("Buat Laporan terlebih dahulu!"); return; }
+      if (!currentLaporanData) { 
+        alert("Buat Laporan / Rapor terlebih dahulu!"); 
+        return; 
+      }
 
-      var txt = "*SDIT ALADZIEVIE*\n" +
+      var d = currentLaporanData;
+      var ab = d.absen || { Hadir: 0, Izin: 0, Sakit: 0, Alpha: 0 };
+      
+      // A. CATATAN KEHADIRAN
+      var txtAbsen = "  · Hadir: " + ab.Hadir + " | Izin: " + ab.Izin + " | Sakit: " + ab.Sakit + " | Alpha: " + ab.Alpha;
+
+      // B. CAPAIAN SETORAN TAHSIN / TAHFIDZ / TILAWAH
+      var txtSetoran = "";
+      if (!d.set || d.set.length === 0) {
+        txtSetoran = "  · Belum ada data setoran\n";
+      } else {
+        d.set.forEach(function(p, i) {
+          var tgl = p.tanggal || d.periode.split(' s/d ')[0];
+          var surah = p.surah_jilid || '-';
+          var kat = p.jenis || 'Ziyadah';
+          var hal = p.ayat_halaman || '-';
+          var nilai = p.nilai || 'A (Jayyid Jiddan)';
+          var cat = p.catatan || p.keterangan || '';
+
+          txtSetoran += (i + 1) + ". 📅 *" + tgl + "* – *" + surah + "* (" + kat + ")\n" +
+                        "   Hal/Ayat: " + hal + "\n" +
+                        "   Nilai: *" + nilai + "*\n" +
+                        (cat ? "   _Catatan:_ " + cat + "\n" : "") + "\n";
+        });
+      }
+
+      // C. CATATAN KEDISIPLINAN
+      var txtDisiplin = "";
+      if (!d.ked || d.ked.length === 0) {
+        txtDisiplin = "  · Tidak ada catatan kedisiplinan\n";
+      } else {
+        d.ked.forEach(function(k, i) {
+          txtDisiplin += (i + 1) + ". 📅 *" + k.tanggal + "* – [" + k.jenis + "]\n" +
+                         "   Catatan: " + k.catatan + "\n\n";
+        });
+      }
+
+      // SUSUN PESAN LENGKAP WHATSAPP
+      var txt = "Assalamu'alaikum warahmatullahi wabarakatuh\n\n" +
+                "*SDIT ALADZIEVIE*\n" +
                 "Laporan Perkembangan Siswa\n" +
                 "------------------------------------------\n" +
-                "*Nama:* " + currentLaporanData.nama + "\n" +
-                "*Kelas:* " + currentLaporanData.kls + "\n" +
-                "*Periode:* " + currentLaporanData.periode + "\n\n" +
+                "*Nama:* " + d.nama + "\n" +
+                "*Kelas:* " + d.kls + "\n" +
+                "*Periode:* *" + d.periode.replace(" s/d ", "* s/d *") + "*\n\n" +
+                "*A. CATATAN KEHADIRAN*\n" +
+                txtAbsen + "\n\n" +
+                "*B. CAPAIAN SETORAN TAHSIN / TAHFIDZ / TILAWAH*\n" +
+                txtSetoran +
+                "*C. CATATAN KEDISIPLINAN*\n" +
+                txtDisiplin +
+                "------------------------------------------\n" +
                 "Jazakumullah khairan wa barakallahu fiikum.";
-      
+
       var waUrl = "https://api.whatsapp.com/send?text=" + encodeURIComponent(txt);
       window.open(waUrl, "_blank");
     }
