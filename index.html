@@ -841,6 +841,19 @@
       }
     }
 
+    async function hapusSetoranData(idSetoran) {
+      if (confirm("Apakah Anda yakin ingin menghapus data setoran ini?")) {
+        const { error } = await db.from('tahfidz').delete().eq('id', idSetoran);
+        if (error) {
+          alert("❌ Gagal menghapus setoran: " + error.message);
+        } else {
+          alert("✅ Data setoran berhasil dihapus!");
+          if (typeof buatLaporanSantri === 'function') buatLaporanSantri();
+          if (currentTab === 'cekdata') loadRekapBulanan();
+        }
+      }
+    }
+
     // 7. RIWAYAT KEDISIPLINAN
     async function loadRiwayatKedisiplinan() {
       var box = document.getElementById('list-riwayat-disiplin');
@@ -871,7 +884,7 @@
       });
     }
 
-    // 8. CEK DATA REKAP BULANAN
+    // 8. CEK DATA REKAP BULANAN (DENGAN RINCIAN SETORAN & KEDISIPLINAN LENGKAP)
     async function loadRekapBulanan() {
       var kls = document.getElementById('cek-kelas').value;
       var box = document.getElementById('hasil-rekap-box');
@@ -897,13 +910,45 @@
 
       for (let s of siswaList) {
         const { data: abs } = await db.from('absensi').select('status').eq('siswa_id', s.id);
-        const { data: set } = await db.from('tahfidz').select('*').eq('siswa_id', s.id);
-        const { data: ked } = await db.from('kedisiplinan').select('*').eq('siswa_id', s.id);
+        const { data: set } = await db.from('tahfidz').select('*').eq('siswa_id', s.id).order('tanggal', { ascending: false });
+        const { data: ked } = await db.from('kedisiplinan').select('*').eq('siswa_id', s.id).order('tanggal', { ascending: false });
 
         let countHadir = abs ? abs.filter(a => a.status === 'Hadir').length : 0;
         let countIzin = abs ? abs.filter(a => a.status === 'Izin').length : 0;
         let countSakit = abs ? abs.filter(a => a.status === 'Sakit').length : 0;
         let countAlpha = abs ? abs.filter(a => a.status === 'Alfa' || a.status === 'Alpha').length : 0;
+
+        // SUSUN RINCIAN SETORAN
+        var txtSetoranHtml = '';
+        if (!set || set.length === 0) {
+          txtSetoranHtml = '<div class="text-gray-400 italic text-[11px] bg-gray-50 p-2 rounded-xl border">Belum ada data setoran</div>';
+        } else {
+          set.forEach(function(p) {
+            txtSetoranHtml += '<div class="bg-gray-50 p-2 rounded-xl border text-[11px] flex justify-between items-center mb-1">' +
+              '<div>' +
+                '<b>📅 ' + p.tanggal + '</b> – <b>' + (p.surah_jilid || '-') + '</b> (' + (p.jenis || 'Ziyadah') + ')<br>' +
+                '<span class="text-gray-600">Hal/Ayat: ' + (p.ayat_halaman || '-') + ' | Nilai: <b class="text-blue-700">' + (p.nilai || 'A') + '</b></span>' +
+                (p.catatan ? '<div class="text-gray-500 italic">_Catatan:_ ' + p.catatan + '</div>' : '') +
+              '</div>' +
+              '<button onclick="hapusSetoranData(' + p.id + ')" class="no-print text-rose-600 hover:text-rose-800 bg-rose-50 p-1.5 rounded-lg text-xs font-bold" title="Hapus">' +
+                '<i class="fa-solid fa-trash"></i>' +
+              '</button>' +
+            '</div>';
+          });
+        }
+
+        // SUSUN RINCIAN KEDISIPLINAN
+        var txtDisiplinHtml = '';
+        if (!ked || ked.length === 0) {
+          txtDisiplinHtml = '<div class="text-gray-400 italic text-[11px] bg-gray-50 p-2 rounded-xl border">Tidak ada catatan kedisiplinan</div>';
+        } else {
+          ked.forEach(function(k) {
+            txtDisiplinHtml += '<div class="bg-gray-50 p-2 rounded-xl border text-[11px] mb-1">' +
+              '<div class="flex justify-between font-bold"><span>📅 ' + k.tanggal + '</span><span class="bg-amber-100 text-amber-900 text-[9px] px-1.5 py-0.5 rounded-full">' + k.jenis + '</span></div>' +
+              '<div class="text-gray-700"><b>Catatan:</b> ' + k.catatan + '</div>' +
+            '</div>';
+          });
+        }
 
         box.innerHTML += '<div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3 text-xs page-break-inside-avoid">' +
           '<div class="border-b pb-2 flex justify-between items-center">' +
@@ -913,17 +958,32 @@
               '<span class="bg-amber-100 text-amber-800 font-bold text-[10px] px-2 py-0.5 rounded-full">' + (ked ? ked.length : 0) + ' Disiplin</span>' +
             '</div>' +
           '</div>' +
+
+          '<!-- 1. RINCIAN KEHADIRAN -->' +
           '<div class="grid grid-cols-4 gap-1 text-center font-semibold text-[10px] bg-gray-50 p-2 rounded-xl border">' +
             '<div class="text-blue-700">Hadir<br><b class="text-xs">' + countHadir + '</b></div>' +
             '<div class="text-sky-700">Izin<br><b class="text-xs">' + countIzin + '</b></div>' +
             '<div class="text-amber-700">Sakit<br><b class="text-xs">' + countSakit + '</b></div>' +
             '<div class="text-rose-700">Alpha<br><b class="text-xs">' + countAlpha + '</b></div>' +
           '</div>' +
+
+          '<!-- 2. RINCIAN SETORAN TAHSIN / TAHFIDZ -->' +
+          '<div class="space-y-1.5 pt-1">' +
+            '<div class="font-bold text-gray-800 text-[11px]"><i class="fa-solid fa-book-quran text-blue-600 mr-1"></i>Rincian Setoran:</div>' +
+            txtSetoranHtml +
+          '</div>' +
+
+          '<!-- 3. RINCIAN KEDISIPLINAN -->' +
+          '<div class="space-y-1.5 pt-1">' +
+            '<div class="font-bold text-gray-800 text-[11px]"><i class="fa-solid fa-shield-halved text-amber-600 mr-1"></i>Rincian Kedisiplinan:</div>' +
+            txtDisiplinHtml +
+          '</div>' +
+
         '</div>';
       }
     }
 
-    // 9. LAPORAN INDIVIDUAL & FORMAT WA PRESISI DENGAN EMOJI
+    // 9. LAPORAN INDIVIDUAL
     async function buatLaporanSantri() {
       var valSiswa = document.getElementById('lap-nama').value.split('|');
       var sId = valSiswa[0];
@@ -955,10 +1015,15 @@
         listEl.innerHTML = '<p class="text-gray-400 italic">Belum ada data setoran</p>';
       } else {
         set.forEach(function(p) {
-          listEl.innerHTML += '<div class="bg-gray-50 p-2.5 rounded-lg border text-xs space-y-0.5">' +
-            '<div class="flex justify-between font-bold text-gray-800"><span>📅 ' + p.tanggal + ' — ' + p.surah_jilid + ' <span class="text-gray-500 font-normal">(' + p.jenis + ')</span></span><span class="text-blue-700 font-bold">' + p.nilai + '</span></div>' +
-            '<div class="text-gray-600">Hal/Ayat: <b>' + p.ayat_halaman + '</b></div>' +
-            (p.catatan ? '<div class="text-gray-500 italic">Catatan: ' + p.catatan + '</div>' : '') +
+          listEl.innerHTML += '<div class="bg-gray-50 p-2.5 rounded-lg border text-xs flex justify-between items-center">' +
+            '<div class="space-y-0.5">' +
+              '<div class="font-bold text-gray-800">📅 ' + p.tanggal + ' — ' + p.surah_jilid + ' <span class="text-gray-500 font-normal">(' + p.jenis + ')</span></div>' +
+              '<div class="text-gray-600">Hal/Ayat: <b>' + p.ayat_halaman + '</b> | Nilai: <b class="text-blue-700">' + p.nilai + '</b></div>' +
+              (p.catatan ? '<div class="text-gray-500 italic">Catatan: ' + p.catatan + '</div>' : '') +
+            '</div>' +
+            '<button onclick="hapusSetoranData(' + p.id + ')" class="no-print text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 p-2 rounded-lg ml-2 font-bold transition" title="Hapus Setoran">' +
+              '<i class="fa-solid fa-trash"></i>' +
+            '</button>' +
           '</div>';
         });
       }
@@ -991,7 +1056,7 @@
       };
     }
 
-    // FORMAT PESAN WHATSAPP SESUAI SCREENSHOT (EMOJI TERTAMPIL LENGKAP)
+    // FORMAT PESAN WHATSAPP SESUAI SCREENSHOT
     function kirimWaOrtu() {
       if (!currentLaporanData) { 
         alert("Buat Laporan / Rapor terlebih dahulu!"); 
