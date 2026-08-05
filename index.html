@@ -50,7 +50,6 @@
   <!-- ================= 1. LAYAR LOGIN ================= -->
   <div id="view-login" class="min-h-screen bg-custom-blue flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl space-y-5 text-center">
-      <!-- LOGO HITAM -->
       <img src="https://lh3.googleusercontent.com/d/1mcj8SqJ2sctE2c5qPuHG0p7ZmpgXYdnd" alt="Logo SDIT Aladzievie" class="w-20 h-20 mx-auto object-contain drop-shadow brightness-0" referrerpolicy="no-referrer">
       <div>
         <h2 class="font-bold text-xl text-gray-800">SDIT Aladzievie</h2>
@@ -85,7 +84,6 @@
         </div>
       </div>
       <div class="flex items-center gap-2">
-        <!-- BADGE TANGGAL -->
         <div id="header-date-badge" class="bg-blue-700/60 text-blue-50 text-[11px] font-semibold px-3 py-1.5 rounded-full border border-blue-400/30 shadow-inner">
           31 Jul 2026
         </div>
@@ -104,15 +102,10 @@
 
     <!-- TAB 1: BERANDA -->
     <div id="view-dashboard" class="space-y-4">
-      
-      <!-- HERO BANNER BIRU GRADASI (#1A98FF) -->
       <div class="bg-gradient-to-br from-[#1A98FF] via-blue-600 to-slate-900 text-white rounded-3xl p-5 shadow-xl relative overflow-hidden space-y-4 border border-blue-400/30">
-        
-        <!-- WATERMARK DEKORATIF -->
         <div class="absolute -right-6 -bottom-6 opacity-10 pointer-events-none">
           <i class="fa-solid fa-mosque text-9xl text-white"></i>
         </div>
-
         <div class="space-y-2 relative z-10">
           <span class="inline-block bg-amber-400 text-blue-950 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
             SDIT ALADZIEVIE
@@ -124,7 +117,6 @@
             Bapak / Ibu Guru Pembimbing
           </p>
         </div>
-
         <div class="pt-3 border-t border-blue-400/30 flex justify-between items-center text-[11px] text-blue-100/80 font-semibold relative z-10">
           <span class="flex items-center gap-1.5">
             <i class="fa-solid fa-building text-blue-200"></i> Gedung Utama
@@ -133,7 +125,6 @@
         </div>
       </div>
 
-      <!-- CARD HADITS / QUOTE MAFUZHAT -->
       <div class="bg-blue-50/80 border border-blue-200/80 rounded-2xl p-4 flex gap-3.5 items-start shadow-sm">
         <div class="text-[#1A98FF] text-2xl font-serif font-black leading-none pt-1">
           <i class="fa-solid fa-quote-left"></i>
@@ -148,72 +139,41 @@
         </div>
       </div>
 
-      <!-- PINTASAN UTAMA -->
       <div class="space-y-2.5 pt-1">
-        <h3 class="text-xs font-extrabold uppercase text-gray-500 tracking-wider px-1">
-          Pintasan Utama
-        </h3>
-
+        <h3 class="text-xs font-extrabold uppercase text-gray-500 tracking-wider px-1">Pintasan Utama</h3>
         <div class="grid grid-cols-2 gap-3">
-          
-          <!-- CARD 1: ABSENSI HARIAN -->
           <div onclick="bukaTab('absensi')" class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition active:scale-95 cursor-pointer text-center space-y-2.5 flex flex-col items-center justify-center">
-            <div class="w-12 h-12 rounded-2xl bg-blue-100/80 flex items-center justify-center text-[#1A98FF] text-xl shadow-inner">
-              <i class="fa-solid fa-clipboard-user"></i>
-            </div>
+            <div class="w-12 h-12 rounded-2xl bg-blue-100/80 flex items-center justify-center text-[#1A98FF] text-xl shadow-inner"><i class="fa-solid fa-clipboard-user"></i></div>
             <span class="font-bold text-xs text-gray-800">Absensi Harian</span>
           </div>
-
-          <!-- CARD 2: INPUT SETORAN -->
           <div onclick="bukaTab('setoran')" class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition active:scale-95 cursor-pointer text-center space-y-2.5 flex flex-col items-center justify-center">
-            <div class="w-12 h-12 rounded-2xl bg-amber-100/80 flex items-center justify-center text-amber-600 text-xl shadow-inner">
-              <i class="fa-solid fa-trophy"></i>
-            </div>
+            <div class="w-12 h-12 rounded-2xl bg-amber-100/80 flex items-center justify-center text-amber-600 text-xl shadow-inner"><i class="fa-solid fa-trophy"></i></div>
             <span class="font-bold text-xs text-gray-800">Input Setoran</span>
           </div>
-
-          <!-- CARD 3: CATATAN KEDISIPLINAN -->
           <div onclick="bukaTab('disiplin')" class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition active:scale-95 cursor-pointer text-center space-y-2.5 flex flex-col items-center justify-center">
-            <div class="w-12 h-12 rounded-2xl bg-rose-100/80 flex items-center justify-center text-rose-600 text-xl shadow-inner">
-              <i class="fa-solid fa-shield-halved"></i>
-            </div>
+            <div class="w-12 h-12 rounded-2xl bg-rose-100/80 flex items-center justify-center text-rose-600 text-xl shadow-inner"><i class="fa-solid fa-shield-halved"></i></div>
             <span class="font-bold text-xs text-gray-800">Kedisiplinan</span>
           </div>
-
-          <!-- CARD 4: REKAP BULANAN -->
           <div onclick="bukaTab('cekdata')" class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition active:scale-95 cursor-pointer text-center space-y-2.5 flex flex-col items-center justify-center">
-            <div class="w-12 h-12 rounded-2xl bg-indigo-100/80 flex items-center justify-center text-indigo-600 text-xl shadow-inner">
-              <i class="fa-solid fa-chart-simple"></i>
-            </div>
+            <div class="w-12 h-12 rounded-2xl bg-indigo-100/80 flex items-center justify-center text-indigo-600 text-xl shadow-inner"><i class="fa-solid fa-chart-simple"></i></div>
             <span class="font-bold text-xs text-gray-800">Rekap Bulanan</span>
           </div>
-
-          <!-- CARD 5: LAPORAN WA & RAPOR -->
           <div onclick="bukaTab('laporan')" class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition active:scale-95 cursor-pointer text-center space-y-2.5 flex flex-col items-center justify-center">
-            <div class="w-12 h-12 rounded-2xl bg-sky-100/80 flex items-center justify-center text-sky-600 text-xl shadow-inner">
-              <i class="fa-solid fa-file-lines"></i>
-            </div>
+            <div class="w-12 h-12 rounded-2xl bg-sky-100/80 flex items-center justify-center text-sky-600 text-xl shadow-inner"><i class="fa-solid fa-file-lines"></i></div>
             <span class="font-bold text-xs text-gray-800">Laporan WA & Rapor</span>
           </div>
-
-          <!-- CARD 6: KELOLA AKUN (KHUSUS ADMIN) -->
           <div id="card-shortcut-akun" onclick="bukaTab('akun')" class="hidden bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition active:scale-95 cursor-pointer text-center space-y-2.5 flex-col items-center justify-center">
-            <div class="w-12 h-12 rounded-2xl bg-purple-100/80 flex items-center justify-center text-purple-600 text-xl shadow-inner">
-              <i class="fa-solid fa-user-gear"></i>
-            </div>
+            <div class="w-12 h-12 rounded-2xl bg-purple-100/80 flex items-center justify-center text-purple-600 text-xl shadow-inner"><i class="fa-solid fa-user-gear"></i></div>
             <span class="font-bold text-xs text-gray-800">Kelola Akun</span>
           </div>
-
         </div>
       </div>
-
     </div>
 
     <!-- TAB 2: ABSENSI -->
     <div id="view-absensi" class="hidden space-y-4">
       <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
         <h3 class="font-bold text-sm text-gray-800">Input Absensi Harian Kelas</h3>
-        
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block text-[11px] text-gray-500 mb-1">Tanggal</label>
@@ -226,9 +186,7 @@
             </select>
           </div>
         </div>
-
         <div id="list-siswa-absen" class="space-y-2 pt-2"></div>
-
         <button type="button" onclick="simpanAbsenManual()" class="w-full bg-[#1A98FF] hover:bg-blue-600 text-white font-bold py-2.5 rounded-xl text-xs shadow">
           💾 Simpan Absensi
         </button>
@@ -239,7 +197,6 @@
     <div id="view-setoran" class="hidden space-y-4">
       <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
         <h3 class="font-bold text-sm text-gray-800">Form Setoran Tahsin / Tahfidz / Tilawah</h3>
-        
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block text-[11px] text-gray-500 mb-1">Tanggal</label>
@@ -252,14 +209,12 @@
             </select>
           </div>
         </div>
-
         <div>
           <label class="block text-[11px] text-gray-500 mb-1">Nama Siswa</label>
           <select id="setor-nama" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
             <option value="">Pilih Siswa</option>
           </select>
         </div>
-
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block text-[11px] text-gray-500 mb-1">Kategori</label>
@@ -274,7 +229,6 @@
             <input type="text" id="setor-materi" placeholder="Misal: Al-Mujadalah / Wafa 2" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
           </div>
         </div>
-
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block text-[11px] text-gray-500 mb-1">Halaman / Ayat</label>
@@ -290,19 +244,17 @@
             </select>
           </div>
         </div>
-
         <div>
           <label class="block text-[11px] text-gray-500 mb-1">Catatan Guru</label>
           <input type="text" id="setor-catatan" placeholder="Catatan kelancaran, tajwid, makhraj..." class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
         </div>
-
         <button type="button" onclick="simpanSetoranData()" class="w-full bg-[#1A98FF] hover:bg-blue-600 text-white font-bold py-2.5 rounded-xl text-xs shadow">
           💾 Simpan Setoran
         </button>
       </div>
     </div>
 
-    <!-- TAB 4: CATATAN KEDISIPLINAN -->
+    <!-- TAB 4: CATATAN KEDISIPLINAN (SUDAH DITAMBAH TOMBOL HARI INI TERTIB) -->
     <div id="view-disiplin" class="hidden space-y-4">
       <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
         <h3 class="font-bold text-sm text-gray-800"><i class="fa-solid fa-shield-halved text-amber-500 mr-2"></i>Form Catatan Kedisiplinan Siswa</h3>
@@ -359,26 +311,30 @@
           <input type="text" id="disiplin-tindakan" placeholder="Nasihat, hukuman mendidik, pujian, dll." class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
         </div>
 
-        <button type="button" onclick="simpanKedisiplinanData()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2.5 rounded-xl text-xs shadow">
-          💾 Simpan Catatan Kedisiplinan
-        </button>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 pt-1">
+          <button type="button" onclick="simpanKedisiplinanData()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2.5 rounded-xl text-xs shadow">
+            💾 Simpan Catatan Kedisiplinan
+          </button>
+          
+          <!-- TOMBOL BARU: SATU KELAS TERTIB -->
+          <button type="button" onclick="simpanSatuKelasTertib()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs shadow flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-circle-check"></i> Satu Kelas Tertib (Nihil)
+          </button>
+        </div>
       </div>
 
-      <!-- CEK RIWAYAT KEDISIPLINAN DENGAN FILTER KELAS -->
+      <!-- CEK RIWAYAT KEDISIPLINAN -->
       <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
         <h3 class="font-bold text-sm text-gray-800">Cek Riwayat Kedisiplinan</h3>
-        
         <div>
           <label class="block text-[11px] text-gray-500 mb-1">Filter Berdasarkan Kelas</label>
           <select id="filter-disiplin-kelas" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
             <option value="">-- Semua Kelas --</option>
           </select>
         </div>
-
         <button type="button" onclick="loadRiwayatKedisiplinan()" class="w-full bg-gray-800 hover:bg-black text-white font-bold py-2.5 rounded-xl text-xs shadow flex items-center justify-center gap-2">
           <i class="fa-solid fa-magnifying-glass"></i> Tampilkan Catatan Kedisiplinan
         </button>
-
         <div id="list-riwayat-disiplin" class="space-y-2 pt-1 text-xs"></div>
       </div>
     </div>
@@ -387,7 +343,6 @@
     <div id="view-cekdata" class="hidden space-y-4">
       <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3 no-print">
         <h3 class="font-bold text-sm text-gray-800">Cek Rekap Bulanan Sekelas</h3>
-        
         <div class="grid grid-cols-3 gap-2">
           <div>
             <label class="block text-[11px] text-gray-500 mb-1">Kelas</label>
@@ -407,7 +362,6 @@
             <input type="number" id="cek-tahun" value="2026" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
           </div>
         </div>
-
         <button type="button" onclick="loadRekapBulanan()" class="w-full bg-[#1A98FF] hover:bg-blue-600 text-white font-bold py-2.5 rounded-xl text-xs shadow">
           🔍 Tampilkan Rekap Bulanan
         </button>
@@ -418,7 +372,6 @@
           <i class="fa-solid fa-print"></i> Cetak PDF Rekap Sekelas
         </button>
       </div>
-
       <div id="hasil-rekap-box" class="space-y-3"></div>
     </div>
 
@@ -426,7 +379,6 @@
     <div id="view-laporan" class="hidden space-y-4">
       <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3 no-print">
         <h3 class="font-bold text-sm text-gray-800">Laporan Perkembangan Siswa</h3>
-        
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block text-[11px] text-gray-500 mb-1">Kelas</label>
@@ -441,7 +393,6 @@
             </select>
           </div>
         </div>
-
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block text-[11px] text-gray-500 mb-1">Dari Tanggal</label>
@@ -452,25 +403,21 @@
             <input type="date" id="lap-tgl-akhir" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
           </div>
         </div>
-
         <button type="button" onclick="buatLaporanSantri()" class="w-full bg-[#1A98FF] hover:bg-blue-600 text-white font-bold py-2.5 rounded-xl text-xs shadow">
           Buat Laporan / Rapor
         </button>
       </div>
 
-      <!-- TEMPLATE HASIL LAPORAN -->
       <div id="hasil-laporan-box" class="hidden bg-white p-5 rounded-2xl border shadow space-y-4 text-xs">
         <div class="text-center border-b pb-3">
           <h3 class="font-bold text-blue-900 text-sm">SDIT ALADZIEVIE</h3>
           <p class="text-[11px] text-gray-500">Laporan Perkembangan Siswa</p>
         </div>
-
         <div class="bg-gray-50 p-3 rounded-xl space-y-1">
           <p><b>Nama Siswa:</b> <span id="out-nama"></span></p>
           <p><b>Kelas:</b> <span id="out-kelas"></span></p>
           <p><b>Periode:</b> <span id="out-periode"></span></p>
         </div>
-
         <div class="space-y-2">
           <h4 class="font-bold text-gray-800">A. Catatan Kehadiran</h4>
           <div class="grid grid-cols-4 gap-2 text-center text-xs font-bold">
@@ -480,17 +427,14 @@
             <div class="bg-rose-100 text-rose-900 p-2 rounded-xl"><span id="out-alpha" class="block text-sm">0</span>Alpha</div>
           </div>
         </div>
-
         <div class="space-y-2">
           <h4 class="font-bold text-gray-800">B. Capaian Setoran Tahsin / Tahfidz / Tilawah</h4>
           <div id="out-list-setoran" class="space-y-1.5"></div>
         </div>
-
         <div class="space-y-2">
           <h4 class="font-bold text-gray-800">C. Catatan Kedisiplinan</h4>
           <div id="out-list-disiplin" class="space-y-1.5"></div>
         </div>
-
         <div class="grid grid-cols-2 gap-2 pt-2 no-print">
           <button onclick="kirimWaOrtu()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow">
             <i class="fa-brands fa-whatsapp text-sm"></i> Kirim WA Ortu
@@ -502,11 +446,10 @@
       </div>
     </div>
 
-    <!-- TAB 7: KELOLA AKUN & PENGGUNA (KHUSUS ADMIN) -->
+    <!-- TAB 7: KELOLA AKUN -->
     <div id="view-akun" class="hidden space-y-4">
       <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
         <h3 class="font-bold text-sm text-gray-800"><i class="fa-solid fa-user-plus text-[#1A98FF] mr-2"></i>Tambah Admin / Guru Baru</h3>
-        
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block text-[11px] text-gray-500 mb-1">Username Baru</label>
@@ -517,7 +460,6 @@
             <input type="password" id="new-pass" placeholder="Password akun" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
           </div>
         </div>
-
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block text-[11px] text-gray-500 mb-1">Nama Lengkap</label>
@@ -532,7 +474,6 @@
             </select>
           </div>
         </div>
-
         <button type="button" onclick="prosesTambahUser()" class="w-full bg-[#1A98FF] hover:bg-blue-600 text-white font-bold py-2.5 rounded-xl text-xs shadow">
           ➕ Tambahkan Akun Pengguna
         </button>
@@ -546,14 +487,13 @@
 
   </main>
 
-  <!-- ================= 5. MODAL UBAH PASSWORD SAYA ================= -->
+  <!-- MODAL UBAH PASSWORD SAYA -->
   <div id="modal-pass" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-3xl p-5 shadow-2xl space-y-4">
       <div class="flex justify-between items-center border-b pb-2">
         <h3 class="font-bold text-sm text-gray-800"><i class="fa-solid fa-key text-amber-500 mr-2"></i>Ubah Password Saya</h3>
         <button onclick="tutupModalPass()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-base"></i></button>
       </div>
-
       <div class="space-y-3">
         <div>
           <label class="block text-[11px] text-gray-500 mb-1">Password Lama</label>
@@ -564,45 +504,27 @@
           <input type="password" id="pass-baru" placeholder="Password baru kamu" class="w-full bg-gray-50 border rounded-xl p-2.5 text-xs">
         </div>
       </div>
-
       <div class="grid grid-cols-2 gap-2 pt-1">
-        <button type="button" onclick="tutupModalPass()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 rounded-xl text-xs">
-          Batal
-        </button>
-        <button type="button" onclick="prosesUbahPasswordMandiri()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 rounded-xl text-xs shadow">
-          🔑 Simpan
-        </button>
+        <button type="button" onclick="tutupModalPass()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 rounded-xl text-xs">Batal</button>
+        <button type="button" onclick="prosesUbahPasswordMandiri()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 rounded-xl text-xs shadow">🔑 Simpan</button>
       </div>
     </div>
   </div>
 
-  <!-- ================= 6. NAVIGASI BAWAH ================= -->
+  <!-- NAVIGASI BAWAH -->
   <nav id="app-nav" class="hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200/80 py-2 z-40 shadow-lg">
     <div id="nav-container" class="max-w-xl mx-auto grid grid-cols-5 text-center text-[10px] font-medium">
-      <button onclick="bukaTab('dashboard')" id="nav-dashboard" class="space-y-1 text-gray-400 hover:text-[#1A98FF] transition">
-        <i class="fa-solid fa-house text-base block mx-auto"></i>Beranda
-      </button>
-      <button onclick="bukaTab('absensi')" id="nav-absensi" class="space-y-1 text-gray-400 hover:text-[#1A98FF] transition">
-        <i class="fa-solid fa-clipboard-user text-base block mx-auto"></i>Absensi
-      </button>
-      <button onclick="bukaTab('setoran')" id="nav-setoran" class="space-y-1 text-gray-400 hover:text-[#1A98FF] transition">
-        <i class="fa-solid fa-star text-base block mx-auto"></i>Setoran
-      </button>
-      <button onclick="bukaTab('cekdata')" id="nav-cekdata" class="space-y-1 text-gray-400 hover:text-[#1A98FF] transition">
-        <i class="fa-solid fa-chart-pie text-base block mx-auto"></i>Cek Data
-      </button>
-      <button onclick="bukaTab('laporan')" id="nav-laporan" class="space-y-1 text-gray-400 hover:text-[#1A98FF] transition">
-        <i class="fa-solid fa-file-chart-column text-base block mx-auto"></i>Laporan
-      </button>
-      <button onclick="bukaTab('akun')" id="nav-akun" class="hidden space-y-1 text-gray-400 hover:text-[#1A98FF] transition">
-        <i class="fa-solid fa-user-gear text-base block mx-auto"></i>Akun
-      </button>
+      <button onclick="bukaTab('dashboard')" id="nav-dashboard" class="space-y-1 text-gray-400 hover:text-[#1A98FF] transition"><i class="fa-solid fa-house text-base block mx-auto"></i>Beranda</button>
+      <button onclick="bukaTab('absensi')" id="nav-absensi" class="space-y-1 text-gray-400 hover:text-[#1A98FF] transition"><i class="fa-solid fa-clipboard-user text-base block mx-auto"></i>Absensi</button>
+      <button onclick="bukaTab('setoran')" id="nav-setoran" class="space-y-1 text-gray-400 hover:text-[#1A98FF] transition"><i class="fa-solid fa-star text-base block mx-auto"></i>Setoran</button>
+      <button onclick="bukaTab('cekdata')" id="nav-cekdata" class="space-y-1 text-gray-400 hover:text-[#1A98FF] transition"><i class="fa-solid fa-chart-pie text-base block mx-auto"></i>Cek Data</button>
+      <button onclick="bukaTab('laporan')" id="nav-laporan" class="space-y-1 text-gray-400 hover:text-[#1A98FF] transition"><i class="fa-solid fa-file-chart-column text-base block mx-auto"></i>Laporan</button>
+      <button onclick="bukaTab('akun')" id="nav-akun" class="hidden space-y-1 text-gray-400 hover:text-[#1A98FF] transition"><i class="fa-solid fa-user-gear text-base block mx-auto"></i>Akun</button>
     </div>
   </nav>
 
   <!-- JAVASCRIPT SYSTEM WITH SUPABASE BACKEND -->
   <script>
-    // 🔑 SUPABASE CONFIGURATION
     const SUPABASE_URL = "https://tavoxawaparjahyldecc.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRhdm94YXdhcGFyamFoeWxkZWNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4OTc4MzgsImV4cCI6MjEwMTQ3MzgzOH0.21A23nlVJ9gaF1u86W3tQCcNggPOi1Wvaj4awaV0nEI";
     const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -610,7 +532,6 @@
     var currentTab = 'dashboard';
     var currentSessionUser = '';
     var currentSessionRole = '';
-    var globalDisiplinCount = 0;
     var currentLaporanData = null;
 
     window.onload = function() {
@@ -628,7 +549,7 @@
       loadKelasOptions();
     };
 
-    // 1. LOGIN & LOGOUT (SUPABASE)
+    // 1. LOGIN & LOGOUT
     async function prosesLogin() {
       var u = document.getElementById('login-user').value.trim();
       var p = document.getElementById('login-pass').value.trim();
@@ -646,10 +567,7 @@
 
       try {
         const { data, error } = await db.from('users').select('*').eq('username', u).eq('password', p).single();
-
-        if (error || !data) {
-          throw new Error("Username atau password salah!");
-        }
+        if (error || !data) throw new Error("Username atau password salah!");
 
         currentSessionUser = data.username;
         currentSessionRole = data.role;
@@ -669,17 +587,11 @@
         if (data.role === 'Admin Utama') {
           navBox.className = 'max-w-xl mx-auto grid grid-cols-6 text-center text-[10px] font-medium';
           navAkun.classList.remove('hidden');
-          if(cardAkun) {
-            cardAkun.classList.remove('hidden');
-            cardAkun.classList.add('flex');
-          }
+          if(cardAkun) { cardAkun.classList.remove('hidden'); cardAkun.classList.add('flex'); }
         } else {
           navBox.className = 'max-w-xl mx-auto grid grid-cols-5 text-center text-[10px] font-medium';
           navAkun.classList.add('hidden');
-          if(cardAkun) {
-            cardAkun.classList.add('hidden');
-            cardAkun.classList.remove('flex');
-          }
+          if(cardAkun) { cardAkun.classList.add('hidden'); cardAkun.classList.remove('flex'); }
         }
 
         bukaTab('dashboard');
@@ -710,32 +622,19 @@
       }
 
       ['dashboard', 'absensi', 'setoran', 'disiplin', 'cekdata', 'laporan', 'akun'].forEach(function(t) {
-        if(document.getElementById('view-' + t)) {
-          document.getElementById('view-' + t).classList.add('hidden');
-        }
-        if (document.getElementById('nav-' + t)) {
-          document.getElementById('nav-' + t).className = 'space-y-1 text-gray-400 hover:text-[#1A98FF] transition';
-        }
+        if(document.getElementById('view-' + t)) document.getElementById('view-' + t).classList.add('hidden');
+        if (document.getElementById('nav-' + t)) document.getElementById('nav-' + t).className = 'space-y-1 text-gray-400 hover:text-[#1A98FF] transition';
       });
 
-      if(document.getElementById('view-' + tabName)) {
-        document.getElementById('view-' + tabName).classList.remove('hidden');
-      }
-      if (document.getElementById('nav-' + tabName)) {
-        document.getElementById('nav-' + tabName).className = 'space-y-1 nav-active';
-      }
+      if(document.getElementById('view-' + tabName)) document.getElementById('view-' + tabName).classList.remove('hidden');
+      if (document.getElementById('nav-' + tabName)) document.getElementById('nav-' + tabName).className = 'space-y-1 nav-active';
       currentTab = tabName;
 
-      if (tabName === 'akun') {
-        loadDaftarUser();
-      }
+      if (tabName === 'akun') loadDaftarUser();
     }
 
     // 3. MODAL UBAH PASSWORD MANDIRI
-    function bukaModalPass() {
-      document.getElementById('modal-pass').classList.remove('hidden');
-    }
-
+    function bukaModalPass() { document.getElementById('modal-pass').classList.remove('hidden'); }
     function tutupModalPass() {
       document.getElementById('modal-pass').classList.add('hidden');
       document.getElementById('pass-lama').value = '';
@@ -745,39 +644,24 @@
     async function prosesUbahPasswordMandiri() {
       var pLama = document.getElementById('pass-lama').value;
       var pBaru = document.getElementById('pass-baru').value;
-
-      if (!pLama || !pBaru) {
-        alert("Isi password lama dan password baru!");
-        return;
-      }
+      if (!pLama || !pBaru) { alert("Isi password lama dan password baru!"); return; }
 
       const { data, error } = await db.from('users').update({ password: pBaru }).eq('username', currentSessionUser).eq('password', pLama).select();
-      
-      if(error || !data || data.length === 0) {
-        alert("❌ Gagal ubah password! Password lama salah.");
-      } else {
-        alert("✅ Password berhasil diperbarui!");
-        tutupModalPass();
-      }
+      if(error || !data || data.length === 0) alert("❌ Gagal ubah password! Password lama salah.");
+      else { alert("✅ Password berhasil diperbarui!"); tutupModalPass(); }
     }
 
-    // 4. KELOLA AKUN / ADMIN
+    // 4. KELOLA AKUN
     async function prosesTambahUser() {
       var u = document.getElementById('new-user').value.trim();
       var p = document.getElementById('new-pass').value.trim();
       var n = document.getElementById('new-nama').value.trim();
       var r = document.getElementById('new-role').value;
-
-      if (!u || !p || !n) {
-        alert("Semua kolom data pengguna baru harus diisi!");
-        return;
-      }
+      if (!u || !p || !n) { alert("Semua kolom data pengguna baru harus diisi!"); return; }
 
       const { error } = await db.from('users').insert([{ username: u, password: p, nama: n, role: r }]);
-      
-      if(error) {
-        alert("❌ Gagal menambah user: " + error.message);
-      } else {
+      if(error) alert("❌ Gagal menambah user: " + error.message);
+      else {
         alert("✅ User baru berhasil ditambahkan!");
         document.getElementById('new-user').value = '';
         document.getElementById('new-pass').value = '';
@@ -797,7 +681,6 @@
     async function loadDaftarUser() {
       var box = document.getElementById('list-daftar-user');
       box.innerHTML = '<p class="text-gray-400">Loading...</p>';
-      
       const { data, error } = await db.from('users').select('*').order('id', { ascending: true });
       if(error || !data) { box.innerHTML = '<p class="text-red-400">Gagal memuat data.</p>'; return; }
 
@@ -808,12 +691,8 @@
           : '<button onclick="prosesHapusUser(\'' + u.username + '\', \'' + u.nama + '\')" class="bg-rose-100 hover:bg-rose-200 text-rose-700 px-2 py-1 rounded-lg text-[10px] font-bold"><i class="fa-solid fa-trash mr-1"></i>Hapus</button>';
 
         box.innerHTML += '<div class="flex justify-between items-center bg-gray-50 p-2.5 rounded-xl border text-xs">' +
-          '<div>' +
-            '<b>' + u.nama + '</b> <span class="text-gray-400">(' + u.username + ')</span>' +
-            '<div class="mt-0.5"><span class="bg-blue-100 text-blue-800 text-[9px] px-2 py-0.5 rounded-full font-semibold">' + u.role + '</span></div>' +
-          '</div>' +
-          '<div>' + btnHapus + '</div>' +
-        '</div>';
+          '<div><b>' + u.nama + '</b> <span class="text-gray-400">(' + u.username + ')</span><div class="mt-0.5"><span class="bg-blue-100 text-blue-800 text-[9px] px-2 py-0.5 rounded-full font-semibold">' + u.role + '</span></div></div>' +
+          '<div>' + btnHapus + '</div></div>';
       });
     }
 
@@ -827,9 +706,7 @@
         if(el) {
           var defaultLabel = (id === 'filter-disiplin-kelas') ? '-- Semua Kelas --' : 'Pilih Kelas';
           el.innerHTML = '<option value="">' + defaultLabel + '</option>';
-          list.forEach(function(k) {
-            el.innerHTML += '<option value="' + k + '">' + k + '</option>';
-          });
+          list.forEach(function(k) { el.innerHTML += '<option value="' + k + '">' + k + '</option>'; });
         }
       });
     }
@@ -850,8 +727,7 @@
         box.innerHTML += '<div class="flex justify-between items-center bg-gray-50 p-2 rounded-xl border text-xs">' +
           '<span class="font-semibold">' + s.nama + '</span>' +
           '<select data-id="' + s.id + '" data-nama="' + s.nama + '" class="absen-status bg-white border rounded p-1 text-xs">' +
-            '<option value="Hadir">Hadir</option><option value="Izin">Izin</option>' +
-            '<option value="Sakit">Sakit</option><option value="Alpha">Alpha</option>' +
+            '<option value="Hadir">Hadir</option><option value="Izin">Izin</option><option value="Sakit">Sakit</option><option value="Alpha">Alpha</option>' +
           '</select></div>';
       });
     }
@@ -880,7 +756,7 @@
       siswa.forEach(function(s) { el.innerHTML += '<option value="' + s.id + '|' + s.nama + '">' + s.nama + '</option>'; });
     }
 
-    // 6. ACTIONS FORM TO SUPABASE
+    // 6. ACTIONS FORM
     async function simpanAbsenManual() {
       var tgl = document.getElementById('absen-tgl').value;
       var kls = document.getElementById('absen-kelas').value;
@@ -919,9 +795,11 @@
 
     async function simpanKedisiplinanData() {
       var valSiswa = document.getElementById('disiplin-nama').value.split('|');
+      if(!valSiswa[0]) { alert("Pilih nama siswa terlebih dahulu!"); return; }
+
       var payload = {
         tanggal: document.getElementById('disiplin-tgl').value,
-        siswa_id: valSiswa[0] || 1,
+        siswa_id: valSiswa[0],
         jenis: document.getElementById('disiplin-jenis').value,
         catatan: document.getElementById('disiplin-kategori').value + " - " + document.getElementById('disiplin-keterangan').value + (document.getElementById('disiplin-tindakan').value ? " (Tindakan: "+document.getElementById('disiplin-tindakan').value+")" : ""),
         pencatat: currentSessionUser
@@ -934,6 +812,33 @@
         document.getElementById('disiplin-keterangan').value = '';
         document.getElementById('disiplin-tindakan').value = '';
         loadRiwayatKedisiplinan();
+      }
+    }
+
+    // FUNGSI BARU: SIMPAN SATU KELAS TERTIB SEKALIGUS
+    async function simpanSatuKelasTertib() {
+      var kls = document.getElementById('disiplin-kelas').value;
+      var tgl = document.getElementById('disiplin-tgl').value;
+      if(!kls) { alert("Pilih kelas terlebih dahulu!"); return; }
+
+      if (confirm("Apakah Anda yakin ingin mencatat bahwa " + kls + " TERTIB & NIHIL PELANGGARAN pada tanggal " + tgl + "?")) {
+        const siswaList = await getSiswaByKelasData(kls);
+        if(!siswaList || siswaList.length === 0) { alert("Tidak ada data siswa di kelas ini."); return; }
+
+        var inserts = siswaList.map(s => ({
+          tanggal: tgl,
+          siswa_id: s.id,
+          jenis: 'Prestasi',
+          catatan: 'Kedisiplinan - Tertib Harian (Nihil Pelanggaran)',
+          pencatat: currentSessionUser
+        }));
+
+        const { error } = await db.from('kedisiplinan').insert(inserts);
+        if(error) alert("Error: " + error.message);
+        else {
+          alert("✅ Berhasil mencatat " + kls + " TERTIB (Nihil Pelanggaran)!");
+          loadRiwayatKedisiplinan();
+        }
       }
     }
 
@@ -1009,7 +914,6 @@
               '<span class="bg-amber-100 text-amber-800 font-bold text-[10px] px-2 py-0.5 rounded-full">' + (ked ? ked.length : 0) + ' Disiplin</span>' +
             '</div>' +
           '</div>' +
-
           '<div class="grid grid-cols-4 gap-1 text-center font-semibold text-[10px] bg-gray-50 p-2 rounded-xl border">' +
             '<div class="text-blue-700">Hadir<br><b class="text-xs">' + countHadir + '</b></div>' +
             '<div class="text-sky-700">Izin<br><b class="text-xs">' + countIzin + '</b></div>' +
@@ -1030,10 +934,7 @@
       var tglAkhir = document.getElementById('lap-tgl-akhir').value;
       var box = document.getElementById('hasil-laporan-box');
 
-      if (!sId || !kls) {
-        alert("Pilih Kelas dan Nama Siswa terlebih dahulu!");
-        return;
-      }
+      if (!sId || !kls) { alert("Pilih Kelas dan Nama Siswa terlebih dahulu!"); return; }
 
       box.classList.remove('hidden');
       document.getElementById('out-nama').innerText = sNama;
@@ -1056,10 +957,7 @@
       } else {
         set.forEach(function(p) {
           listEl.innerHTML += '<div class="bg-gray-50 p-2.5 rounded-lg border text-xs space-y-0.5">' +
-            '<div class="flex justify-between font-bold text-gray-800">' +
-              '<span>📅 ' + p.tanggal + ' — ' + p.surah_jilid + ' <span class="text-gray-500 font-normal">(' + p.jenis + ')</span></span>' +
-              '<span class="text-blue-700 font-bold">' + p.nilai + '</span>' +
-            '</div>' +
+            '<div class="flex justify-between font-bold text-gray-800"><span>📅 ' + p.tanggal + ' — ' + p.surah_jilid + ' <span class="text-gray-500 font-normal">(' + p.jenis + ')</span></span><span class="text-blue-700 font-bold">' + p.nilai + '</span></div>' +
             '<div class="text-gray-600">Hal/Ayat: <b>' + p.ayat_halaman + '</b></div>' +
           '</div>';
         });
