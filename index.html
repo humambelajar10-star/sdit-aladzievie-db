@@ -785,6 +785,7 @@
         surah_jilid: document.getElementById('setor-materi').value,
         ayat_halaman: document.getElementById('setor-halaman').value,
         nilai: document.getElementById('setor-nilai').value,
+        catatan: document.getElementById('setor-catatan').value,
         penerima: currentSessionUser
       };
       const { error } = await db.from('tahfidz').insert([payload]);
@@ -922,7 +923,7 @@
       }
     }
 
-    // 9. LAPORAN INDIVIDUAL & FORMAT WA PRESISI
+    // 9. LAPORAN INDIVIDUAL & FORMAT WA PRESISI DENGAN EMOJI
     async function buatLaporanSantri() {
       var valSiswa = document.getElementById('lap-nama').value.split('|');
       var sId = valSiswa[0];
@@ -957,6 +958,7 @@
           listEl.innerHTML += '<div class="bg-gray-50 p-2.5 rounded-lg border text-xs space-y-0.5">' +
             '<div class="flex justify-between font-bold text-gray-800"><span>📅 ' + p.tanggal + ' — ' + p.surah_jilid + ' <span class="text-gray-500 font-normal">(' + p.jenis + ')</span></span><span class="text-blue-700 font-bold">' + p.nilai + '</span></div>' +
             '<div class="text-gray-600">Hal/Ayat: <b>' + p.ayat_halaman + '</b></div>' +
+            (p.catatan ? '<div class="text-gray-500 italic">Catatan: ' + p.catatan + '</div>' : '') +
           '</div>';
         });
       }
@@ -989,7 +991,7 @@
       };
     }
 
-    // FORMAT PESAN WHATSAPP SESUAI SCREENSHOT
+    // FORMAT PESAN WHATSAPP SESUAI SCREENSHOT (EMOJI TERTAMPIL LENGKAP)
     function kirimWaOrtu() {
       if (!currentLaporanData) { 
         alert("Buat Laporan / Rapor terlebih dahulu!"); 
@@ -1005,7 +1007,7 @@
       // B. CAPAIAN SETORAN TAHSIN / TAHFIDZ / TILAWAH
       var txtSetoran = "";
       if (!d.set || d.set.length === 0) {
-        txtSetoran = "  · Belum ada data setoran\n";
+        txtSetoran = "  · Belum ada data setoran\n\n";
       } else {
         d.set.forEach(function(p, i) {
           var tgl = p.tanggal || d.periode.split(' s/d ')[0];
@@ -1025,7 +1027,7 @@
       // C. CATATAN KEDISIPLINAN
       var txtDisiplin = "";
       if (!d.ked || d.ked.length === 0) {
-        txtDisiplin = "  · Tidak ada catatan kedisiplinan\n";
+        txtDisiplin = "  · Tidak ada catatan kedisiplinan\n\n";
       } else {
         d.ked.forEach(function(k, i) {
           txtDisiplin += (i + 1) + ". 📅 *" + k.tanggal + "* – [" + k.jenis + "]\n" +
