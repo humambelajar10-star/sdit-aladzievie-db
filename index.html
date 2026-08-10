@@ -83,7 +83,7 @@
       </div>
       <div class="flex items-center gap-2">
         <div id="header-date-badge" class="bg-blue-700/60 text-blue-50 text-[11px] font-semibold px-3 py-1.5 rounded-full border border-blue-400/30 shadow-inner">
-          06 Agu 2026
+          10 Agu 2026
         </div>
         <button onclick="bukaModalPass()" class="text-xs bg-blue-600 px-2.5 py-1.5 rounded-xl hover:bg-blue-700 font-semibold" title="Ubah Password Saya">
           <i class="fa-solid fa-key"></i>
@@ -109,7 +109,7 @@
             SDIT ALADZIEVIE
           </span>
           <h2 class="text-2xl font-black tracking-tight text-white flex items-center gap-2">
-            Ahlan Wa Sahlan, Selamat Datang! <span class="text-2xl">👋</span>
+            Selamat Datang! <span class="text-2xl">👋</span>
           </h2>
           <p class="text-xs font-medium text-blue-100/90" id="welcome-user-name">
             Bapak / Ibu Guru Pembimbing
@@ -191,7 +191,7 @@
       </div>
     </div>
 
-    <!-- TAB 3: SETORAN (PILIHAN PER SISWA / MASAL KELAS) -->
+    <!-- TAB 3: SETORAN -->
     <div id="view-setoran" class="hidden space-y-4">
       <div class="flex bg-gray-200 p-1 rounded-xl text-xs font-bold text-center">
         <button id="btn-mode-single" onclick="switchModeSetoran('single')" class="flex-1 py-2 rounded-lg bg-white text-[#1A98FF] shadow">
@@ -230,7 +230,6 @@
               <option value="Ziyadah">Ziyadah</option>
               <option value="Muraja'ah">Muraja'ah</option>
               <option value="Tilawah">Tilawah</option>
-	      <option value="Tasmi'">Tasmi'</option>
             </select>
           </div>
           <div>
@@ -387,7 +386,7 @@
       </div>
     </div>
 
-    <!-- TAB 5: CEK DATA REKAP -->
+    <!-- TAB 5: CEK DATA REKAP BULANAN -->
     <div id="view-cekdata" class="hidden space-y-4">
       <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3 no-print">
         <h3 class="font-bold text-sm text-gray-800">Cek Rekap Bulanan Sekelas</h3>
@@ -852,7 +851,7 @@
       siswa.forEach(function(s) { el.innerHTML += '<option value="' + s.id + '|' + s.nama + '">' + s.nama + '</option>'; });
     }
 
-    // 6. ACTIONS FORM
+    // 6. ACTIONS FORM & FUNGSI HAPUS DATA (SETORAN, ABSEN, DISIPLIN)
     async function simpanAbsenManual() {
       var tgl = document.getElementById('absen-tgl').value;
       var kls = document.getElementById('absen-kelas').value;
@@ -983,17 +982,44 @@
       }
     }
 
+    // FUNGSI HAPUS DATA DARI SUPABASE
     async function hapusSetoranData(idSetoran) {
       if (confirm("Apakah Anda yakin ingin menghapus data setoran ini?")) {
         const { error } = await db.from('tahfidz').delete().eq('id', idSetoran);
-        if (error) {
-          alert("❌ Gagal menghapus setoran: " + error.message);
-        } else {
+        if (error) alert("❌ Gagal menghapus setoran: " + error.message);
+        else {
           alert("✅ Data setoran berhasil dihapus!");
-          if (typeof buatLaporanSantri === 'function') buatLaporanSantri();
-          if (currentTab === 'cekdata') loadRekapBulanan();
+          refreshTampilanData();
         }
       }
+    }
+
+    async function hapusAbsensiData(idAbsen) {
+      if (confirm("Apakah Anda yakin ingin menghapus data absensi ini?")) {
+        const { error } = await db.from('absensi').delete().eq('id', idAbsen);
+        if (error) alert("❌ Gagal menghapus absensi: " + error.message);
+        else {
+          alert("✅ Data absensi berhasil dihapus!");
+          refreshTampilanData();
+        }
+      }
+    }
+
+    async function hapusKedisiplinanData(idDisiplin) {
+      if (confirm("Apakah Anda yakin ingin menghapus catatan kedisiplinan ini?")) {
+        const { error } = await db.from('kedisiplinan').delete().eq('id', idDisiplin);
+        if (error) alert("❌ Gagal menghapus catatan kedisiplinan: " + error.message);
+        else {
+          alert("✅ Catatan kedisiplinan berhasil dihapus!");
+          refreshTampilanData();
+        }
+      }
+    }
+
+    function refreshTampilanData() {
+      if (currentTab === 'cekdata') loadRekapBulanan();
+      if (currentTab === 'laporan') buatLaporanSantri();
+      if (currentTab === 'disiplin') loadRiwayatKedisiplinan();
     }
 
     // 7. RIWAYAT KEDISIPLINAN
@@ -1015,18 +1041,23 @@
         var sNama = d.siswa ? d.siswa.nama : 'Siswa #' + d.siswa_id;
         var sKelas = d.siswa ? d.siswa.kelas : '-';
 
-        box.innerHTML += '<div class="bg-gray-50 p-3 rounded-xl border space-y-1">' +
-          '<div class="flex justify-between items-center font-bold">' +
-            '<span>' + sNama + ' <span class="text-gray-400 font-normal">(' + sKelas + ')</span></span>' +
-            '<span class="' + badgeColor + ' text-[10px] px-2 py-0.5 rounded-full">' + d.jenis + '</span>' +
+        box.innerHTML += '<div class="bg-gray-50 p-3 rounded-xl border space-y-1 flex justify-between items-center">' +
+          '<div class="space-y-1">' +
+            '<div class="flex items-center gap-2 font-bold">' +
+              '<span>' + sNama + ' <span class="text-gray-400 font-normal">(' + sKelas + ')</span></span>' +
+              '<span class="' + badgeColor + ' text-[10px] px-2 py-0.5 rounded-full">' + d.jenis + '</span>' +
+            '</div>' +
+            '<div class="text-gray-600">📅 ' + d.tanggal + '</div>' +
+            '<div class="text-gray-700"><b>Catatan:</b> ' + d.catatan + '</div>' +
           '</div>' +
-          '<div class="text-gray-600">📅 ' + d.tanggal + '</div>' +
-          '<div class="text-gray-700"><b>Catatan:</b> ' + d.catatan + '</div>' +
+          '<button onclick="hapusKedisiplinanData(' + d.id + ')" class="no-print text-rose-600 hover:text-rose-800 bg-rose-50 p-2 rounded-lg text-xs font-bold transition ml-2" title="Hapus Kedisiplinan">' +
+            '<i class="fa-solid fa-trash"></i>' +
+          '</button>' +
         '</div>';
       });
     }
 
-    // 8. CEK DATA REKAP BULANAN
+    // 8. CEK DATA REKAP BULANAN (FITUR HAPUS SETORAN, ABSEN, KEDISIPLINAN LENGKAP)
     async function loadRekapBulanan() {
       var kls = document.getElementById('cek-kelas').value;
       var box = document.getElementById('hasil-rekap-box');
@@ -1051,7 +1082,7 @@
       '</div>';
 
       for (let s of siswaList) {
-        const { data: abs } = await db.from('absensi').select('status').eq('siswa_id', s.id);
+        const { data: abs } = await db.from('absensi').select('*').eq('siswa_id', s.id).order('tanggal', { ascending: false });
         const { data: set } = await db.from('tahfidz').select('*').eq('siswa_id', s.id).order('tanggal', { ascending: false });
         const { data: ked } = await db.from('kedisiplinan').select('*').eq('siswa_id', s.id).order('tanggal', { ascending: false });
 
@@ -1060,6 +1091,25 @@
         let countSakit = abs ? abs.filter(a => a.status === 'Sakit').length : 0;
         let countAlpha = abs ? abs.filter(a => a.status === 'Alfa' || a.status === 'Alpha').length : 0;
 
+        // 1. RINCIAN ABSENSI (JIKA ADA YG BUKAN HADIR)
+        var txtAbsenHtml = '';
+        if (abs && abs.length > 0) {
+          var nonHadir = abs.filter(a => a.status !== 'Hadir');
+          if (nonHadir.length > 0) {
+            txtAbsenHtml += '<div class="space-y-1 pt-1"><div class="font-bold text-gray-800 text-[11px]"><i class="fa-solid fa-clipboard-user text-blue-600 mr-1"></i>Riwayat Ketidakhadiran:</div>';
+            nonHadir.forEach(function(a) {
+              txtAbsenHtml += '<div class="bg-gray-50 p-2 rounded-xl border text-[11px] flex justify-between items-center mb-1">' +
+                '<div><b>📅 ' + a.tanggal + '</b> – Status: <b class="text-rose-700">' + a.status + '</b></div>' +
+                '<button onclick="hapusAbsensiData(' + a.id + ')" class="no-print text-rose-600 hover:text-rose-800 bg-rose-50 p-1.5 rounded-lg text-xs font-bold" title="Hapus Absensi">' +
+                  '<i class="fa-solid fa-trash"></i>' +
+                '</button>' +
+              '</div>';
+            });
+            txtAbsenHtml += '</div>';
+          }
+        }
+
+        // 2. RINCIAN SETORAN
         var txtSetoranHtml = '';
         if (!set || set.length === 0) {
           txtSetoranHtml = '<div class="text-gray-400 italic text-[11px] bg-gray-50 p-2 rounded-xl border">Belum ada data setoran</div>';
@@ -1071,21 +1121,27 @@
                 '<span class="text-gray-600">Hal/Ayat: ' + (p.ayat_halaman || '-') + ' | Nilai: <b class="text-blue-700">' + (p.nilai || 'A') + '</b></span>' +
                 (p.catatan ? '<div class="text-gray-500 italic">Catatan: ' + p.catatan + '</div>' : '') +
               '</div>' +
-              '<button onclick="hapusSetoranData(' + p.id + ')" class="no-print text-rose-600 hover:text-rose-800 bg-rose-50 p-1.5 rounded-lg text-xs font-bold" title="Hapus">' +
+              '<button onclick="hapusSetoranData(' + p.id + ')" class="no-print text-rose-600 hover:text-rose-800 bg-rose-50 p-1.5 rounded-lg text-xs font-bold" title="Hapus Setoran">' +
                 '<i class="fa-solid fa-trash"></i>' +
               '</button>' +
             '</div>';
           });
         }
 
+        // 3. RINCIAN KEDISIPLINAN
         var txtDisiplinHtml = '';
         if (!ked || ked.length === 0) {
           txtDisiplinHtml = '<div class="text-gray-400 italic text-[11px] bg-gray-50 p-2 rounded-xl border">Tidak ada catatan kedisiplinan</div>';
         } else {
           ked.forEach(function(k) {
-            txtDisiplinHtml += '<div class="bg-gray-50 p-2 rounded-xl border text-[11px] mb-1">' +
-              '<div class="flex justify-between font-bold"><span>📅 ' + k.tanggal + '</span><span class="bg-amber-100 text-amber-900 text-[9px] px-1.5 py-0.5 rounded-full">' + k.jenis + '</span></div>' +
-              '<div class="text-gray-700"><b>Catatan:</b> ' + k.catatan + '</div>' +
+            txtDisiplinHtml += '<div class="bg-gray-50 p-2 rounded-xl border text-[11px] flex justify-between items-center mb-1">' +
+              '<div>' +
+                '<div class="flex gap-2 font-bold"><span>📅 ' + k.tanggal + '</span><span class="bg-amber-100 text-amber-900 text-[9px] px-1.5 py-0.5 rounded-full">' + k.jenis + '</span></div>' +
+                '<div class="text-gray-700"><b>Catatan:</b> ' + k.catatan + '</div>' +
+              '</div>' +
+              '<button onclick="hapusKedisiplinanData(' + k.id + ')" class="no-print text-rose-600 hover:text-rose-800 bg-rose-50 p-1.5 rounded-lg text-xs font-bold ml-2" title="Hapus Kedisiplinan">' +
+                '<i class="fa-solid fa-trash"></i>' +
+              '</button>' +
             '</div>';
           });
         }
@@ -1105,6 +1161,8 @@
             '<div class="text-amber-700">Sakit<br><b class="text-xs">' + countSakit + '</b></div>' +
             '<div class="text-rose-700">Alpha<br><b class="text-xs">' + countAlpha + '</b></div>' +
           '</div>' +
+
+          txtAbsenHtml +
 
           '<div class="space-y-1.5 pt-1">' +
             '<div class="font-bold text-gray-800 text-[11px]"><i class="fa-solid fa-book-quran text-blue-600 mr-1"></i>Rincian Setoran:</div>' +
@@ -1140,7 +1198,6 @@
       document.getElementById('out-kelas').innerText = kls;
       document.getElementById('out-periode').innerText = tglAwal + " s/d " + tglAkhir;
 
-      // FILTER QUERY SESUAI PERIODE TANGGAL (GTE & LTE)
       const { data: abs } = await db.from('absensi').select('*').eq('siswa_id', sId).gte('tanggal', tglAwal).lte('tanggal', tglAkhir);
       const { data: set } = await db.from('tahfidz').select('*').eq('siswa_id', sId).gte('tanggal', tglAwal).lte('tanggal', tglAkhir).order('tanggal', { ascending: true });
       const { data: ked } = await db.from('kedisiplinan').select('*').eq('siswa_id', sId).gte('tanggal', tglAwal).lte('tanggal', tglAkhir).order('tanggal', { ascending: true });
@@ -1175,9 +1232,14 @@
         listDisiplinEl.innerHTML = '<p class="text-gray-400 italic">Tidak ada catatan kedisiplinan pada periode ini</p>';
       } else {
         ked.forEach(function(d) {
-          listDisiplinEl.innerHTML += '<div class="bg-gray-50 p-2.5 rounded-lg border text-xs space-y-0.5 mb-1.5">' +
-            '<div class="flex justify-between font-bold"><span>📅 ' + d.tanggal + '</span><span class="bg-blue-100 text-blue-800 text-[9px] px-1.5 py-0.5 rounded-full">' + d.jenis + '</span></div>' +
-            '<div><b>Catatan:</b> ' + d.catatan + '</div>' +
+          listDisiplinEl.innerHTML += '<div class="bg-gray-50 p-2.5 rounded-lg border text-xs flex justify-between items-center mb-1.5">' +
+            '<div class="space-y-0.5">' +
+              '<div class="flex gap-2 font-bold"><span>📅 ' + d.tanggal + '</span><span class="bg-blue-100 text-blue-800 text-[9px] px-1.5 py-0.5 rounded-full">' + d.jenis + '</span></div>' +
+              '<div><b>Catatan:</b> ' + d.catatan + '</div>' +
+            '</div>' +
+            '<button onclick="hapusKedisiplinanData(' + d.id + ')" class="no-print text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 p-2 rounded-lg ml-2 font-bold transition" title="Hapus Kedisiplinan">' +
+              '<i class="fa-solid fa-trash"></i>' +
+            '</button>' +
           '</div>';
         });
       }
