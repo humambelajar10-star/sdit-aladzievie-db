@@ -148,6 +148,10 @@
             <div class="w-12 h-12 rounded-2xl bg-amber-100/80 flex items-center justify-center text-amber-600 text-xl shadow-inner"><i class="fa-solid fa-trophy"></i></div>
             <span class="font-bold text-xs text-gray-800">Input Setoran</span>
           </div>
+          <div onclick="bukaTab('tasmi')" class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition active:scale-95 cursor-pointer text-center space-y-2.5 flex flex-col items-center justify-center">
+            <div class="w-12 h-12 rounded-2xl bg-purple-100/80 flex items-center justify-center text-purple-600 text-xl shadow-inner"><i class="fa-solid fa-graduation-cap"></i></div>
+            <span class="font-bold text-xs text-gray-800">Tasmi' & Ujian</span>
+          </div>
           <div onclick="bukaTab('disiplin')" class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition active:scale-95 cursor-pointer text-center space-y-2.5 flex flex-col items-center justify-center">
             <div class="w-12 h-12 rounded-2xl bg-rose-100/80 flex items-center justify-center text-rose-600 text-xl shadow-inner"><i class="fa-solid fa-shield-halved"></i></div>
             <span class="font-bold text-xs text-gray-800">Kedisiplinan</span>
@@ -161,7 +165,7 @@
             <span class="font-bold text-xs text-gray-800">Laporan WA & Rapor</span>
           </div>
           <div id="card-shortcut-akun" onclick="bukaTab('akun')" class="hidden bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition active:scale-95 cursor-pointer text-center space-y-2.5 flex-col items-center justify-center">
-            <div class="w-12 h-12 rounded-2xl bg-purple-100/80 flex items-center justify-center text-purple-600 text-xl shadow-inner"><i class="fa-solid fa-user-gear"></i></div>
+            <div class="w-12 h-12 rounded-2xl bg-teal-100/80 flex items-center justify-center text-teal-600 text-xl shadow-inner"><i class="fa-solid fa-user-gear"></i></div>
             <span class="font-bold text-xs text-gray-800">Kelola Akun</span>
           </div>
         </div>
@@ -303,7 +307,141 @@
       </div>
     </div>
 
-    <!-- TAB 4: CATATAN KEDISIPLINAN -->
+    <!-- TAB 4: TASMI' & UJIAN (BISA MODE PER SISWA / MASAL SEKELAS) -->
+    <div id="view-tasmi" class="hidden space-y-4">
+      <div class="flex bg-gray-200 p-1 rounded-xl text-xs font-bold text-center">
+        <button id="btn-mode-tasmi-single" onclick="switchModeTasmi('single')" class="flex-1 py-2 rounded-lg bg-white text-purple-700 shadow">
+          👤 Per Siswa
+        </button>
+        <button id="btn-mode-tasmi-bulk" onclick="switchModeTasmi('bulk')" class="flex-1 py-2 rounded-lg text-gray-600">
+          ⚡ Masal Sekelas
+        </button>
+      </div>
+
+      <!-- FORM TASMI' / UJIAN PER SISWA -->
+      <div id="box-tasmi-single" class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
+        <h3 class="font-bold text-sm text-gray-800 flex items-center gap-2">
+          <i class="fa-solid fa-graduation-cap text-purple-600"></i>Form Tasmi' / Ujian Per Siswa
+        </h3>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[11px] text-gray-500 mb-1">Tanggal</label>
+            <input type="date" id="tasmi-tgl" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
+          </div>
+          <div>
+            <label class="block text-[11px] text-gray-500 mb-1">Kelas</label>
+            <select id="tasmi-kelas" onchange="loadSiswaTasmi()" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
+              <option value="">Pilih Kelas</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[11px] text-gray-500 mb-1">Nama Siswa</label>
+          <select id="tasmi-nama" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
+            <option value="">Pilih Siswa</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[11px] text-gray-500 mb-1">Kategori</label>
+            <select id="tasmi-jenis" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
+              <option value="Tasmi' Per Juz">Tasmi' Per Juz</option>
+              <option value="Ujian Juz">Ujian Juz</option>
+              <option value="Ujian Akhir Semester">Ujian Akhir Semester</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] text-gray-500 mb-1">Juz / Materi Ujian</label>
+            <input type="text" id="tasmi-materi" placeholder="Misal: Juz 30 / Juz 29" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[11px] text-gray-500 mb-1">Nilai Status</label>
+            <select id="tasmi-status" class="w-full bg-gray-50 border rounded-xl p-2 text-xs font-bold text-purple-900">
+              <option value="LULUS">LULUS</option>
+              <option value="ULANG">ULANG</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] text-gray-500 mb-1">Penguji</label>
+            <input type="text" id="tasmi-penguji" placeholder="Penguji..." class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[11px] text-gray-500 mb-1">Catatan Guru</label>
+          <input type="text" id="tasmi-catatan" placeholder="Catatan kelancaran / tajwid..." class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
+        </div>
+
+        <button type="button" onclick="simpanTasmiData()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 rounded-xl text-xs shadow flex items-center justify-center gap-2">
+          🎓 Simpan Tasmi' / Ujian
+        </button>
+      </div>
+
+      <!-- FORM TASMI' / UJIAN MASAL SEKELAS -->
+      <div id="box-tasmi-bulk" class="hidden bg-white p-4 rounded-2xl border shadow-sm space-y-3">
+        <h3 class="font-bold text-sm text-gray-800"><i class="fa-solid fa-bolt text-purple-600 mr-1.5"></i>Input Tasmi' / Ujian Masal Sekelas</h3>
+        <p class="text-[11px] text-gray-500">Pilih tanggal & kelas, lalu isi Juz untuk siswa yang Tasmi'/Ujian saja.</p>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[11px] text-gray-500 mb-1">Tanggal</label>
+            <input type="date" id="bulk-tasmi-tgl" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
+          </div>
+          <div>
+            <label class="block text-[11px] text-gray-500 mb-1">Kelas</label>
+            <select id="bulk-tasmi-kelas" onchange="loadSiswaBulkTasmi()" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
+              <option value="">Pilih Kelas</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[11px] text-gray-500 mb-1">Kategori Ujian Umum</label>
+            <select id="bulk-tasmi-jenis" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
+              <option value="Tasmi' Per Juz">Tasmi' Per Juz</option>
+              <option value="Ujian Juz">Ujian Juz</option>
+              <option value="Ujian Akhir Semester">Ujian Akhir Semester</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] text-gray-500 mb-1">Penguji (Opsional)</label>
+            <input type="text" id="bulk-tasmi-penguji" placeholder="Nama Penguji..." class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
+          </div>
+        </div>
+
+        <div id="list-siswa-bulk-tasmi" class="space-y-2 pt-2 border-t">
+          <p class="text-xs text-gray-400 italic">Pilih kelas di atas untuk menampilkan daftar siswa.</p>
+        </div>
+
+        <button type="button" onclick="simpanBulkTasmiData()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl text-xs shadow flex items-center justify-center gap-2">
+          🚀 Simpan Semua Tasmi' / Ujian Sekelas
+        </button>
+      </div>
+
+      <!-- RIWAYAT UJIAN -->
+      <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
+        <h3 class="font-bold text-sm text-gray-800">Cek Riwayat Tasmi' & Ujian</h3>
+        <div>
+          <label class="block text-[11px] text-gray-500 mb-1">Filter Kelas</label>
+          <select id="filter-tasmi-kelas" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
+            <option value="">-- Semua Kelas --</option>
+          </select>
+        </div>
+        <button type="button" onclick="loadRiwayatTasmi()" class="w-full bg-gray-800 hover:bg-black text-white font-bold py-2.5 rounded-xl text-xs shadow flex items-center justify-center gap-2">
+          <i class="fa-solid fa-magnifying-glass"></i> Tampilkan Riwayat Ujian
+        </button>
+        <div id="list-riwayat-tasmi" class="space-y-2 pt-1 text-xs"></div>
+      </div>
+    </div>
+
+    <!-- TAB 5: CATATAN KEDISIPLINAN -->
     <div id="view-disiplin" class="hidden space-y-4">
       <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
         <h3 class="font-bold text-sm text-gray-800"><i class="fa-solid fa-shield-halved text-amber-500 mr-2"></i>Form Catatan Kedisiplinan Siswa</h3>
@@ -386,7 +524,7 @@
       </div>
     </div>
 
-    <!-- TAB 5: CEK DATA REKAP BULANAN -->
+    <!-- TAB 6: CEK DATA REKAP BULANAN -->
     <div id="view-cekdata" class="hidden space-y-4">
       <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3 no-print">
         <h3 class="font-bold text-sm text-gray-800">Cek Rekap Bulanan Sekelas</h3>
@@ -422,7 +560,7 @@
       <div id="hasil-rekap-box" class="space-y-3"></div>
     </div>
 
-    <!-- TAB 6: LAPORAN -->
+    <!-- TAB 7: LAPORAN -->
     <div id="view-laporan" class="hidden space-y-4">
       <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3 no-print">
         <h3 class="font-bold text-sm text-gray-800">Laporan Perkembangan Siswa</h3>
@@ -478,8 +616,12 @@
           <h4 class="font-bold text-gray-800">B. Capaian Setoran Tahsin / Tahfidz / Tilawah</h4>
           <div id="out-list-setoran" class="space-y-1.5"></div>
         </div>
-        <div class="space-y-2">
-          <h4 class="font-bold text-gray-800">C. Catatan Kedisiplinan</h4>
+        <div class="space-y-2 border-t pt-2">
+          <h4 class="font-bold text-purple-900"><i class="fa-solid fa-graduation-cap mr-1"></i>C. Hasil Tasmi' & Ujian Tahfidz</h4>
+          <div id="out-list-tasmi" class="space-y-1.5"></div>
+        </div>
+        <div class="space-y-2 border-t pt-2">
+          <h4 class="font-bold text-gray-800">D. Catatan Kedisiplinan</h4>
           <div id="out-list-disiplin" class="space-y-1.5"></div>
         </div>
         <div class="grid grid-cols-2 gap-2 pt-2 no-print">
@@ -493,7 +635,7 @@
       </div>
     </div>
 
-    <!-- TAB 7: KELOLA AKUN -->
+    <!-- TAB 8: KELOLA AKUN -->
     <div id="view-akun" class="hidden space-y-4">
       <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
         <h3 class="font-bold text-sm text-gray-800"><i class="fa-solid fa-user-plus text-[#1A98FF] mr-2"></i>Tambah Admin / Guru Baru</h3>
@@ -558,12 +700,13 @@
     </div>
   </div>
 
-  <!-- NAVIGASI BAWAH -->
+  <!-- NAVIGASI BAWAH WITH TASMI' TAB -->
   <nav id="app-nav" class="hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200/80 py-2 z-40 shadow-lg">
-    <div id="nav-container" class="max-w-xl mx-auto grid grid-cols-5 text-center text-[10px] font-medium">
+    <div id="nav-container" class="max-w-xl mx-auto grid grid-cols-6 text-center text-[9px] font-medium">
       <button onclick="bukaTab('dashboard')" id="nav-dashboard" class="space-y-1 text-gray-400 hover:text-[#1A98FF] transition"><i class="fa-solid fa-house text-base block mx-auto"></i>Beranda</button>
       <button onclick="bukaTab('absensi')" id="nav-absensi" class="space-y-1 text-gray-400 hover:text-[#1A98FF] transition"><i class="fa-solid fa-clipboard-user text-base block mx-auto"></i>Absensi</button>
       <button onclick="bukaTab('setoran')" id="nav-setoran" class="space-y-1 text-gray-400 hover:text-[#1A98FF] transition"><i class="fa-solid fa-star text-base block mx-auto"></i>Setoran</button>
+      <button onclick="bukaTab('tasmi')" id="nav-tasmi" class="space-y-1 text-gray-400 hover:text-[#1A98FF] transition"><i class="fa-solid fa-graduation-cap text-base block mx-auto"></i>Tasmi'</button>
       <button onclick="bukaTab('cekdata')" id="nav-cekdata" class="space-y-1 text-gray-400 hover:text-[#1A98FF] transition"><i class="fa-solid fa-chart-pie text-base block mx-auto"></i>Cek Data</button>
       <button onclick="bukaTab('laporan')" id="nav-laporan" class="space-y-1 text-gray-400 hover:text-[#1A98FF] transition"><i class="fa-solid fa-file-chart-column text-base block mx-auto"></i>Laporan</button>
       <button onclick="bukaTab('akun')" id="nav-akun" class="hidden space-y-1 text-gray-400 hover:text-[#1A98FF] transition"><i class="fa-solid fa-user-gear text-base block mx-auto"></i>Akun</button>
@@ -586,6 +729,8 @@
       document.getElementById('absen-tgl').value = today;
       document.getElementById('setor-tgl').value = today;
       document.getElementById('bulk-setor-tgl').value = today;
+      document.getElementById('tasmi-tgl').value = today;
+      document.getElementById('bulk-tasmi-tgl').value = today;
       document.getElementById('disiplin-tgl').value = today;
       document.getElementById('lap-tgl-awal').value = today;
       document.getElementById('lap-tgl-akhir').value = today;
@@ -633,11 +778,11 @@
         var cardAkun = document.getElementById('card-shortcut-akun');
 
         if (data.role === 'Admin Utama') {
-          navBox.className = 'max-w-xl mx-auto grid grid-cols-6 text-center text-[10px] font-medium';
+          navBox.className = 'max-w-xl mx-auto grid grid-cols-7 text-center text-[9px] font-medium';
           navAkun.classList.remove('hidden');
           if(cardAkun) { cardAkun.classList.remove('hidden'); cardAkun.classList.add('flex'); }
         } else {
-          navBox.className = 'max-w-xl mx-auto grid grid-cols-5 text-center text-[10px] font-medium';
+          navBox.className = 'max-w-xl mx-auto grid grid-cols-6 text-center text-[9px] font-medium';
           navAkun.classList.add('hidden');
           if(cardAkun) { cardAkun.classList.add('hidden'); cardAkun.classList.remove('flex'); }
         }
@@ -669,7 +814,7 @@
         return;
       }
 
-      ['dashboard', 'absensi', 'setoran', 'disiplin', 'cekdata', 'laporan', 'akun'].forEach(function(t) {
+      ['dashboard', 'absensi', 'setoran', 'tasmi', 'disiplin', 'cekdata', 'laporan', 'akun'].forEach(function(t) {
         if(document.getElementById('view-' + t)) document.getElementById('view-' + t).classList.add('hidden');
         if (document.getElementById('nav-' + t)) document.getElementById('nav-' + t).className = 'space-y-1 text-gray-400 hover:text-[#1A98FF] transition';
       });
@@ -694,6 +839,25 @@
         boxBulk.classList.add('hidden');
       } else {
         btnBulk.className = 'flex-1 py-2 rounded-lg bg-white text-[#1A98FF] shadow font-bold';
+        btnSingle.className = 'flex-1 py-2 rounded-lg text-gray-600 font-bold';
+        boxBulk.classList.remove('hidden');
+        boxSingle.classList.add('hidden');
+      }
+    }
+
+    function switchModeTasmi(mode) {
+      var btnSingle = document.getElementById('btn-mode-tasmi-single');
+      var btnBulk = document.getElementById('btn-mode-tasmi-bulk');
+      var boxSingle = document.getElementById('box-tasmi-single');
+      var boxBulk = document.getElementById('box-tasmi-bulk');
+
+      if (mode === 'single') {
+        btnSingle.className = 'flex-1 py-2 rounded-lg bg-white text-purple-700 shadow font-bold';
+        btnBulk.className = 'flex-1 py-2 rounded-lg text-gray-600 font-bold';
+        boxSingle.classList.remove('hidden');
+        boxBulk.classList.add('hidden');
+      } else {
+        btnBulk.className = 'flex-1 py-2 rounded-lg bg-white text-purple-700 shadow font-bold';
         btnSingle.className = 'flex-1 py-2 rounded-lg text-gray-600 font-bold';
         boxBulk.classList.remove('hidden');
         boxSingle.classList.add('hidden');
@@ -768,10 +932,10 @@
       const { data } = await db.from('siswa').select('kelas');
       var list = data ? [...new Set(data.map(item => item.kelas))] : ['Kelas 1', 'Kelas 2', 'Kelas 3', 'Kelas 4', 'Kelas 5', 'Kelas 6'];
 
-      ['absen-kelas', 'setor-kelas', 'bulk-setor-kelas', 'disiplin-kelas', 'filter-disiplin-kelas', 'cek-kelas', 'lap-kelas'].forEach(function(id) {
+      ['absen-kelas', 'setor-kelas', 'bulk-setor-kelas', 'tasmi-kelas', 'bulk-tasmi-kelas', 'filter-tasmi-kelas', 'disiplin-kelas', 'filter-disiplin-kelas', 'cek-kelas', 'lap-kelas'].forEach(function(id) {
         var el = document.getElementById(id);
         if(el) {
-          var defaultLabel = (id === 'filter-disiplin-kelas') ? '-- Semua Kelas --' : 'Pilih Kelas';
+          var defaultLabel = (id.startsWith('filter-')) ? '-- Semua Kelas --' : 'Pilih Kelas';
           el.innerHTML = '<option value="">' + defaultLabel + '</option>';
           list.forEach(function(k) { el.innerHTML += '<option value="' + k + '">' + k + '</option>'; });
         }
@@ -835,6 +999,40 @@
       });
     }
 
+    async function loadSiswaTasmi() {
+      var kls = document.getElementById('tasmi-kelas').value;
+      var el = document.getElementById('tasmi-nama');
+      const siswa = await getSiswaByKelasData(kls);
+      el.innerHTML = '<option value="">Pilih Siswa</option>';
+      siswa.forEach(function(s) { el.innerHTML += '<option value="' + s.id + '|' + s.nama + '">' + s.nama + '</option>'; });
+    }
+
+    async function loadSiswaBulkTasmi() {
+      var kls = document.getElementById('bulk-tasmi-kelas').value;
+      var box = document.getElementById('list-siswa-bulk-tasmi');
+      box.innerHTML = '<p class="text-xs text-gray-400">⏳ Mengambil data siswa...</p>';
+
+      const siswa = await getSiswaByKelasData(kls);
+      box.innerHTML = '';
+      if (!siswa || siswa.length === 0) {
+        box.innerHTML = '<p class="text-xs text-gray-400 italic">Tidak ada siswa di kelas ini.</p>';
+        return;
+      }
+
+      siswa.forEach(function(s) {
+        box.innerHTML += '<div class="bg-gray-50 p-2.5 rounded-xl border space-y-1.5 text-xs bulk-tasmi-item" data-id="' + s.id + '">' +
+          '<div class="font-bold text-gray-800">' + s.nama + '</div>' +
+          '<div class="grid grid-cols-2 gap-2">' +
+            '<input type="text" class="bulk-tasmi-juz bg-white border rounded-lg p-2 text-xs" placeholder="Misal: Juz 30 (Kosongkan jika tdk ujian)">' +
+            '<select class="bulk-tasmi-status bg-white border rounded-lg p-2 text-xs font-bold text-purple-900">' +
+              '<option value="LULUS">LULUS</option>' +
+              '<option value="ULANG">ULANG</option>' +
+            '</select>' +
+          '</div>' +
+        '</div>';
+      });
+    }
+
     async function loadSiswaDisiplin() {
       var kls = document.getElementById('disiplin-kelas').value;
       var el = document.getElementById('disiplin-nama');
@@ -851,7 +1049,7 @@
       siswa.forEach(function(s) { el.innerHTML += '<option value="' + s.id + '|' + s.nama + '">' + s.nama + '</option>'; });
     }
 
-    // 6. ACTIONS FORM & FUNGSI HAPUS DATA (SETORAN, ABSEN, DISIPLIN)
+    // 6. ACTIONS FORM
     async function simpanAbsenManual() {
       var tgl = document.getElementById('absen-tgl').value;
       var kls = document.getElementById('absen-kelas').value;
@@ -934,6 +1132,76 @@
       }
     }
 
+    async function simpanTasmiData() {
+      var valSiswa = document.getElementById('tasmi-nama').value.split('|');
+      if(!valSiswa[0]) { alert("Pilih nama siswa terlebih dahulu!"); return; }
+
+      var payload = {
+        tanggal: document.getElementById('tasmi-tgl').value,
+        siswa_id: valSiswa[0],
+        jenis_ujian: document.getElementById('tasmi-jenis').value,
+        materi_juz: document.getElementById('tasmi-materi').value,
+        status: document.getElementById('tasmi-status').value,
+        penguji: document.getElementById('tasmi-penguji').value,
+        catatan: document.getElementById('tasmi-catatan').value,
+        input_by: currentSessionUser
+      };
+
+      const { error } = await db.from('ujian').insert([payload]);
+      if(error) alert("❌ Error: " + error.message);
+      else {
+        alert("🎓 Data Tasmi' / Ujian Berhasil Disimpan!");
+        document.getElementById('tasmi-materi').value = '';
+        document.getElementById('tasmi-catatan').value = '';
+        loadRiwayatTasmi();
+      }
+    }
+
+    async function simpanBulkTasmiData() {
+      var tgl = document.getElementById('bulk-tasmi-tgl').value;
+      var kls = document.getElementById('bulk-tasmi-kelas').value;
+      var kat = document.getElementById('bulk-tasmi-jenis').value;
+      var penguji = document.getElementById('bulk-tasmi-penguji').value.trim();
+
+      if (!tgl || !kls) {
+        alert("Pilih Tanggal dan Kelas terlebih dahulu!");
+        return;
+      }
+
+      var items = document.querySelectorAll('.bulk-tasmi-item');
+      var inserts = [];
+
+      items.forEach(function(el) {
+        var sId = el.getAttribute('data-id');
+        var juz = el.querySelector('.bulk-tasmi-juz').value.trim();
+        var status = el.querySelector('.bulk-tasmi-status').value;
+
+        if (juz !== '') {
+          inserts.push({
+            tanggal: tgl,
+            siswa_id: sId,
+            jenis_ujian: kat,
+            materi_juz: juz,
+            status: status,
+            penguji: penguji,
+            input_by: currentSessionUser
+          });
+        }
+      });
+
+      if (inserts.length === 0) {
+        alert("Tidak ada nama Juz yang diisi untuk Tasmi'/Ujian!");
+        return;
+      }
+
+      const { error } = await db.from('ujian').insert(inserts);
+      if (error) alert("❌ Error: " + error.message);
+      else {
+        alert("✅ Berhasil menyimpan " + inserts.length + " data Tasmi'/Ujian sekaligus!");
+        loadSiswaBulkTasmi();
+      }
+    }
+
     async function simpanKedisiplinanData() {
       var valSiswa = document.getElementById('disiplin-nama').value.split('|');
       if(!valSiswa[0]) { alert("Pilih nama siswa terlebih dahulu!"); return; }
@@ -994,6 +1262,17 @@
       }
     }
 
+    async function hapusTasmiData(idTasmi) {
+      if (confirm("Apakah Anda yakin ingin menghapus data Tasmi' / Ujian ini?")) {
+        const { error } = await db.from('ujian').delete().eq('id', idTasmi);
+        if (error) alert("❌ Gagal menghapus data Tasmi'/Ujian: " + error.message);
+        else {
+          alert("✅ Data Tasmi' / Ujian berhasil dihapus!");
+          refreshTampilanData();
+        }
+      }
+    }
+
     async function hapusAbsensiData(idAbsen) {
       if (confirm("Apakah Anda yakin ingin menghapus data absensi ini?")) {
         const { error } = await db.from('absensi').delete().eq('id', idAbsen);
@@ -1020,9 +1299,45 @@
       if (currentTab === 'cekdata') loadRekapBulanan();
       if (currentTab === 'laporan') buatLaporanSantri();
       if (currentTab === 'disiplin') loadRiwayatKedisiplinan();
+      if (currentTab === 'tasmi') loadRiwayatTasmi();
     }
 
-    // 7. RIWAYAT KEDISIPLINAN
+    // 7. RIWAYAT TASMI' & KEDISIPLINAN
+    async function loadRiwayatTasmi() {
+      var box = document.getElementById('list-riwayat-tasmi');
+      box.innerHTML = '<p class="text-gray-400 py-2">⏳ Mengambil data Tasmi\' / Ujian...</p>';
+
+      const { data, error } = await db.from('ujian').select('*, siswa(nama, kelas)').order('tanggal', { ascending: false }).limit(20);
+
+      box.innerHTML = '';
+      if (error || !data || data.length === 0) {
+        box.innerHTML = '<p class="text-gray-400 italic py-2">Belum ada riwayat Tasmi\' / Ujian.</p>';
+        return;
+      }
+
+      data.forEach(function(d) {
+        var isLulus = d.status === 'LULUS';
+        var statusBadge = isLulus ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800';
+        var sNama = d.siswa ? d.siswa.nama : 'Siswa #' + d.siswa_id;
+        var sKelas = d.siswa ? d.siswa.kelas : '-';
+
+        box.innerHTML += '<div class="bg-gray-50 p-3 rounded-xl border space-y-1 flex justify-between items-center">' +
+          '<div class="space-y-1">' +
+            '<div class="flex items-center gap-2 font-bold">' +
+              '<span>🎓 ' + sNama + ' <span class="text-gray-400 font-normal">(' + sKelas + ')</span></span>' +
+              '<span class="' + statusBadge + ' text-[10px] px-2 py-0.5 rounded-full font-black">' + d.status + '</span>' +
+            '</div>' +
+            '<div class="text-gray-700"><b>' + d.jenis_ujian + '</b> — Juz/Materi: <b>' + (d.materi_juz || '-') + '</b></div>' +
+            '<div class="text-gray-600">Penguji: ' + (d.penguji || '-') + '</div>' +
+            (d.catatan ? '<div class="text-gray-500 italic">Catatan: ' + d.catatan + '</div>' : '') +
+          '</div>' +
+          '<button onclick="hapusTasmiData(' + d.id + ')" class="no-print text-rose-600 hover:text-rose-800 bg-rose-50 p-2 rounded-lg text-xs font-bold transition ml-2" title="Hapus Data">' +
+            '<i class="fa-solid fa-trash"></i>' +
+          '</button>' +
+        '</div>';
+      });
+    }
+
     async function loadRiwayatKedisiplinan() {
       var box = document.getElementById('list-riwayat-disiplin');
       box.innerHTML = '<p class="text-gray-400 py-2">⏳ Mengambil data kedisiplinan...</p>';
@@ -1057,7 +1372,7 @@
       });
     }
 
-    // 8. CEK DATA REKAP BULANAN (FITUR HAPUS SETORAN, ABSEN, KEDISIPLINAN LENGKAP)
+    // 8. CEK DATA REKAP BULANAN
     async function loadRekapBulanan() {
       var kls = document.getElementById('cek-kelas').value;
       var box = document.getElementById('hasil-rekap-box');
@@ -1084,6 +1399,7 @@
       for (let s of siswaList) {
         const { data: abs } = await db.from('absensi').select('*').eq('siswa_id', s.id).order('tanggal', { ascending: false });
         const { data: set } = await db.from('tahfidz').select('*').eq('siswa_id', s.id).order('tanggal', { ascending: false });
+        const { data: tas } = await db.from('ujian').select('*').eq('siswa_id', s.id).order('tanggal', { ascending: false });
         const { data: ked } = await db.from('kedisiplinan').select('*').eq('siswa_id', s.id).order('tanggal', { ascending: false });
 
         let countHadir = abs ? abs.filter(a => a.status === 'Hadir').length : 0;
@@ -1128,7 +1444,25 @@
           });
         }
 
-        // 3. RINCIAN KEDISIPLINAN
+        // 3. RINCIAN TASMI' / UJIAN
+        var txtTasmiHtml = '';
+        if (!tas || tas.length === 0) {
+          txtTasmiHtml = '<div class="text-gray-400 italic text-[11px] bg-gray-50 p-2 rounded-xl border">Belum ada riwayat Tasmi\' / Ujian</div>';
+        } else {
+          tas.forEach(function(u) {
+            txtTasmiHtml += '<div class="bg-purple-50/50 p-2 rounded-xl border text-[11px] flex justify-between items-center mb-1">' +
+              '<div>' +
+                '<b>🎓 ' + u.jenis_ujian + '</b> (' + (u.materi_juz || '-') + ') — Status: <b class="' + (u.status==='LULUS'?'text-emerald-700':'text-rose-700') + '">' + u.status + '</b>' +
+                (u.catatan ? '<br><span class="text-gray-500 italic">Catatan: ' + u.catatan + '</span>' : '') +
+              '</div>' +
+              '<button onclick="hapusTasmiData(' + u.id + ')" class="no-print text-rose-600 hover:text-rose-800 bg-rose-50 p-1.5 rounded-lg text-xs font-bold" title="Hapus Data">' +
+                '<i class="fa-solid fa-trash"></i>' +
+              '</button>' +
+            '</div>';
+          });
+        }
+
+        // 4. RINCIAN KEDISIPLINAN
         var txtDisiplinHtml = '';
         if (!ked || ked.length === 0) {
           txtDisiplinHtml = '<div class="text-gray-400 italic text-[11px] bg-gray-50 p-2 rounded-xl border">Tidak ada catatan kedisiplinan</div>';
@@ -1151,7 +1485,7 @@
             '<h4 class="font-bold text-blue-900 text-sm"><i class="fa-solid fa-user-graduate mr-1.5"></i>' + s.nama + '</h4>' +
             '<div class="flex gap-1">' +
               '<span class="bg-blue-100 text-blue-800 font-bold text-[10px] px-2 py-0.5 rounded-full">' + (set ? set.length : 0) + ' Setoran</span>' +
-              '<span class="bg-amber-100 text-amber-800 font-bold text-[10px] px-2 py-0.5 rounded-full">' + (ked ? ked.length : 0) + ' Disiplin</span>' +
+              '<span class="bg-purple-100 text-purple-800 font-bold text-[10px] px-2 py-0.5 rounded-full">' + (tas ? tas.length : 0) + ' Tasmi/Ujian</span>' +
             '</div>' +
           '</div>' +
 
@@ -1170,6 +1504,11 @@
           '</div>' +
 
           '<div class="space-y-1.5 pt-1">' +
+            '<div class="font-bold text-purple-900 text-[11px]"><i class="fa-solid fa-graduation-cap text-purple-600 mr-1"></i>Riwayat Tasmi\' & Ujian:</div>' +
+            txtTasmiHtml +
+          '</div>' +
+
+          '<div class="space-y-1.5 pt-1">' +
             '<div class="font-bold text-gray-800 text-[11px]"><i class="fa-solid fa-shield-halved text-amber-600 mr-1"></i>Rincian Kedisiplinan:</div>' +
             txtDisiplinHtml +
           '</div>' +
@@ -1178,7 +1517,7 @@
       }
     }
 
-    // 9. LAPORAN INDIVIDUAL (TERFILTER PRESISI BERDASARKAN RENTANG TANGGAL)
+    // 9. LAPORAN INDIVIDUAL
     async function buatLaporanSantri() {
       var valSiswa = document.getElementById('lap-nama').value.split('|');
       var sId = valSiswa[0];
@@ -1200,6 +1539,7 @@
 
       const { data: abs } = await db.from('absensi').select('*').eq('siswa_id', sId).gte('tanggal', tglAwal).lte('tanggal', tglAkhir);
       const { data: set } = await db.from('tahfidz').select('*').eq('siswa_id', sId).gte('tanggal', tglAwal).lte('tanggal', tglAkhir).order('tanggal', { ascending: true });
+      const { data: tas } = await db.from('ujian').select('*').eq('siswa_id', sId).gte('tanggal', tglAwal).lte('tanggal', tglAkhir).order('tanggal', { ascending: true });
       const { data: ked } = await db.from('kedisiplinan').select('*').eq('siswa_id', sId).gte('tanggal', tglAwal).lte('tanggal', tglAkhir).order('tanggal', { ascending: true });
 
       document.getElementById('out-hadir').innerText = abs ? abs.filter(a => a.status==='Hadir').length : 0;
@@ -1220,6 +1560,25 @@
               (p.catatan ? '<div class="text-gray-500 italic">Catatan: ' + p.catatan + '</div>' : '') +
             '</div>' +
             '<button onclick="hapusSetoranData(' + p.id + ')" class="no-print text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 p-2 rounded-lg ml-2 font-bold transition" title="Hapus Setoran">' +
+              '<i class="fa-solid fa-trash"></i>' +
+            '</button>' +
+          '</div>';
+        });
+      }
+
+      var listTasmiEl = document.getElementById('out-list-tasmi');
+      listTasmiEl.innerHTML = '';
+      if (!tas || tas.length === 0) {
+        listTasmiEl.innerHTML = '<p class="text-gray-400 italic">Belum ada riwayat Tasmi\' / Ujian pada periode ini</p>';
+      } else {
+        tas.forEach(function(u) {
+          listTasmiEl.innerHTML += '<div class="bg-purple-50 p-2.5 rounded-lg border text-xs flex justify-between items-center mb-1.5">' +
+            '<div class="space-y-0.5">' +
+              '<div class="font-bold text-purple-900">🎓 ' + u.jenis_ujian + ' — ' + (u.materi_juz || '-') + ' <span class="bg-purple-200 text-purple-800 text-[9px] px-1.5 py-0.5 rounded-full ml-1 font-bold">' + u.status + '</span></div>' +
+              '<div class="text-gray-600">Penguji: ' + (u.penguji || '-') + '</div>' +
+              (u.catatan ? '<div class="text-gray-500 italic">Catatan: ' + u.catatan + '</div>' : '') +
+            '</div>' +
+            '<button onclick="hapusTasmiData(' + u.id + ')" class="no-print text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 p-2 rounded-lg ml-2 font-bold transition" title="Hapus Data">' +
               '<i class="fa-solid fa-trash"></i>' +
             '</button>' +
           '</div>';
@@ -1254,7 +1613,8 @@
           Sakit: abs ? abs.filter(a => a.status==='Sakit').length : 0,
           Alpha: abs ? abs.filter(a => a.status==='Alfa'||a.status==='Alpha').length : 0
         },
-        set: set, 
+        set: set,
+        tas: tas,
         ked: ked 
       };
     }
@@ -1290,6 +1650,18 @@
         });
       }
 
+      var txtTasmi = "";
+      if (!d.tas || d.tas.length === 0) {
+        txtTasmi = "  · Belum ada riwayat Tasmi' / Ujian\n\n";
+      } else {
+        d.tas.forEach(function(u, i) {
+          txtTasmi += (i + 1) + ". 🎓 *" + u.jenis_ujian + "* – *" + (u.materi_juz || '-') + "*\n" +
+                      "   Status: *" + u.status + "*\n" +
+                      (u.penguji ? "   Penguji: " + u.penguji + "\n" : "") +
+                      (u.catatan ? "   _Catatan:_ " + u.catatan + "\n" : "") + "\n";
+        });
+      }
+
       var txtDisiplin = "";
       if (!d.ked || d.ked.length === 0) {
         txtDisiplin = "  · Tidak ada catatan kedisiplinan\n\n";
@@ -1311,7 +1683,9 @@
                 txtAbsen + "\n\n" +
                 "*B. CAPAIAN SETORAN TAHSIN / TAHFIDZ / TILAWAH*\n" +
                 txtSetoran +
-                "*C. CATATAN KEDISIPLINAN*\n" +
+                "*C. HASIL TASMI' & UJIAN TAHFIDZ*\n" +
+                txtTasmi +
+                "*D. CATATAN KEDISIPLINAN*\n" +
                 txtDisiplin +
                 "------------------------------------------\n" +
                 "Jazakumullah khairan wa barakallahu fiikum.";
