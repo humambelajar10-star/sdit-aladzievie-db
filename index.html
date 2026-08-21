@@ -109,7 +109,7 @@
             SDIT ALADZIEVIE
           </span>
           <h2 class="text-2xl font-black tracking-tight text-white flex items-center gap-2">
-            Selamat Datang!, Ahlan Wa Sahlan! <span class="text-2xl">👋</span>
+            Selamat Datang! <span class="text-2xl">👋</span>
           </h2>
           <p class="text-xs font-medium text-blue-100/90" id="welcome-user-name">
             Bapak / Ibu Guru Pembimbing
@@ -349,8 +349,8 @@
             <label class="block text-[11px] text-gray-500 mb-1">Kategori</label>
             <select id="tasmi-jenis" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
               <option value="Tasmi' Per Juz">Tasmi' Per Juz</option>
-              <option value="Ujian Tahfidz">Ujian Tahfidz</option>
-              <option value="Ujian Tahsin">Ujian Tahsin</option>
+              <option value="Ujian Juz">Ujian Juz</option>
+              <option value="Ujian Akhir Semester">Ujian Akhir Semester</option>
             </select>
           </div>
           <div>
@@ -700,16 +700,13 @@
     </div>
   </div>
 
-  <!-- NAVIGASI BAWAH WITH TASMI' TAB -->
-  <nav id="app-nav" class="hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200/80 py-2 z-40 shadow-lg">
-    <div id="nav-container" class="max-w-xl mx-auto grid grid-cols-6 text-center text-[9px] font-medium">
-      <button onclick="bukaTab('dashboard')" id="nav-dashboard" class="space-y-1 text-gray-400 hover:text-[#1A98FF] transition"><i class="fa-solid fa-house text-base block mx-auto"></i>Beranda</button>
-      <button onclick="bukaTab('absensi')" id="nav-absensi" class="space-y-1 text-gray-400 hover:text-[#1A98FF] transition"><i class="fa-solid fa-clipboard-user text-base block mx-auto"></i>Absensi</button>
-      <button onclick="bukaTab('setoran')" id="nav-setoran" class="space-y-1 text-gray-400 hover:text-[#1A98FF] transition"><i class="fa-solid fa-star text-base block mx-auto"></i>Setoran</button>
-      <button onclick="bukaTab('tasmi')" id="nav-tasmi" class="space-y-1 text-gray-400 hover:text-[#1A98FF] transition"><i class="fa-solid fa-graduation-cap text-base block mx-auto"></i>Tasmi'</button>
-      <button onclick="bukaTab('cekdata')" id="nav-cekdata" class="space-y-1 text-gray-400 hover:text-[#1A98FF] transition"><i class="fa-solid fa-chart-pie text-base block mx-auto"></i>Cek Data</button>
-      <button onclick="bukaTab('laporan')" id="nav-laporan" class="space-y-1 text-gray-400 hover:text-[#1A98FF] transition"><i class="fa-solid fa-file-chart-column text-base block mx-auto"></i>Laporan</button>
-      <button onclick="bukaTab('akun')" id="nav-akun" class="hidden space-y-1 text-gray-400 hover:text-[#1A98FF] transition"><i class="fa-solid fa-user-gear text-base block mx-auto"></i>Akun</button>
+  <!-- NAVIGASI BAWAH RINGKAS & RAPI (BERANDA, CEK DATA, LAPORAN, AKUN) -->
+  <nav id="app-nav" class="hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200/80 py-2.5 z-40 shadow-lg">
+    <div id="nav-container" class="max-w-md mx-auto grid grid-cols-4 text-center text-[10px] font-medium">
+      <button onclick="bukaTab('dashboard')" id="nav-dashboard" class="space-y-1 text-gray-400 hover:text-[#1A98FF] transition"><i class="fa-solid fa-house text-lg block mx-auto"></i>Beranda</button>
+      <button onclick="bukaTab('cekdata')" id="nav-cekdata" class="space-y-1 text-gray-400 hover:text-[#1A98FF] transition"><i class="fa-solid fa-chart-pie text-lg block mx-auto"></i>Cek Data</button>
+      <button onclick="bukaTab('laporan')" id="nav-laporan" class="space-y-1 text-gray-400 hover:text-[#1A98FF] transition"><i class="fa-solid fa-file-chart-column text-lg block mx-auto"></i>Laporan</button>
+      <button onclick="bukaTab('akun')" id="nav-akun" class="hidden space-y-1 text-gray-400 hover:text-[#1A98FF] transition"><i class="fa-solid fa-user-gear text-lg block mx-auto"></i>Akun</button>
     </div>
   </nav>
 
@@ -778,11 +775,11 @@
         var cardAkun = document.getElementById('card-shortcut-akun');
 
         if (data.role === 'Admin Utama') {
-          navBox.className = 'max-w-xl mx-auto grid grid-cols-7 text-center text-[9px] font-medium';
+          navBox.className = 'max-w-md mx-auto grid grid-cols-4 text-center text-[10px] font-medium';
           navAkun.classList.remove('hidden');
           if(cardAkun) { cardAkun.classList.remove('hidden'); cardAkun.classList.add('flex'); }
         } else {
-          navBox.className = 'max-w-xl mx-auto grid grid-cols-6 text-center text-[9px] font-medium';
+          navBox.className = 'max-w-md mx-auto grid grid-cols-3 text-center text-[10px] font-medium';
           navAkun.classList.add('hidden');
           if(cardAkun) { cardAkun.classList.add('hidden'); cardAkun.classList.remove('flex'); }
         }
@@ -824,6 +821,7 @@
       currentTab = tabName;
 
       if (tabName === 'akun') loadDaftarUser();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function switchModeSetoran(mode) {
@@ -1302,7 +1300,7 @@
       if (currentTab === 'tasmi') loadRiwayatTasmi();
     }
 
-    // 7. RIWAYAT TASMI' & KEDISIPLINAN (FIXED FILTER KELAS PRESISI)
+    // 7. RIWAYAT TASMI' & KEDISIPLINAN
     async function loadRiwayatTasmi() {
       var box = document.getElementById('list-riwayat-tasmi');
       var klsFilter = document.getElementById('filter-tasmi-kelas').value;
