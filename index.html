@@ -48,7 +48,7 @@
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen pb-28">
 
-  <!-- ================= 1. LAYAR LOGIN ================= -->
+  <!-- ================= 1. LAYAR LOGIN (GURU & WALI MURID) ================= -->
   <div id="view-login" class="min-h-screen bg-custom-blue flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl space-y-5 text-center">
       <img src="https://lh3.googleusercontent.com/d/1mcj8SqJ2sctE2c5qPuHG0p7ZmpgXYdnd" alt="Logo SDIT Aladzievie" class="w-20 h-20 mx-auto object-contain drop-shadow brightness-0" referrerpolicy="no-referrer">
@@ -57,19 +57,42 @@
         <p class="text-xs text-custom-blue font-semibold mt-0.5">Aplikasi Data Siswa</p>
       </div>
 
-      <div class="space-y-3 text-left">
+      <!-- SWITCHER LOGIN MODE -->
+      <div class="flex bg-gray-100 p-1 rounded-xl text-xs font-bold">
+        <button id="btn-login-guru" onclick="switchLoginMode('guru')" class="flex-1 py-2 rounded-lg bg-white text-[#1A98FF] shadow">
+          👨‍🏫 Ustadz / Guru
+        </button>
+        <button id="btn-login-ortu" onclick="switchLoginMode('ortu')" class="flex-1 py-2 rounded-lg text-gray-500">
+          👨‍👩‍👧 Wali Murid
+        </button>
+      </div>
+
+      <!-- FORM LOGIN GURU/STAFF -->
+      <div id="form-login-guru" class="space-y-3 text-left">
         <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">Username</label>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">Username Guru</label>
           <input type="text" id="login-user" placeholder="Masukkan username" class="w-full bg-gray-50 border rounded-xl p-3 text-sm focus:outline-[#1A98FF]">
         </div>
         <div>
           <label class="block text-xs font-semibold text-gray-600 mb-1">Password</label>
           <input type="password" id="login-pass" placeholder="Masukkan password" class="w-full bg-gray-50 border rounded-xl p-3 text-sm focus:outline-[#1A98FF]">
         </div>
-        <button type="button" onclick="prosesLogin()" class="w-full bg-[#1A98FF] hover:bg-blue-600 text-white font-bold py-3 rounded-xl shadow-md transition text-sm">
-          🔒 Masuk
+        <button type="button" onclick="prosesLoginGuru()" class="w-full bg-[#1A98FF] hover:bg-blue-600 text-white font-bold py-3 rounded-xl shadow-md transition text-sm">
+          🔒 Masuk Guru
         </button>
       </div>
+
+      <!-- FORM LOGIN WALI MURID -->
+      <div id="form-login-ortu" class="hidden space-y-3 text-left">
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 mb-1">ID Siswa / NISN</label>
+          <input type="text" id="login-nisn" placeholder="Masukkan NISN / ID Siswa" class="w-full bg-gray-50 border rounded-xl p-3 text-sm focus:outline-[#1A98FF]">
+        </div>
+        <button type="button" onclick="prosesLoginOrtu()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-md transition text-sm">
+          🔑 Masuk Portal Wali Murid
+        </button>
+      </div>
+
       <p id="login-msg" class="text-xs text-red-500 font-semibold hidden"></p>
     </div>
   </div>
@@ -88,7 +111,7 @@
         <div id="header-date-badge" class="bg-blue-700/60 text-blue-50 text-[11px] font-semibold px-3 py-1.5 rounded-full border border-blue-400/30 shadow-inner">
           10 Agu 2026
         </div>
-        <button onclick="bukaModalPass()" class="text-xs bg-blue-600 px-2.5 py-1.5 rounded-xl hover:bg-blue-700 font-semibold" title="Ubah Password Saya">
+        <button id="btn-header-pass" onclick="bukaModalPass()" class="text-xs bg-blue-600 px-2.5 py-1.5 rounded-xl hover:bg-blue-700 font-semibold" title="Ubah Password Saya">
           <i class="fa-solid fa-key"></i>
         </button>
         <button onclick="logout()" class="text-xs bg-blue-800 px-2.5 py-1.5 rounded-xl hover:bg-blue-900 font-semibold" title="Keluar">
@@ -98,10 +121,10 @@
     </div>
   </header>
 
-  <!-- ================= 3. UTAMA (ISIAN TAB) ================= -->
+  <!-- ================= 3. UTAMA (ISIAN TAB GURU) ================= -->
   <main id="app-main" class="hidden max-w-xl mx-auto p-4 space-y-4">
 
-    <!-- TAB 1: BERANDA -->
+    <!-- TAB 1: BERANDA GURU -->
     <div id="view-dashboard" class="space-y-4">
       <div class="bg-gradient-to-br from-[#1A98FF] via-blue-600 to-slate-900 text-white rounded-3xl p-5 shadow-xl relative overflow-hidden space-y-4 border border-blue-400/30">
         <div class="absolute -right-6 -bottom-6 opacity-10 pointer-events-none">
@@ -537,7 +560,7 @@
             <select id="cek-bulan" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
               <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
               <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
-              <option value="7">Juli</option><option value="8" selected>Agustus</option><option value="9">September</option>
+              <option value="7">Juli</option><option value="8">Agustus</option><option value="9" selected>September</option>
               <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
             </select>
           </div>
@@ -675,6 +698,81 @@
 
   </main>
 
+  <!-- ================= 4. DASHBOARD TAMPILAN WALI MURID ================= -->
+  <div id="view-portal-ortu" class="hidden max-w-xl mx-auto p-4 space-y-4">
+    <!-- BANNER PERKEMBANGAN SISWA -->
+    <div class="bg-gradient-to-r from-emerald-600 to-teal-800 text-white p-5 rounded-3xl shadow-lg space-y-3 relative overflow-hidden">
+      <div class="absolute -right-4 -bottom-4 opacity-15 pointer-events-none">
+        <i class="fa-solid fa-child text-8xl"></i>
+      </div>
+      <div class="space-y-1 relative z-10">
+        <span class="bg-amber-400 text-emerald-950 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase">
+          PORTAL WALI MURID
+        </span>
+        <h2 class="text-xl font-extrabold" id="ortu-siswa-nama">Nama Ananda</h2>
+        <p class="text-xs text-emerald-100" id="ortu-siswa-info">Kelas: - | NISN: -</p>
+      </div>
+    </div>
+
+    <!-- STATISTIK KEHADIRAN SISWA -->
+    <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-2">
+      <h3 class="font-bold text-xs text-gray-800 flex items-center gap-1.5">
+        <i class="fa-solid fa-clipboard-user text-emerald-600"></i> Rekapitulasi Kehadiran
+      </h3>
+      <div class="grid grid-cols-4 gap-2 text-center text-xs font-bold pt-1">
+        <div class="bg-blue-50 text-blue-900 p-2.5 rounded-xl border border-blue-100">
+          <span id="ortu-hadir" class="block text-base">0</span>Hadir
+        </div>
+        <div class="bg-sky-50 text-sky-900 p-2.5 rounded-xl border border-sky-100">
+          <span id="ortu-izin" class="block text-base">0</span>Izin
+        </div>
+        <div class="bg-amber-50 text-amber-900 p-2.5 rounded-xl border border-amber-100">
+          <span id="ortu-sakit" class="block text-base">0</span>Sakit
+        </div>
+        <div class="bg-rose-50 text-rose-900 p-2.5 rounded-xl border border-rose-100">
+          <span id="ortu-alpha" class="block text-base">0</span>Alpha
+        </div>
+      </div>
+    </div>
+
+    <!-- HAFALAN & SETORAN TERAKHIR -->
+    <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
+      <h3 class="font-bold text-xs text-gray-800 flex items-center gap-1.5">
+        <i class="fa-solid fa-book-quran text-amber-500"></i> Setoran Hafalan & Tilawah Terakhir
+      </h3>
+      <div id="ortu-list-setoran" class="space-y-2 text-xs">
+        <p class="text-gray-400 italic">Memuat data setoran...</p>
+      </div>
+    </div>
+
+    <!-- HASIL TASMI' & UJIAN JUZ -->
+    <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
+      <h3 class="font-bold text-xs text-gray-800 flex items-center gap-1.5">
+        <i class="fa-solid fa-graduation-cap text-purple-600"></i> Hasil Tasmi' & Ujian Juz
+      </h3>
+      <div id="ortu-list-tasmi" class="space-y-2 text-xs">
+        <p class="text-gray-400 italic">Memuat data ujian...</p>
+      </div>
+    </div>
+
+    <!-- CATATAN KEDISIPLINAN -->
+    <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
+      <h3 class="font-bold text-xs text-gray-800 flex items-center gap-1.5">
+        <i class="fa-solid fa-shield-halved text-rose-500"></i> Catatan Adab & Kedisiplinan
+      </h3>
+      <div id="ortu-list-disiplin" class="space-y-2 text-xs">
+        <p class="text-gray-400 italic">Memuat catatan kedisiplinan...</p>
+      </div>
+    </div>
+
+    <!-- TOMBOL CETAK PDF -->
+    <div class="pt-2 no-print">
+      <button onclick="window.print()" class="w-full bg-gray-800 hover:bg-black text-white font-bold py-3 rounded-2xl text-xs shadow flex items-center justify-center gap-2">
+        <i class="fa-solid fa-print"></i> Cetak PDF Rapor Ananda
+      </button>
+    </div>
+  </div>
+
   <!-- MODAL UBAH PASSWORD SAYA -->
   <div id="modal-pass" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-3xl p-5 shadow-2xl space-y-4">
@@ -699,7 +797,7 @@
     </div>
   </div>
 
-  <!-- MODAL PILIHAN SETORAN (MUNCUL SAAT SETORAN DIKLIK) -->
+  <!-- MODAL PILIHAN SETORAN -->
   <div id="modal-setoran-choice" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl space-y-4">
       <div class="flex justify-between items-center border-b pb-3">
@@ -727,7 +825,7 @@
     </div>
   </div>
 
-  <!-- MODAL MENU LAINNYA (KHUSUS REKAP, LAPORAN WA, KELOLA AKUN) -->
+  <!-- MODAL MENU LAINNYA -->
   <div id="modal-lainnya" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl space-y-4">
       <div class="flex justify-between items-center border-b pb-3">
@@ -759,23 +857,20 @@
     </div>
   </div>
 
-  <!-- ================= 4. FLOATING BOTTOM NAVIGATION (WARNA BIRU BERANDA) ================= -->
+  <!-- ================= 5. FLOATING BOTTOM NAVIGATION ================= -->
   <nav id="app-nav" class="hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 z-40 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
     <div class="max-w-md mx-auto relative px-4 py-2 flex justify-between items-center">
       
-      <!-- 1. ABSENSI (KIRI 1) -->
       <button onclick="bukaTab('absensi')" id="nav-absensi" class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400 hover:text-[#1A98FF] transition py-1">
         <i class="fa-solid fa-clipboard-user text-xl"></i>
         <span class="text-[10px] font-medium">Absensi</span>
       </button>
 
-      <!-- 2. SETORAN (KIRI 2) -->
       <button onclick="bukaModalSetoranChoice()" id="nav-setoran" class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400 hover:text-[#1A98FF] transition py-1">
         <i class="fa-solid fa-wallet text-xl"></i>
         <span class="text-[10px] font-medium">Setoran</span>
       </button>
 
-      <!-- 3. BERANDA (MELAYANG DI TENGAH - BIRU SAMAIN DENGAN BERANDA) -->
       <div class="flex-1 flex flex-col items-center justify-center -mt-8 z-10">
         <button onclick="bukaTab('dashboard')" id="nav-dashboard-btn" class="w-14 h-14 bg-[#1A98FF] text-white rounded-full flex items-center justify-center shadow-lg border-4 border-white hover:bg-blue-600 transition active:scale-90">
           <i class="fa-solid fa-house text-xl"></i>
@@ -783,13 +878,11 @@
         <span id="nav-dashboard-txt" class="text-[10px] font-bold text-[#1A98FF] mt-1">Beranda</span>
       </div>
 
-      <!-- 4. DISIPLIN (KANAN 1) -->
       <button onclick="bukaTab('disiplin')" id="nav-disiplin" class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400 hover:text-[#1A98FF] transition py-1">
         <i class="fa-solid fa-shield-halved text-xl"></i>
         <span class="text-[10px] font-medium">Disiplin</span>
       </button>
 
-      <!-- 5. LAINNYA (KANAN 2) -->
       <button onclick="bukaModalLainnya()" id="nav-lainnya" class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400 hover:text-[#1A98FF] transition py-1">
         <i class="fa-solid fa-ellipsis text-xl"></i>
         <span class="text-[10px] font-medium">Lainnya</span>
@@ -827,15 +920,37 @@
       loadKelasOptions();
     };
 
-    // MODAL SYSTEM
+    // MODAL & MODE LOGIN SWITCHER
+    function switchLoginMode(mode) {
+      var btnG = document.getElementById('btn-login-guru');
+      var btnO = document.getElementById('btn-login-ortu');
+      var formG = document.getElementById('form-login-guru');
+      var formO = document.getElementById('form-login-ortu');
+      var msg = document.getElementById('login-msg');
+
+      msg.classList.add('hidden');
+
+      if (mode === 'guru') {
+        btnG.className = "flex-1 py-2 rounded-lg bg-white text-[#1A98FF] shadow";
+        btnO.className = "flex-1 py-2 rounded-lg text-gray-500";
+        formG.classList.remove('hidden');
+        formO.classList.add('hidden');
+      } else {
+        btnO.className = "flex-1 py-2 rounded-lg bg-white text-emerald-600 shadow";
+        btnG.className = "flex-1 py-2 rounded-lg text-gray-500";
+        formO.classList.remove('hidden');
+        formG.classList.add('hidden');
+      }
+    }
+
     function bukaModalLainnya() { document.getElementById('modal-lainnya').classList.remove('hidden'); }
     function tutupModalLainnya() { document.getElementById('modal-lainnya').classList.add('hidden'); }
 
     function bukaModalSetoranChoice() { document.getElementById('modal-setoran-choice').classList.remove('hidden'); }
     function tutupModalSetoranChoice() { document.getElementById('modal-setoran-choice').classList.add('hidden'); }
 
-    // 1. LOGIN & LOGOUT
-    async function prosesLogin() {
+    // 1. LOGIN SYSTEM
+    async function prosesLoginGuru() {
       var u = document.getElementById('login-user').value.trim();
       var p = document.getElementById('login-pass').value.trim();
       var msg = document.getElementById('login-msg');
@@ -864,6 +979,8 @@
         document.getElementById('app-header').classList.remove('hidden');
         document.getElementById('app-main').classList.remove('hidden');
         document.getElementById('app-nav').classList.remove('hidden');
+        document.getElementById('view-portal-ortu').classList.add('hidden');
+        document.getElementById('btn-header-pass').classList.remove('hidden');
 
         var cardAkun = document.getElementById('card-shortcut-akun');
         var modalMenuAkun = document.getElementById('modal-menu-akun');
@@ -883,20 +1000,121 @@
       }
     }
 
+    async function prosesLoginOrtu() {
+      var nisnVal = document.getElementById('login-nisn').value.trim();
+      var msg = document.getElementById('login-msg');
+
+      if (!nisnVal) {
+        msg.innerText = "Masukkan ID Siswa atau NISN Ananda!";
+        msg.classList.remove('hidden');
+        return;
+      }
+
+      msg.innerText = "Memuat data ananda...";
+      msg.className = "text-xs text-emerald-600 font-semibold animate-pulse";
+      msg.classList.remove('hidden');
+
+      try {
+        // Cek data siswa berdasarkan ID
+        const { data: siswa, error } = await db.from('siswa').select('*').eq('id', nisnVal).single();
+        if (error || !siswa) throw new Error("Data ID/NISN siswa tidak ditemukan!");
+
+        currentSessionUser = 'Wali Murid - ' + siswa.nama;
+        currentSessionRole = 'Ortu';
+
+        document.getElementById('session-info').innerText = 'Wali dari ' + siswa.nama;
+        document.getElementById('view-login').classList.add('hidden');
+        document.getElementById('app-header').classList.remove('hidden');
+        document.getElementById('btn-header-pass').classList.add('hidden');
+        document.getElementById('app-main').classList.add('hidden');
+        document.getElementById('app-nav').classList.add('hidden');
+        document.getElementById('view-portal-ortu').classList.remove('hidden');
+
+        loadPortalWaliMurid(siswa);
+      } catch (err) {
+        msg.innerText = err.message;
+        msg.className = "text-xs text-red-500 font-semibold";
+      }
+    }
+
     function logout() {
       if (confirm("Apakah Anda yakin ingin keluar?")) {
         document.getElementById('login-user').value = '';
         document.getElementById('login-pass').value = '';
+        document.getElementById('login-nisn').value = '';
         document.getElementById('login-msg').classList.add('hidden');
 
         document.getElementById('app-header').classList.add('hidden');
         document.getElementById('app-main').classList.add('hidden');
+        document.getElementById('view-portal-ortu').classList.add('hidden');
         document.getElementById('app-nav').classList.add('hidden');
         document.getElementById('view-login').classList.remove('hidden');
       }
     }
 
-    // 2. TAB SYSTEM WITH BLUE NAVBAR STYLING
+    // 2. LOAD PORTAL WALI MURID
+    async function loadPortalWaliMurid(siswa) {
+      document.getElementById('ortu-siswa-nama').innerText = siswa.nama;
+      document.getElementById('ortu-siswa-info').innerText = 'Kelas: ' + siswa.kelas + ' | ID Siswa: #' + siswa.id;
+
+      // 1. Ambil Data Absensi
+      const { data: abs } = await db.from('absensi').select('*').eq('siswa_id', siswa.id);
+      document.getElementById('ortu-hadir').innerText = abs ? abs.filter(a => a.status === 'Hadir').length : 0;
+      document.getElementById('ortu-izin').innerText = abs ? abs.filter(a => a.status === 'Izin').length : 0;
+      document.getElementById('ortu-sakit').innerText = abs ? abs.filter(a => a.status === 'Sakit').length : 0;
+      document.getElementById('ortu-alpha').innerText = abs ? abs.filter(a => a.status === 'Alfa' || a.status === 'Alpha').length : 0;
+
+      // 2. Ambil Data Setoran
+      const { data: set } = await db.from('tahfidz').select('*').eq('siswa_id', siswa.id).order('tanggal', { ascending: false }).limit(5);
+      var setBox = document.getElementById('ortu-list-setoran');
+      setBox.innerHTML = '';
+      if (!set || set.length === 0) {
+        setBox.innerHTML = '<p class="text-gray-400 italic">Belum ada riwayat setoran.</p>';
+      } else {
+        set.forEach(function(s) {
+          setBox.innerHTML += '<div class="bg-gray-50 p-2.5 rounded-xl border flex justify-between items-center">' +
+            '<div><b class="text-blue-900">📅 ' + s.tanggal + '</b> — ' + (s.surah_jilid || '-') + ' (' + s.jenis + ')<br>' +
+            '<span class="text-gray-600">Ayat/Hal: ' + (s.ayat_halaman || '-') + '</span></div>' +
+            '<span class="bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded-full text-[10px]">' + (s.nilai || 'A') + '</span>' +
+          '</div>';
+        });
+      }
+
+      // 3. Ambil Data Tasmi / Ujian
+      const { data: tas } = await db.from('ujian').select('*').eq('siswa_id', siswa.id).order('tanggal', { ascending: false });
+      var tasBox = document.getElementById('ortu-list-tasmi');
+      tasBox.innerHTML = '';
+      if (!tas || tas.length === 0) {
+        tasBox.innerHTML = '<p class="text-gray-400 italic">Belum ada data Tasmi / Ujian.</p>';
+      } else {
+        tas.forEach(function(u) {
+          var isL = u.status === 'LULUS';
+          tasBox.innerHTML += '<div class="bg-purple-50 p-2.5 rounded-xl border flex justify-between items-center">' +
+            '<div><b class="text-purple-900">🎓 ' + u.jenis_ujian + '</b> — ' + (u.materi_juz || '-') + '<br>' +
+            '<span class="text-gray-600">Penguji: ' + (u.penguji || '-') + '</span></div>' +
+            '<span class="' + (isL ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800') + ' font-extrabold px-2 py-0.5 rounded-full text-[10px]">' + u.status + '</span>' +
+          '</div>';
+        });
+      }
+
+      // 4. Ambil Data Kedisiplinan
+      const { data: ked } = await db.from('kedisiplinan').select('*').eq('siswa_id', siswa.id).order('tanggal', { ascending: false });
+      var kedBox = document.getElementById('ortu-list-disiplin');
+      kedBox.innerHTML = '';
+      if (!ked || ked.length === 0) {
+        kedBox.innerHTML = '<p class="text-gray-400 italic">Tidak ada catatan pelanggaran (Sangat Baik).</p>';
+      } else {
+        ked.forEach(function(k) {
+          var isP = k.jenis === 'Prestasi';
+          kedBox.innerHTML += '<div class="bg-gray-50 p-2.5 rounded-xl border space-y-1">' +
+            '<div class="flex justify-between font-bold"><span>📅 ' + k.tanggal + '</span><span class="' + (isP ? 'bg-blue-100 text-blue-800' : 'bg-rose-100 text-rose-800') + ' px-2 py-0.5 rounded-full text-[9px]">' + k.jenis + '</span></div>' +
+            '<p class="text-gray-700">' + k.catatan + '</p>' +
+          '</div>';
+        });
+      }
+    }
+
+    // 3. TAB SYSTEM & ROUTING
     function bukaTab(tabName) {
       if (tabName === 'akun' && currentSessionRole !== 'Admin Utama') {
         alert("🔒 Tab Akun hanya dapat diakses oleh Admin Utama!");
@@ -910,7 +1128,6 @@
 
       if(document.getElementById('view-' + tabName)) document.getElementById('view-' + tabName).classList.remove('hidden');
       
-      // Highlight Active Bottom Nav Button
       if (tabName === 'dashboard') {
         document.getElementById('nav-dashboard-btn').className = 'w-14 h-14 bg-[#1A98FF] text-white rounded-full flex items-center justify-center shadow-lg border-4 border-white scale-105 transition';
         document.getElementById('nav-dashboard-txt').className = 'text-[10px] font-bold text-[#1A98FF] mt-1';
@@ -968,7 +1185,7 @@
       }
     }
 
-    // 3. MODAL UBAH PASSWORD MANDIRI
+    // MODAL UBAH PASSWORD MANDIRI
     function bukaModalPass() { document.getElementById('modal-pass').classList.remove('hidden'); }
     function tutupModalPass() {
       document.getElementById('modal-pass').classList.add('hidden');
@@ -986,7 +1203,7 @@
       else { alert("✅ Password berhasil diperbarui!"); tutupModalPass(); }
     }
 
-    // 4. KELOLA AKUN
+    // KELOLA AKUN
     async function prosesTambahUser() {
       var u = document.getElementById('new-user').value.trim();
       var p = document.getElementById('new-pass').value.trim();
@@ -1031,7 +1248,7 @@
       });
     }
 
-    // 5. LOAD DATA KELAS & SISWA
+    // LOAD DATA KELAS & SISWA
     async function loadKelasOptions() {
       const { data } = await db.from('siswa').select('kelas');
       var list = data ? [...new Set(data.map(item => item.kelas))] : ['Kelas 1', 'Kelas 2', 'Kelas 3', 'Kelas 4', 'Kelas 5', 'Kelas 6'];
@@ -1153,7 +1370,7 @@
       siswa.forEach(function(s) { el.innerHTML += '<option value="' + s.id + '|' + s.nama + '">' + s.nama + '</option>'; });
     }
 
-    // 6. ACTIONS FORM
+    // ACTIONS FORM GURU
     async function simpanAbsenManual() {
       var tgl = document.getElementById('absen-tgl').value;
       var kls = document.getElementById('absen-kelas').value;
@@ -1354,7 +1571,7 @@
       }
     }
 
-    // FUNGSI HAPUS DATA DARI SUPABASE
+    // FUNGSI HAPUS DATA
     async function hapusSetoranData(idSetoran) {
       if (confirm("Apakah Anda yakin ingin menghapus data setoran ini?")) {
         const { error } = await db.from('tahfidz').delete().eq('id', idSetoran);
@@ -1406,7 +1623,7 @@
       if (currentTab === 'tasmi') loadRiwayatTasmi();
     }
 
-    // 7. RIWAYAT TASMI' & KEDISIPLINAN
+    // RIWAYAT TASMI' & KEDISIPLINAN
     async function loadRiwayatTasmi() {
       var box = document.getElementById('list-riwayat-tasmi');
       var klsFilter = document.getElementById('filter-tasmi-kelas').value;
@@ -1506,7 +1723,7 @@
       });
     }
 
-    // 8. CEK DATA REKAP BULANAN
+    // CEK DATA REKAP BULANAN
     async function loadRekapBulanan() {
       var kls = document.getElementById('cek-kelas').value;
       var box = document.getElementById('hasil-rekap-box');
@@ -1541,7 +1758,6 @@
         let countSakit = abs ? abs.filter(a => a.status === 'Sakit').length : 0;
         let countAlpha = abs ? abs.filter(a => a.status === 'Alfa' || a.status === 'Alpha').length : 0;
 
-        // 1. RINCIAN ABSENSI (JIKA ADA YG BUKAN HADIR)
         var txtAbsenHtml = '';
         if (abs && abs.length > 0) {
           var nonHadir = abs.filter(a => a.status !== 'Hadir');
@@ -1559,7 +1775,6 @@
           }
         }
 
-        // 2. RINCIAN SETORAN
         var txtSetoranHtml = '';
         if (!set || set.length === 0) {
           txtSetoranHtml = '<div class="text-gray-400 italic text-[11px] bg-gray-50 p-2 rounded-xl border">Belum ada data setoran</div>';
@@ -1578,7 +1793,6 @@
           });
         }
 
-        // 3. RINCIAN TASMI' / UJIAN
         var txtTasmiHtml = '';
         if (!tas || tas.length === 0) {
           txtTasmiHtml = '<div class="text-gray-400 italic text-[11px] bg-gray-50 p-2 rounded-xl border">Belum ada riwayat Tasmi\' / Ujian</div>';
@@ -1596,7 +1810,6 @@
           });
         }
 
-        // 4. RINCIAN KEDISIPLINAN
         var txtDisiplinHtml = '';
         if (!ked || ked.length === 0) {
           txtDisiplinHtml = '<div class="text-gray-400 italic text-[11px] bg-gray-50 p-2 rounded-xl border">Tidak ada catatan kedisiplinan</div>';
@@ -1651,7 +1864,7 @@
       }
     }
 
-    // 9. LAPORAN INDIVIDUAL
+    // LAPORAN INDIVIDUAL
     async function buatLaporanSantri() {
       var valSiswa = document.getElementById('lap-nama').value.split('|');
       var sId = valSiswa[0];
@@ -1753,7 +1966,7 @@
       };
     }
 
-    // FORMAT PESAN WHATSAPP SESUAI SCREENSHOT
+    // FORMAT PESAN WHATSAPP
     function kirimWaOrtu() {
       if (!currentLaporanData) { 
         alert("Buat Laporan / Rapor terlebih dahulu!"); 
