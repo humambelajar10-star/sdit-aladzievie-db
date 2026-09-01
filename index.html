@@ -85,8 +85,8 @@
       <!-- FORM LOGIN WALI MURID -->
       <div id="form-login-ortu" class="hidden space-y-3 text-left">
         <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">ID Siswa Ananda</label>
-          <input type="text" id="login-nisn" placeholder="Masukkan ID Siswa (Contoh: 3144052408)" class="w-full bg-gray-50 border rounded-xl p-3 text-sm focus:outline-[#1A98FF]">
+          <label class="block text-xs font-semibold text-gray-600 mb-1">NIS / ID Siswa Ananda</label>
+          <input type="text" id="login-nisn" placeholder="Masukkan NIS (Contoh: 3144052408)" class="w-full bg-gray-50 border rounded-xl p-3 text-sm focus:outline-[#1A98FF]">
         </div>
         <button type="button" onclick="prosesLoginOrtu()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-md transition text-sm">
           🔑 Masuk Portal Wali Murid
@@ -710,7 +710,7 @@
           PORTAL WALI MURID
         </span>
         <h2 class="text-xl font-extrabold" id="ortu-siswa-nama">Nama Ananda</h2>
-        <p class="text-xs text-emerald-100" id="ortu-siswa-info">Kelas: - | ID Siswa: -</p>
+        <p class="text-xs text-emerald-100" id="ortu-siswa-info">Kelas: - | NIS: -</p>
       </div>
     </div>
 
@@ -1005,7 +1005,7 @@
       var msg = document.getElementById('login-msg');
 
       if (!nisnVal) {
-        msg.innerText = "Masukkan ID Siswa Ananda!";
+        msg.innerText = "Masukkan NIS / ID Siswa Ananda!";
         msg.classList.remove('hidden');
         return;
       }
@@ -1015,16 +1015,29 @@
       msg.classList.remove('hidden');
 
       try {
-        // Cek data siswa berdasarkan ID_Siswa dari Supabase kamu
-        const { data: siswa, error } = await db
+        // Mencari langsung di kolom 'nis' sesuai tabel Supabase kamu
+        let { data: siswaList, error } = await db
           .from('siswa')
           .select('*')
-          .eq('ID_Siswa', nisnVal)
-          .single();
+          .eq('nis', nisnVal);
 
-        if (error || !siswa) throw new Error("ID Siswa tidak ditemukan! Pastikan nomor sudah benar.");
+        // Jika pencarian langsung gagal, coba ambil semua data siswa dan filter
+        if (error || !siswaList || siswaList.length === 0) {
+          const { data: allSiswa, error: errAll } = await db.from('siswa').select('*');
+          if (errAll) {
+            throw new Error("Akses data terhalang. Mohon aktifkan RLS Policy di Supabase!");
+          }
+          if (allSiswa && allSiswa.length > 0) {
+            siswaList = allSiswa.filter(s => String(s.nis || '').trim() === nisnVal);
+          }
+        }
 
-        var namaSiswa = siswa.Nama_Siswa || siswa.nama;
+        if (!siswaList || siswaList.length === 0) {
+          throw new Error("NIS (" + nisnVal + ") tidak ditemukan! Pastikan nomor sudah benar.");
+        }
+
+        var siswa = siswaList[0];
+        var namaSiswa = siswa.nama || siswa.Nama_Siswa || 'Ananda';
 
         currentSessionUser = 'Wali Murid - ' + namaSiswa;
         currentSessionRole = 'Ortu';
@@ -1061,12 +1074,12 @@
 
     // 2. LOAD PORTAL WALI MURID
     async function loadPortalWaliMurid(siswa) {
-      var namaSiswa = siswa.Nama_Siswa || siswa.nama;
-      var klsSiswa = siswa.Kelas || siswa.kelas;
-      var idSiswa = siswa.ID_Siswa || siswa.id;
+      var namaSiswa = siswa.nama || siswa.Nama_Siswa;
+      var klsSiswa = siswa.kelas || siswa.Kelas;
+      var idSiswa = siswa.id; // Memakai ID unik bawaan (72, 73, 67, dll) untuk relasi data
 
       document.getElementById('ortu-siswa-nama').innerText = namaSiswa;
-      document.getElementById('ortu-siswa-info').innerText = 'Kelas: ' + klsSiswa + ' | ID Siswa: ' + idSiswa;
+      document.getElementById('ortu-siswa-info').innerText = 'Kelas: ' + klsSiswa + ' | NIS: ' + (siswa.nis || '-');
 
       // 1. Ambil Data Absensi
       const { data: abs } = await db.from('absensi').select('*').eq('siswa_id', idSiswa);
@@ -1261,8 +1274,8 @@
 
     // LOAD DATA KELAS & SISWA
     async function loadKelasOptions() {
-      const { data } = await db.from('siswa').select('Kelas, kelas');
-      var list = data ? [...new Set(data.map(item => item.Kelas || item.kelas))] : ['Kelas 1', 'Kelas 2', 'Kelas 3', 'Kelas 4', 'Kelas 5', 'Kelas 6'];
+      const { data } = await db.from('siswa').select('kelas, Kelas');
+      var list = data ? [...new Set(data.map(item => item.kelas || item.Kelas))] : ['Kelas 1', 'Kelas 2', 'Kelas 3', 'Kelas 4', 'Kelas 5', 'Kelas 6'];
 
       ['absen-kelas', 'setor-kelas', 'bulk-setor-kelas', 'tasmi-kelas', 'bulk-tasmi-kelas', 'filter-tasmi-kelas', 'disiplin-kelas', 'filter-disiplin-kelas', 'cek-kelas', 'lap-kelas'].forEach(function(id) {
         var el = document.getElementById(id);
@@ -1276,7 +1289,7 @@
 
     async function getSiswaByKelasData(kls) {
       if(!kls) return [];
-      const { data } = await db.from('siswa').select('*').or('Kelas.eq.' + kls + ',kelas.eq.' + kls);
+      const { data } = await db.from('siswa').select('*').or('kelas.eq.' + kls + ',Kelas.eq.' + kls);
       return data || [];
     }
 
@@ -1287,8 +1300,8 @@
       const siswa = await getSiswaByKelasData(kls);
       box.innerHTML = '';
       siswa.forEach(function(s) {
-        var sId = s.ID_Siswa || s.id;
-        var sNama = s.Nama_Siswa || s.nama;
+        var sId = s.id;
+        var sNama = s.nama || s.Nama_Siswa;
         box.innerHTML += '<div class="flex justify-between items-center bg-gray-50 p-2 rounded-xl border text-xs">' +
           '<span class="font-semibold">' + sNama + '</span>' +
           '<select data-id="' + sId + '" data-nama="' + sNama + '" class="absen-status bg-white border rounded p-1 text-xs">' +
@@ -1303,8 +1316,8 @@
       const siswa = await getSiswaByKelasData(kls);
       el.innerHTML = '<option value="">Pilih Siswa</option>';
       siswa.forEach(function(s) {
-        var sId = s.ID_Siswa || s.id;
-        var sNama = s.Nama_Siswa || s.nama;
+        var sId = s.id;
+        var sNama = s.nama || s.Nama_Siswa;
         el.innerHTML += '<option value="' + sId + '|' + sNama + '">' + sNama + '</option>';
       });
     }
@@ -1322,8 +1335,8 @@
       }
 
       siswa.forEach(function(s) {
-        var sId = s.ID_Siswa || s.id;
-        var sNama = s.Nama_Siswa || s.nama;
+        var sId = s.id;
+        var sNama = s.nama || s.Nama_Siswa;
         box.innerHTML += '<div class="bg-gray-50 p-2.5 rounded-xl border space-y-1.5 text-xs bulk-item" data-id="' + sId + '">' +
           '<div class="font-bold text-gray-800">' + sNama + '</div>' +
           '<div class="grid grid-cols-2 gap-2">' +
@@ -1345,8 +1358,8 @@
       const siswa = await getSiswaByKelasData(kls);
       el.innerHTML = '<option value="">Pilih Siswa</option>';
       siswa.forEach(function(s) {
-        var sId = s.ID_Siswa || s.id;
-        var sNama = s.Nama_Siswa || s.nama;
+        var sId = s.id;
+        var sNama = s.nama || s.Nama_Siswa;
         el.innerHTML += '<option value="' + sId + '|' + sNama + '">' + sNama + '</option>';
       });
     }
@@ -1364,8 +1377,8 @@
       }
 
       siswa.forEach(function(s) {
-        var sId = s.ID_Siswa || s.id;
-        var sNama = s.Nama_Siswa || s.nama;
+        var sId = s.id;
+        var sNama = s.nama || s.Nama_Siswa;
         box.innerHTML += '<div class="bg-gray-50 p-2.5 rounded-xl border space-y-1.5 text-xs bulk-tasmi-item" data-id="' + sId + '">' +
           '<div class="font-bold text-gray-800">' + sNama + '</div>' +
           '<div class="grid grid-cols-2 gap-2">' +
@@ -1385,8 +1398,8 @@
       const siswa = await getSiswaByKelasData(kls);
       el.innerHTML = '<option value="">Pilih Siswa</option>';
       siswa.forEach(function(s) {
-        var sId = s.ID_Siswa || s.id;
-        var sNama = s.Nama_Siswa || s.nama;
+        var sId = s.id;
+        var sNama = s.nama || s.Nama_Siswa;
         el.innerHTML += '<option value="' + sId + '|' + sNama + '">' + sNama + '</option>';
       });
     }
@@ -1397,8 +1410,8 @@
       const siswa = await getSiswaByKelasData(kls);
       el.innerHTML = '<option value="">Pilih Siswa</option>';
       siswa.forEach(function(s) {
-        var sId = s.ID_Siswa || s.id;
-        var sNama = s.Nama_Siswa || s.nama;
+        var sId = s.id;
+        var sNama = s.nama || s.Nama_Siswa;
         el.innerHTML += '<option value="' + sId + '|' + sNama + '">' + sNama + '</option>';
       });
     }
@@ -1588,10 +1601,9 @@
         if(!siswaList || siswaList.length === 0) { alert("Tidak ada data siswa di kelas ini."); return; }
 
         var inserts = siswaList.map(function(s) {
-          var sId = s.ID_Siswa || s.id;
           return {
             tanggal: tgl,
-            siswa_id: sId,
+            siswa_id: s.id,
             jenis: 'Prestasi',
             catatan: 'Kedisiplinan - Tertib Harian (Nihil Pelanggaran)',
             pencatat: currentSessionUser
@@ -1678,7 +1690,7 @@
       var filteredData = data;
       if (klsFilter && klsFilter !== '') {
         filteredData = data.filter(function(d) {
-          var klsS = d.siswa ? (d.siswa.Kelas || d.siswa.kelas) : '';
+          var klsS = d.siswa ? (d.siswa.kelas || d.siswa.Kelas) : '';
           return klsS === klsFilter;
         });
       }
@@ -1691,8 +1703,8 @@
       filteredData.forEach(function(d) {
         var isLulus = d.status === 'LULUS';
         var statusBadge = isLulus ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800';
-        var sNama = d.siswa ? (d.siswa.Nama_Siswa || d.siswa.nama) : 'Siswa #' + d.siswa_id;
-        var sKelas = d.siswa ? (d.siswa.Kelas || d.siswa.kelas) : '-';
+        var sNama = d.siswa ? (d.siswa.nama || d.siswa.Nama_Siswa) : 'Siswa #' + d.siswa_id;
+        var sKelas = d.siswa ? (d.siswa.kelas || d.siswa.Kelas) : '-';
 
         box.innerHTML += '<div class="bg-gray-50 p-3 rounded-xl border space-y-1 flex justify-between items-center mb-1.5">' +
           '<div class="space-y-1">' +
@@ -1729,7 +1741,7 @@
       var filteredData = data;
       if (klsFilter && klsFilter !== '') {
         filteredData = data.filter(function(d) {
-          var klsS = d.siswa ? (d.siswa.Kelas || d.siswa.kelas) : '';
+          var klsS = d.siswa ? (d.siswa.kelas || d.siswa.Kelas) : '';
           return klsS === klsFilter;
         });
       }
@@ -1742,8 +1754,8 @@
       filteredData.forEach(function(d) {
         var isPrestasi = d.jenis === 'Prestasi';
         var badgeColor = isPrestasi ? 'bg-blue-100 text-blue-800' : 'bg-rose-100 text-rose-800';
-        var sNama = d.siswa ? (d.siswa.Nama_Siswa || d.siswa.nama) : 'Siswa #' + d.siswa_id;
-        var sKelas = d.siswa ? (d.siswa.Kelas || d.siswa.kelas) : '-';
+        var sNama = d.siswa ? (d.siswa.nama || d.siswa.Nama_Siswa) : 'Siswa #' + d.siswa_id;
+        var sKelas = d.siswa ? (d.siswa.kelas || d.siswa.Kelas) : '-';
 
         box.innerHTML += '<div class="bg-gray-50 p-3 rounded-xl border space-y-1 flex justify-between items-center mb-1.5">' +
           '<div class="space-y-1">' +
@@ -1770,7 +1782,7 @@
       box.innerHTML = '<p class="text-xs text-center text-gray-500 font-semibold py-4">⏳ Mengambil data rekap sekelas...</p>';
       btnCetak.classList.add('hidden');
 
-      const { data: siswaList } = await db.from('siswa').select('*').or('Kelas.eq.' + kls + ',kelas.eq.' + kls);
+      const { data: siswaList } = await db.from('siswa').select('*').or('kelas.eq.' + kls + ',Kelas.eq.' + kls);
 
       box.innerHTML = '';
       if (!siswaList || siswaList.length === 0) {
@@ -1786,8 +1798,8 @@
       '</div>';
 
       for (let s of siswaList) {
-        var sId = s.ID_Siswa || s.id;
-        var sNama = s.Nama_Siswa || s.nama;
+        var sId = s.id;
+        var sNama = s.nama || s.Nama_Siswa;
 
         const { data: abs } = await db.from('absensi').select('*').eq('siswa_id', sId).order('tanggal', { ascending: false });
         const { data: set } = await db.from('tahfidz').select('*').eq('siswa_id', sId).order('tanggal', { ascending: false });
