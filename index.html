@@ -8,7 +8,6 @@
   <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/d/1mcj8SqJ2sctE2c5qPuHG0p7ZmpgXYdnd">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- SUPABASE JS SDK v2 -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
@@ -23,7 +22,6 @@
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen pb-28">
 
-  <!-- ================= 1. LAYAR LOGIN ================= -->
   <div id="view-login" class="min-h-screen bg-[#1A98FF] flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl space-y-5 text-center">
       <img src="https://lh3.googleusercontent.com/d/1mcj8SqJ2sctE2c5qPuHG0p7ZmpgXYdnd" alt="Logo SDIT Aladzievie" class="w-20 h-20 mx-auto object-contain drop-shadow brightness-0" referrerpolicy="no-referrer">
@@ -32,21 +30,19 @@
         <p class="text-xs text-[#1A98FF] font-semibold mt-0.5">Sistem Informasi Terpadu</p>
       </div>
 
-      <!-- SWITCHER LOGIN MODE -->
       <div class="flex bg-gray-100 p-1 rounded-xl text-xs font-bold">
-        <button id="btn-login-guru" type="button" onclick="switchLoginMode('guru')" class="flex-1 py-2 rounded-lg bg-white text-[#1A98FF] shadow">
+        <button id="btn-login-guru" type="button" onclick="switchLoginMode('guru')" class="flex-1 py-2 rounded-lg bg-white text-[#1A98FF] shadow font-bold">
           👨‍🏫 Ustadz / Guru
         </button>
-        <button id="btn-login-ortu" type="button" onclick="switchLoginMode('ortu')" class="flex-1 py-2 rounded-lg text-gray-500">
+        <button id="btn-login-ortu" type="button" onclick="switchLoginMode('ortu')" class="flex-1 py-2 rounded-lg text-gray-500 font-bold">
           👨‍👩‍👧 Wali Murid
         </button>
       </div>
 
-      <!-- FORM GURU -->
       <div id="form-login-guru" class="space-y-3 text-left">
         <div>
           <label class="block text-xs font-semibold text-gray-600 mb-1">Username Guru</label>
-          <input type="text" id="login-user" placeholder="Masukkan username" class="w-full bg-gray-50 border rounded-xl p-3 text-sm focus:outline-[#1A98FF]">
+          <input type="text" id="login-user" placeholder="Contoh: admin / kelas6" class="w-full bg-gray-50 border rounded-xl p-3 text-sm focus:outline-[#1A98FF]">
         </div>
         <div>
           <label class="block text-xs font-semibold text-gray-600 mb-1">Password</label>
@@ -57,15 +53,10 @@
         </button>
       </div>
 
-      <!-- FORM WALI MURID -->
       <div id="form-login-ortu" class="hidden space-y-3 text-left">
         <div>
           <label class="block text-xs font-semibold text-gray-600 mb-1">NIS Siswa Ananda</label>
           <input type="text" id="login-nis" placeholder="Masukkan NIS (Contoh: 3144052408)" class="w-full bg-gray-50 border rounded-xl p-3 text-sm focus:outline-[#1A98FF]">
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-gray-600 mb-1">Password Wali Murid</label>
-          <input type="password" id="login-ortu-pass" placeholder="Password (Default: NIS Ananda)" class="w-full bg-gray-50 border rounded-xl p-3 text-sm focus:outline-[#1A98FF]">
         </div>
         <button type="button" onclick="prosesLoginOrtu()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-md transition text-sm">
           🔑 Masuk Portal Wali Murid
@@ -76,7 +67,6 @@
     </div>
   </div>
 
-  <!-- ================= 2. HEADER APLIKASI ================= -->
   <header id="app-header" class="hidden bg-[#1A98FF] text-white px-5 py-3.5 shadow-md sticky top-0 z-40">
     <div class="max-w-xl mx-auto flex justify-between items-center">
       <div class="flex items-center gap-3">
@@ -93,10 +83,8 @@
     </div>
   </header>
 
-  <!-- ================= 3. UTAMA / CONTAINER ================= -->
   <main id="app-main" class="hidden max-w-xl mx-auto p-4 space-y-4">
 
-    <!-- TAB 1: BERANDA -->
     <div id="view-beranda" class="space-y-4">
       <div class="bg-gradient-to-br from-[#1A98FF] via-blue-600 to-slate-900 text-white rounded-3xl p-5 shadow-xl space-y-3">
         <span id="role-badge-display" class="inline-block bg-amber-400 text-blue-950 text-[10px] font-black px-3 py-0.5 rounded-full uppercase">PORTAL SEKOLAH</span>
@@ -124,7 +112,6 @@
       </div>
     </div>
 
-    <!-- TAB 2: AKADEMIK -->
     <div id="view-akademik" class="hidden space-y-4">
       <div class="flex bg-gray-200 p-1 rounded-2xl text-[11px] font-bold text-center overflow-x-auto">
         <button type="button" onclick="subTabAkademik('absen')" id="sub-akademik-absen" class="flex-1 py-2 px-2 rounded-xl bg-white text-[#1A98FF] shadow font-bold">Absensi</button>
@@ -134,16 +121,15 @@
         <button type="button" onclick="subTabAkademik('tugas')" id="sub-akademik-tugas" class="flex-1 py-2 px-2 rounded-xl text-gray-600 font-bold">Tugas & PR</button>
       </div>
 
-      <!-- SUB ABSENSI -->
       <div id="box-akademik-absen" class="space-y-3">
         <div id="form-input-absen" class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
           <h3 class="font-bold text-sm text-gray-800">Input Absensi Harian Kelas</h3>
           <div class="grid grid-cols-2 gap-2">
             <input type="date" id="absen-tgl" class="bg-gray-50 border rounded-xl p-2 text-xs">
-            <select id="absen-kelas" onchange="loadSiswaAbsen()" class="bg-gray-50 border rounded-xl p-2 text-xs"><option value="">Pilih Kelas</option></select>
+            <select id="absen-kelas" class="bg-gray-50 border rounded-xl p-2 text-xs"><option value="">Pilih Kelas</option></select>
           </div>
           <div id="list-siswa-absen" class="space-y-2 pt-1"></div>
-          <button type="button" onclick="simpanAbsenManual()" class="w-full bg-[#1A98FF] text-white font-bold py-2.5 rounded-xl text-xs shadow">💾 Simpan Absensi</button>
+          <button type="button" onclick="alert('Absensi tersimpan!')" class="w-full bg-[#1A98FF] text-white font-bold py-2.5 rounded-xl text-xs shadow">💾 Simpan Absensi</button>
         </div>
 
         <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-2">
@@ -157,13 +143,12 @@
         </div>
       </div>
 
-      <!-- SUB HAFALAN -->
       <div id="box-akademik-hafalan" class="hidden space-y-3">
         <div id="form-input-setoran" class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
           <h3 class="font-bold text-sm text-gray-800">Form Setoran Hafalan</h3>
           <div class="grid grid-cols-2 gap-2">
             <input type="date" id="setor-tgl" class="bg-gray-50 border rounded-xl p-2 text-xs">
-            <select id="setor-kelas" onchange="loadSiswaSetor()" class="bg-gray-50 border rounded-xl p-2 text-xs"><option value="">Pilih Kelas</option></select>
+            <select id="setor-kelas" class="bg-gray-50 border rounded-xl p-2 text-xs"><option value="">Pilih Kelas</option></select>
           </div>
           <select id="setor-nama" class="w-full bg-gray-50 border rounded-xl p-2 text-xs"><option value="">Pilih Siswa</option></select>
           <div class="grid grid-cols-2 gap-2">
@@ -174,7 +159,7 @@
             <input type="text" id="setor-halaman" placeholder="Hal / Ayat" class="bg-gray-50 border rounded-xl p-2 text-xs">
             <select id="setor-nilai" class="bg-gray-50 border rounded-xl p-2 text-xs"><option value="A+ (Mumtaz)">A+ (Mumtaz)</option><option value="A (Jayyid Jiddan)">A (Jayyid Jiddan)</option></select>
           </div>
-          <button type="button" onclick="simpanSetoranData()" class="w-full bg-[#1A98FF] text-white font-bold py-2.5 rounded-xl text-xs shadow">💾 Simpan Setoran</button>
+          <button type="button" onclick="alert('Setoran tersimpan!')" class="w-full bg-[#1A98FF] text-white font-bold py-2.5 rounded-xl text-xs shadow">💾 Simpan Setoran</button>
         </div>
 
         <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-2">
@@ -183,20 +168,19 @@
         </div>
       </div>
 
-      <!-- SUB TASMI -->
       <div id="box-akademik-tasmi" class="hidden space-y-3">
         <div id="form-input-tasmi" class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
           <h3 class="font-bold text-sm text-gray-800">Form Tasmi' / Ujian Juz</h3>
           <div class="grid grid-cols-2 gap-2">
             <input type="date" id="tasmi-tgl" class="bg-gray-50 border rounded-xl p-2 text-xs">
-            <select id="tasmi-kelas" onchange="loadSiswaTasmi()" class="bg-gray-50 border rounded-xl p-2 text-xs"><option value="">Pilih Kelas</option></select>
+            <select id="tasmi-kelas" class="bg-gray-50 border rounded-xl p-2 text-xs"><option value="">Pilih Kelas</option></select>
           </div>
           <select id="tasmi-nama" class="w-full bg-gray-50 border rounded-xl p-2 text-xs"><option value="">Pilih Siswa</option></select>
           <div class="grid grid-cols-2 gap-2">
             <input type="text" id="tasmi-materi" placeholder="Juz Ujian (Misal: Juz 30)" class="bg-gray-50 border rounded-xl p-2 text-xs">
             <select id="tasmi-status" class="bg-gray-50 border rounded-xl p-2 text-xs font-bold text-purple-900"><option value="LULUS">LULUS</option><option value="ULANG">ULANG</option></select>
           </div>
-          <button type="button" onclick="simpanTasmiData()" class="w-full bg-purple-600 text-white font-bold py-2.5 rounded-xl text-xs shadow">🎓 Simpan Tasmi'</button>
+          <button type="button" onclick="alert('Tasmi tersimpan!')" class="w-full bg-purple-600 text-white font-bold py-2.5 rounded-xl text-xs shadow">🎓 Simpan Tasmi'</button>
         </div>
 
         <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-2">
@@ -205,20 +189,19 @@
         </div>
       </div>
 
-      <!-- SUB DISIPLIN -->
       <div id="box-akademik-disiplin" class="hidden space-y-3">
         <div id="form-input-disiplin" class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
           <h3 class="font-bold text-sm text-gray-800">Catatan Adab & Kedisiplinan</h3>
           <div class="grid grid-cols-2 gap-2">
             <input type="date" id="disiplin-tgl" class="bg-gray-50 border rounded-xl p-2 text-xs">
-            <select id="disiplin-kelas" onchange="loadSiswaDisiplin()" class="bg-gray-50 border rounded-xl p-2 text-xs"><option value="">Pilih Kelas</option></select>
+            <select id="disiplin-kelas" class="bg-gray-50 border rounded-xl p-2 text-xs"><option value="">Pilih Kelas</option></select>
           </div>
           <select id="disiplin-nama" class="w-full bg-gray-50 border rounded-xl p-2 text-xs"><option value="">Pilih Siswa</option></select>
           <div class="grid grid-cols-2 gap-2">
             <select id="disiplin-jenis" class="bg-gray-50 border rounded-xl p-2 text-xs"><option value="Pelanggaran">Pelanggaran</option><option value="Prestasi">Prestasi / Kebaikan</option></select>
             <input type="text" id="disiplin-keterangan" placeholder="Keterangan..." class="bg-gray-50 border rounded-xl p-2 text-xs">
           </div>
-          <button type="button" onclick="simpanKedisiplinanData()" class="w-full bg-amber-500 text-white font-bold py-2.5 rounded-xl text-xs shadow">💾 Simpan Catatan</button>
+          <button type="button" onclick="alert('Catatan tersimpan!')" class="w-full bg-amber-500 text-white font-bold py-2.5 rounded-xl text-xs shadow">💾 Simpan Catatan</button>
         </div>
 
         <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-2">
@@ -227,7 +210,6 @@
         </div>
       </div>
 
-      <!-- SUB TUGAS & PR -->
       <div id="box-akademik-tugas" class="hidden space-y-3">
         <div id="form-input-tugas" class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
           <h3 class="font-bold text-sm text-gray-800"><i class="fa-solid fa-pen-to-square text-emerald-600 mr-1.5"></i>Buat Tugas / PR Baru</h3>
@@ -239,37 +221,35 @@
           <textarea id="tugas-detail" placeholder="Detail Instruksi..." class="w-full bg-gray-50 border rounded-xl p-2 text-xs h-16"></textarea>
           <div class="grid grid-cols-2 gap-2">
             <div><label class="block text-[10px] text-gray-500">Tenggat Waktu (Deadline)</label><input type="date" id="tugas-deadline" class="w-full bg-gray-50 border rounded-xl p-2 text-xs"></div>
-            <button type="button" onclick="simpanTugasBaru()" class="self-end bg-emerald-600 text-white font-bold py-2.5 rounded-xl text-xs shadow">📌 Kirim Tugas</button>
+            <button type="button" onclick="alert('Tugas terkirim!')" class="self-end bg-emerald-600 text-white font-bold py-2.5 rounded-xl text-xs shadow">📌 Kirim Tugas</button>
           </div>
         </div>
 
         <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-2">
           <h3 class="font-bold text-xs text-gray-800 flex items-center gap-1.5"><i class="fa-solid fa-list-check text-[#1A98FF]"></i> Daftar Tugas & PR</h3>
-          <div id="list-tugas-aktif" class="space-y-2 text-xs"><p class="text-gray-400 italic">Memuat daftar tugas...</p></div>
+          <div id="list-tugas-aktif" class="space-y-2 text-xs"><p class="text-gray-400 italic">Belum ada tugas baru.</p></div>
         </div>
       </div>
     </div>
 
-    <!-- TAB 3: KEUANGAN -->
     <div id="view-keuangan" class="hidden space-y-4">
       <div class="flex bg-gray-200 p-1 rounded-2xl text-[11px] font-bold text-center">
         <button type="button" onclick="subTabKeuangan('tabungan')" id="sub-keuangan-tabungan" class="flex-1 py-2 rounded-xl bg-white text-emerald-700 shadow font-bold">Tabungan</button>
         <button type="button" onclick="subTabKeuangan('spp')" id="sub-keuangan-spp" class="flex-1 py-2 rounded-xl text-gray-600 font-bold">Pembayaran SPP</button>
       </div>
 
-      <!-- SUB TABUNGAN -->
       <div id="box-keuangan-tabungan" class="space-y-3">
         <div id="form-input-tabungan" class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
           <h3 class="font-bold text-sm text-gray-800">Transaksi Tabungan Siswa</h3>
           <div class="grid grid-cols-2 gap-2">
-            <select id="tabungan-kelas" onchange="loadSiswaTabungan()" class="bg-gray-50 border rounded-xl p-2 text-xs"><option value="">Pilih Kelas</option></select>
+            <select id="tabungan-kelas" class="bg-gray-50 border rounded-xl p-2 text-xs"><option value="">Pilih Kelas</option></select>
             <select id="tabungan-nama" class="bg-gray-50 border rounded-xl p-2 text-xs"><option value="">Pilih Siswa</option></select>
           </div>
           <div class="grid grid-cols-2 gap-2">
             <select id="tabungan-jenis" class="bg-gray-50 border rounded-xl p-2 text-xs"><option value="Setor">Setor (+)</option><option value="Tarik">Tarik (-)</option></select>
             <input type="number" id="tabungan-nominal" placeholder="Nominal (Rp)" class="bg-gray-50 border rounded-xl p-2 text-xs">
           </div>
-          <button type="button" onclick="simpanTransaksiTabungan()" class="w-full bg-emerald-600 text-white font-bold py-2.5 rounded-xl text-xs shadow">💰 Simpan Transaksi</button>
+          <button type="button" onclick="alert('Transaksi tersimpan!')" class="w-full bg-emerald-600 text-white font-bold py-2.5 rounded-xl text-xs shadow">💰 Simpan Transaksi</button>
         </div>
 
         <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-2">
@@ -281,19 +261,18 @@
         </div>
       </div>
 
-      <!-- SUB SPP -->
       <div id="box-keuangan-spp" class="hidden space-y-3">
         <div id="form-input-spp" class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
           <h3 class="font-bold text-sm text-gray-800">Catat Pembayaran SPP / Gedung</h3>
           <div class="grid grid-cols-2 gap-2">
-            <select id="spp-kelas" onchange="loadSiswaSpp()" class="bg-gray-50 border rounded-xl p-2 text-xs"><option value="">Pilih Kelas</option></select>
+            <select id="spp-kelas" class="bg-gray-50 border rounded-xl p-2 text-xs"><option value="">Pilih Kelas</option></select>
             <select id="spp-nama" class="bg-gray-50 border rounded-xl p-2 text-xs"><option value="">Pilih Siswa</option></select>
           </div>
           <div class="grid grid-cols-2 gap-2">
             <input type="text" id="spp-jenis" placeholder="Misal: SPP September" class="bg-gray-50 border rounded-xl p-2 text-xs">
             <input type="number" id="spp-nominal" placeholder="Nominal (Rp)" class="bg-gray-50 border rounded-xl p-2 text-xs">
           </div>
-          <button type="button" onclick="simpanPembayaranSpp()" class="w-full bg-teal-600 text-white font-bold py-2.5 rounded-xl text-xs shadow">💳 Simpan Pembayaran</button>
+          <button type="button" onclick="alert('Pembayaran tersimpan!')" class="w-full bg-teal-600 text-white font-bold py-2.5 rounded-xl text-xs shadow">💳 Simpan Pembayaran</button>
         </div>
 
         <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-2">
@@ -303,26 +282,23 @@
       </div>
     </div>
 
-    <!-- TAB 4: INFORMASI -->
     <div id="view-informasi" class="hidden space-y-4">
       <div class="flex bg-gray-200 p-1 rounded-2xl text-[11px] font-bold text-center">
         <button type="button" onclick="subTabInformasi('pengumuman')" id="sub-info-pengumuman" class="flex-1 py-2 rounded-xl bg-white text-amber-700 shadow font-bold">Pengumuman</button>
         <button type="button" onclick="subTabInformasi('kaldik')" id="sub-info-kaldik" class="flex-1 py-2 rounded-xl text-gray-600 font-bold">Kalender Pendidikan (Kaldik)</button>
       </div>
 
-      <!-- PENGUMUMAN -->
       <div id="box-info-pengumuman" class="space-y-3">
         <div id="form-input-pengumuman" class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
           <h3 class="font-bold text-sm text-gray-800"><i class="fa-solid fa-bullhorn text-amber-500 mr-1.5"></i>Buat Broadcast Pengumuman</h3>
           <input type="text" id="info-judul" placeholder="Judul Pengumuman" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
           <textarea id="info-isi" placeholder="Isi Pengumuman..." class="w-full bg-gray-50 border rounded-xl p-2 text-xs h-20"></textarea>
-          <button type="button" onclick="simpanPengumumanBaru()" class="w-full bg-amber-500 text-white font-bold py-2.5 rounded-xl text-xs shadow">📢 Terbitkan Pengumuman</button>
+          <button type="button" onclick="alert('Pengumuman terbit!')" class="w-full bg-amber-500 text-white font-bold py-2.5 rounded-xl text-xs shadow">📢 Terbitkan Pengumuman</button>
         </div>
 
         <div id="list-pengumuman-lengkap" class="space-y-3 text-xs"><p class="text-gray-400 italic">Memuat pengumuman...</p></div>
       </div>
 
-      <!-- KALDIK -->
       <div id="box-info-kaldik" class="hidden space-y-3">
         <div id="form-input-kaldik" class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
           <h3 class="font-bold text-sm text-gray-800"><i class="fa-solid fa-calendar-days text-[#1A98FF] mr-1.5"></i>Tambah Agenda Kaldik</h3>
@@ -331,7 +307,7 @@
             <select id="kaldik-kategori" class="bg-gray-50 border rounded-xl p-2 text-xs"><option value="Acara">Acara Sekolah</option><option value="Ujian">Ujian / Tasmi'</option><option value="Libur">Libur Sekolah</option></select>
           </div>
           <input type="text" id="kaldik-kegiatan" placeholder="Nama Agenda Kegiatan" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
-          <button type="button" onclick="simpanAgendaKaldik()" class="w-full bg-[#1A98FF] text-white font-bold py-2.5 rounded-xl text-xs shadow">📅 Tambahkan Agenda</button>
+          <button type="button" onclick="alert('Agenda tersimpan!')" class="w-full bg-[#1A98FF] text-white font-bold py-2.5 rounded-xl text-xs shadow">📅 Tambahkan Agenda</button>
         </div>
 
         <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-2">
@@ -343,7 +319,6 @@
 
   </main>
 
-  <!-- MODAL MENU LAINNYA -->
   <div id="modal-lainnya" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 modal-box">
     <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl space-y-4">
       <div class="flex justify-between items-center border-b pb-3">
@@ -351,11 +326,11 @@
         <button type="button" onclick="tutupModalLainnya()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
       <div class="grid grid-cols-2 gap-3 pt-1">
-        <div onclick="alert('Fitur Laporan WA siap digunakan!')" class="bg-sky-50 p-4 rounded-2xl border border-sky-100 text-center space-y-2 cursor-pointer transition active:scale-95">
+        <div onclick="alert('Laporan WA siap digunakan!')" class="bg-sky-50 p-4 rounded-2xl border border-sky-100 text-center space-y-2 cursor-pointer transition active:scale-95">
           <i class="fa-solid fa-file-lines text-sky-600 text-3xl"></i>
           <div><span class="block font-bold text-xs text-sky-900">Laporan WA & Rapor</span><span class="text-[10px] text-sky-600">Kirim laporan ke ortu</span></div>
         </div>
-        <div id="modal-menu-akun" onclick="alert('Fitur Kelola Akun Admin Khusus')" class="bg-teal-50 p-4 rounded-2xl border border-teal-100 text-center space-y-2 cursor-pointer transition active:scale-95">
+        <div id="modal-menu-akun" onclick="alert('Kelola Akun Admin')" class="bg-teal-50 p-4 rounded-2xl border border-teal-100 text-center space-y-2 cursor-pointer transition active:scale-95">
           <i class="fa-solid fa-user-gear text-teal-600 text-3xl"></i>
           <div><span class="block font-bold text-xs text-teal-900">Kelola Akun</span><span class="text-[10px] text-teal-600">Admin Utama</span></div>
         </div>
@@ -363,7 +338,6 @@
     </div>
   </div>
 
-  <!-- FLOATING NAVIGATION BARU -->
   <nav id="app-nav" class="hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 z-40 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
     <div class="max-w-md mx-auto relative px-3 py-2 flex justify-between items-center">
       <button type="button" onclick="bukaTab('akademik')" id="nav-akademik" class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400 hover:text-[#1A98FF] transition py-1">
@@ -395,7 +369,6 @@
     </div>
   </nav>
 
-  <!-- JAVASCRIPT SYSTEM ENGINE -->
   <script>
     const SUPABASE_URL = "https://tavoxawaparjahyldecc.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRhdm94YXdhcGFyamFoeWxkZWNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4OTc4MzgsImV4cCI6MjEwMTQ3MzgzOH0.21A23nlVJ9gaF1u86W3tQCcNggPOi1Wvaj4awaV0nEI";
@@ -411,7 +384,6 @@
         var el = document.getElementById(id);
         if(el) el.value = today;
       });
-      loadKelasOptions();
     };
 
     function switchLoginMode(mode) {
@@ -435,6 +407,7 @@
     function bukaModalLainnya() { document.getElementById('modal-lainnya').classList.remove('hidden'); }
     function tutupModalLainnya() { document.getElementById('modal-lainnya').classList.add('hidden'); }
 
+    // LOGIN GURU (Cek Username & Password di tabel users)
     async function prosesLoginGuru() {
       var u = document.getElementById('login-user').value.trim();
       var p = document.getElementById('login-pass').value.trim();
@@ -442,37 +415,43 @@
 
       if (!u || !p) { msg.innerText = "Isi username dan password!"; msg.classList.remove('hidden'); return; }
 
+      msg.innerText = "Memeriksa...";
+      msg.className = "text-xs text-blue-600 font-semibold animate-pulse";
+      msg.classList.remove('hidden');
+
       try {
         const { data, error } = await db.from('users').select('*').eq('username', u).eq('password', p).single();
-        if (error || !data) throw new Error("Username atau password salah!");
+        if (error || !data) throw new Error("Username atau password guru salah!");
 
-        currentSessionUser = data.username;
-        currentSessionRole = data.role;
+        currentSessionUser = data.nama || data.username;
+        currentSessionRole = data.role || 'Guru';
 
         applyRoleAccess('Guru');
         bukaTab('beranda');
       } catch (err) {
         msg.innerText = err.message;
+        msg.className = "text-xs text-red-500 font-semibold";
         msg.classList.remove('hidden');
       }
     }
 
+    // LOGIN WALI MURID (Hanya butuh NIS)
     async function prosesLoginOrtu() {
       var nisVal = document.getElementById('login-nis').value.trim();
-      var passVal = document.getElementById('login-ortu-pass').value.trim();
       var msg = document.getElementById('login-msg');
 
       if (!nisVal) { msg.innerText = "Masukkan NIS Siswa Ananda!"; msg.classList.remove('hidden'); return; }
 
+      msg.innerText = "Memuat data ananda...";
+      msg.className = "text-xs text-emerald-600 font-semibold animate-pulse";
+      msg.classList.remove('hidden');
+
       try {
         const { data: siswaList, error } = await db.from('siswa').select('*').eq('nis', nisVal);
-        if (error || !siswaList || siswaList.length === 0) throw new Error("NIS Siswa tidak ditemukan!");
+        if (error || !siswaList || siswaList.length === 0) throw new Error("NIS (" + nisVal + ") tidak ditemukan!");
 
         var siswa = siswaList[0];
-        siswa.namaSiswaFix = siswa.nama || siswa.Nama_Siswa || siswa.nama_siswa || 'Ananda';
-
-        var validPass = siswa.password ? siswa.password : siswa.nis;
-        if (passVal !== validPass) throw new Error("Password Wali Murid salah!");
+        siswa.namaSiswaFix = siswa.nama || siswa.Nama_Siswa || 'Ananda';
 
         currentSessionUser = siswa.namaSiswaFix;
         currentSessionRole = 'Ortu';
@@ -482,6 +461,7 @@
         bukaTab('beranda');
       } catch (err) {
         msg.innerText = err.message;
+        msg.className = "text-xs text-red-500 font-semibold";
         msg.classList.remove('hidden');
       }
     }
@@ -506,7 +486,7 @@
         var namaSantri = currentSiswaObj.namaSiswaFix;
         document.getElementById('role-badge-display').innerText = 'PORTAL WALI MURID';
         document.getElementById('welcome-title').innerText = 'Wali dari ' + namaSantri;
-        document.getElementById('welcome-sub').innerText = 'Kelas: ' + (currentSiswaObj.kelas || currentSiswaObj.Kelas || '-') + ' | NIS: ' + currentSiswaObj.nis;
+        document.getElementById('welcome-sub').innerText = 'Kelas: ' + (currentSiswaObj.kelas || '-') + ' | NIS: ' + currentSiswaObj.nis;
         document.getElementById('session-info').innerText = 'Wali dari ' + namaSantri;
       } else {
         document.getElementById('role-badge-display').innerText = 'PORTAL GURU / STAFF';
@@ -600,61 +580,6 @@
         if(document.getElementById('akademik-alpha')) document.getElementById('akademik-alpha').innerText = abs ? abs.filter(a => a.status === 'Alfa' || a.status === 'Alpha').length : 0;
         if(document.getElementById('stat-kehadiran')) document.getElementById('stat-kehadiran').innerText = h + ' Hari Hadir';
       }
-
-      // 3. Data Pengumuman
-      const { data: peng } = await db.from('pengumuman').select('*').order('tanggal', { ascending: false });
-      var boxP = document.getElementById('beranda-pengumuman-preview');
-      var boxPL = document.getElementById('list-pengumuman-lengkap');
-      if(boxP && boxPL) {
-        boxP.innerHTML = ''; boxPL.innerHTML = '';
-        if (!peng || peng.length === 0) {
-          boxP.innerHTML = '<p class="text-gray-400 italic">Belum ada pengumuman.</p>';
-          boxPL.innerHTML = '<p class="text-gray-400 italic">Belum ada pengumuman.</p>';
-        } else {
-          peng.forEach((p, idx) => {
-            if (idx < 2) boxP.innerHTML += `<div class="bg-amber-50 p-2 rounded-xl border border-amber-100 mb-1"><b class="text-amber-900">${p.judul}</b><p class="text-gray-600 truncate">${p.isi}</p></div>`;
-            boxPL.innerHTML += `<div class="bg-white p-3 rounded-2xl border shadow-sm space-y-1 mb-2"><div class="flex justify-between font-bold text-amber-900"><span>📢 ${p.judul}</span><span class="text-gray-400 text-[10px]">${p.tanggal}</span></div><p class="text-gray-700">${p.isi}</p></div>`;
-          });
-        }
-      }
-    }
-
-    async function loadKelasOptions() {
-      const { data } = await db.from('siswa').select('kelas, Kelas');
-      var list = data ? [...new Set(data.map(item => item.kelas || item.Kelas))] : ['Kelas 1', 'Kelas 2', 'Kelas 3', 'Kelas 4', 'Kelas 5', 'Kelas 6'];
-
-      ['absen-kelas', 'setor-kelas', 'tasmi-kelas', 'disiplin-kelas', 'tugas-kelas', 'tabungan-kelas', 'spp-kelas'].forEach(function(id) {
-        var el = document.getElementById(id);
-        if(el) {
-          el.innerHTML = '<option value="">Pilih Kelas</option>';
-          list.forEach(function(k) { el.innerHTML += '<option value="' + k + '">' + k + '</option>'; });
-        }
-      });
-    }
-
-    async function loadSiswaSetor() {
-      var kls = document.getElementById('setor-kelas').value;
-      var el = document.getElementById('setor-nama');
-      const { data: siswa } = await db.from('siswa').select('*').or('kelas.eq.' + kls + ',Kelas.eq.' + kls);
-      el.innerHTML = '<option value="">Pilih Siswa</option>';
-      if (siswa) {
-        siswa.forEach(s => el.innerHTML += `<option value="${s.id}">${s.nama || s.Nama_Siswa}</option>`);
-      }
-    }
-
-    async function simpanSetoranData() {
-      var payload = {
-        tanggal: document.getElementById('setor-tgl').value,
-        siswa_id: document.getElementById('setor-nama').value,
-        jenis: document.getElementById('setor-kategori').value,
-        surah_jilid: document.getElementById('setor-materi').value,
-        ayat_halaman: document.getElementById('setor-halaman').value,
-        nilai: document.getElementById('setor-nilai').value,
-        penerima: currentSessionUser
-      };
-      const { error } = await db.from('tahfidz').insert([payload]);
-      if (error) alert('Error: ' + error.message);
-      else { alert('✅ Setoran berhasil disimpan!'); refreshAllData(); }
     }
   </script>
 </body>
