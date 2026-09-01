@@ -18,11 +18,14 @@
     .text-custom-blue { color: #1A98FF; }
     .border-custom-blue { border-color: #1A98FF; }
 
-    .nav-active { color: #1A98FF; font-weight: 700; }
-    .nav-active i { color: #1A98FF; }
+    /* Custom Floating Nav Classes */
+    .nav-btn-active {
+      color: #10B981 !important;
+      font-weight: 700;
+    }
 
     @media print {
-      #app-header, #app-nav, #view-login, .no-print, #modal-pass {
+      #app-header, #app-nav, #view-login, .no-print, #modal-pass, #modal-lainnya, #modal-setoran-choice {
         display: none !important;
       }
       body {
@@ -43,7 +46,7 @@
     }
   </style>
 </head>
-<body class="bg-gray-50 text-gray-800 min-h-screen pb-24">
+<body class="bg-gray-50 text-gray-800 min-h-screen pb-28">
 
   <!-- ================= 1. LAYAR LOGIN ================= -->
   <div id="view-login" class="min-h-screen bg-custom-blue flex items-center justify-center p-4">
@@ -144,13 +147,9 @@
             <div class="w-12 h-12 rounded-2xl bg-blue-100/80 flex items-center justify-center text-[#1A98FF] text-xl shadow-inner"><i class="fa-solid fa-clipboard-user"></i></div>
             <span class="font-bold text-xs text-gray-800">Absensi Harian</span>
           </div>
-          <div onclick="bukaTab('setoran')" class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition active:scale-95 cursor-pointer text-center space-y-2.5 flex flex-col items-center justify-center">
-            <div class="w-12 h-12 rounded-2xl bg-amber-100/80 flex items-center justify-center text-amber-600 text-xl shadow-inner"><i class="fa-solid fa-trophy"></i></div>
-            <span class="font-bold text-xs text-gray-800">Input Setoran</span>
-          </div>
-          <div onclick="bukaTab('tasmi')" class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition active:scale-95 cursor-pointer text-center space-y-2.5 flex flex-col items-center justify-center">
-            <div class="w-12 h-12 rounded-2xl bg-purple-100/80 flex items-center justify-center text-purple-600 text-xl shadow-inner"><i class="fa-solid fa-graduation-cap"></i></div>
-            <span class="font-bold text-xs text-gray-800">Tasmi' & Ujian</span>
+          <div onclick="bukaModalSetoranChoice()" class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition active:scale-95 cursor-pointer text-center space-y-2.5 flex flex-col items-center justify-center">
+            <div class="w-12 h-12 rounded-2xl bg-amber-100/80 flex items-center justify-center text-amber-600 text-xl shadow-inner"><i class="fa-solid fa-book-quran"></i></div>
+            <span class="font-bold text-xs text-gray-800">Setoran & Tasmi'</span>
           </div>
           <div onclick="bukaTab('disiplin')" class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition active:scale-95 cursor-pointer text-center space-y-2.5 flex flex-col items-center justify-center">
             <div class="w-12 h-12 rounded-2xl bg-rose-100/80 flex items-center justify-center text-rose-600 text-xl shadow-inner"><i class="fa-solid fa-shield-halved"></i></div>
@@ -195,7 +194,7 @@
       </div>
     </div>
 
-    <!-- TAB 3: SETORAN -->
+    <!-- TAB 3: SETORAN HAFALAN -->
     <div id="view-setoran" class="hidden space-y-4">
       <div class="flex bg-gray-200 p-1 rounded-xl text-xs font-bold text-center">
         <button id="btn-mode-single" onclick="switchModeSetoran('single')" class="flex-1 py-2 rounded-lg bg-white text-[#1A98FF] shadow">
@@ -700,13 +699,102 @@
     </div>
   </div>
 
-  <!-- NAVIGASI BAWAH RINGKAS & RAPI (BERANDA, CEK DATA, LAPORAN, AKUN) -->
-  <nav id="app-nav" class="hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200/80 py-2.5 z-40 shadow-lg">
-    <div id="nav-container" class="max-w-md mx-auto grid grid-cols-4 text-center text-[10px] font-medium">
-      <button onclick="bukaTab('dashboard')" id="nav-dashboard" class="space-y-1 text-gray-400 hover:text-[#1A98FF] transition"><i class="fa-solid fa-house text-lg block mx-auto"></i>Beranda</button>
-      <button onclick="bukaTab('cekdata')" id="nav-cekdata" class="space-y-1 text-gray-400 hover:text-[#1A98FF] transition"><i class="fa-solid fa-chart-pie text-lg block mx-auto"></i>Cek Data</button>
-      <button onclick="bukaTab('laporan')" id="nav-laporan" class="space-y-1 text-gray-400 hover:text-[#1A98FF] transition"><i class="fa-solid fa-file-chart-column text-lg block mx-auto"></i>Laporan</button>
-      <button onclick="bukaTab('akun')" id="nav-akun" class="hidden space-y-1 text-gray-400 hover:text-[#1A98FF] transition"><i class="fa-solid fa-user-gear text-lg block mx-auto"></i>Akun</button>
+  <!-- MODAL PILIHAN SETORAN (MUNCUL SAAT SETORAN DIKLIK) -->
+  <div id="modal-setoran-choice" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl space-y-4">
+      <div class="flex justify-between items-center border-b pb-3">
+        <h3 class="font-extrabold text-sm text-gray-800 flex items-center gap-2">
+          <i class="fa-solid fa-book-quran text-amber-500"></i> Pilih Jenis Setoran / Ujian
+        </h3>
+        <button onclick="tutupModalSetoranChoice()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <div class="grid grid-cols-2 gap-3 pt-1">
+        <div onclick="bukaTab('setoran'); tutupModalSetoranChoice();" class="bg-amber-50 hover:bg-amber-100 p-4 rounded-2xl border border-amber-200 text-center space-y-2 cursor-pointer transition active:scale-95 shadow-sm">
+          <i class="fa-solid fa-wallet text-amber-600 text-3xl"></i>
+          <div>
+            <span class="block font-bold text-xs text-amber-900">Setoran Hafalan</span>
+            <span class="text-[10px] text-amber-700">Ziyadah, Muraja'ah, Tilawah</span>
+          </div>
+        </div>
+        <div onclick="bukaTab('tasmi'); tutupModalSetoranChoice();" class="bg-purple-50 hover:bg-purple-100 p-4 rounded-2xl border border-purple-200 text-center space-y-2 cursor-pointer transition active:scale-95 shadow-sm">
+          <i class="fa-solid fa-graduation-cap text-purple-600 text-3xl"></i>
+          <div>
+            <span class="block font-bold text-xs text-purple-900">Tasmi' & Ujian</span>
+            <span class="text-[10px] text-purple-700">Tasmi' Juz & Ujian Semester</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL MENU LAINNYA (KHUSUS REKAP, LAPORAN WA, KELOLA AKUN) -->
+  <div id="modal-lainnya" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl space-y-4">
+      <div class="flex justify-between items-center border-b pb-3">
+        <h3 class="font-extrabold text-sm text-gray-800 flex items-center gap-2">
+          <i class="fa-solid fa-grid-2 text-emerald-500"></i> Menu Lainnya
+        </h3>
+        <button onclick="tutupModalLainnya()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <div class="grid grid-cols-2 gap-3 pt-1">
+        <div onclick="bukaTab('cekdata'); tutupModalLainnya();" class="bg-indigo-50 hover:bg-indigo-100 p-4 rounded-2xl border border-indigo-100 text-center space-y-2 cursor-pointer transition active:scale-95">
+          <i class="fa-solid fa-chart-pie text-indigo-600 text-3xl"></i>
+          <div>
+            <span class="block font-bold text-xs text-indigo-900">Rekap Bulanan</span>
+            <span class="text-[10px] text-indigo-600">Lihat rekap per kelas</span>
+          </div>
+        </div>
+        <div onclick="bukaTab('laporan'); tutupModalLainnya();" class="bg-sky-50 hover:bg-sky-100 p-4 rounded-2xl border border-sky-100 text-center space-y-2 cursor-pointer transition active:scale-95">
+          <i class="fa-solid fa-file-lines text-sky-600 text-3xl"></i>
+          <div>
+            <span class="block font-bold text-xs text-sky-900">Laporan WA & Rapor</span>
+            <span class="text-[10px] text-sky-600">Kirim laporan ke ortu</span>
+          </div>
+        </div>
+        <div id="modal-menu-akun" onclick="bukaTab('akun'); tutupModalLainnya();" class="hidden col-span-2 bg-teal-50 hover:bg-teal-100 p-3.5 rounded-2xl border border-teal-100 text-center flex items-center justify-center gap-3 cursor-pointer transition active:scale-95">
+          <i class="fa-solid fa-user-gear text-teal-600 text-xl"></i>
+          <span class="font-bold text-xs text-teal-900">Kelola Akun (Admin Utama)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 4. FLOATING BOTTOM NAVIGATION ================= -->
+  <nav id="app-nav" class="hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 z-40 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
+    <div class="max-w-md mx-auto relative px-4 py-2 flex justify-between items-center">
+      
+      <!-- 1. ABSENSI (KIRI 1) -->
+      <button onclick="bukaTab('absensi')" id="nav-absensi" class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400 hover:text-emerald-500 transition py-1">
+        <i class="fa-solid fa-clipboard-user text-xl"></i>
+        <span class="text-[10px] font-medium">Absensi</span>
+      </button>
+
+      <!-- 2. SETORAN (KIRI 2) -> MEMBUKA POPUP MODAL TASHMI & SETORAN -->
+      <button onclick="bukaModalSetoranChoice()" id="nav-setoran" class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400 hover:text-emerald-500 transition py-1">
+        <i class="fa-solid fa-wallet text-xl"></i>
+        <span class="text-[10px] font-medium">Setoran</span>
+      </button>
+
+      <!-- 3. BERANDA (MELAYANG DI TENGAH) -->
+      <div class="flex-1 flex flex-col items-center justify-center -mt-8 z-10">
+        <button onclick="bukaTab('dashboard')" id="nav-dashboard-btn" class="w-14 h-14 bg-emerald-500 text-white rounded-full flex items-center justify-center shadow-lg border-4 border-white hover:bg-emerald-600 transition active:scale-90">
+          <i class="fa-solid fa-house text-xl"></i>
+        </button>
+        <span id="nav-dashboard-txt" class="text-[10px] font-bold text-emerald-600 mt-1">Beranda</span>
+      </div>
+
+      <!-- 4. DISIPLIN (KANAN 1) -->
+      <button onclick="bukaTab('disiplin')" id="nav-disiplin" class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400 hover:text-emerald-500 transition py-1">
+        <i class="fa-solid fa-shield-halved text-xl"></i>
+        <span class="text-[10px] font-medium">Disiplin</span>
+      </button>
+
+      <!-- 5. LAINNYA (KANAN 2) -> REKAP & LAPORAN WA -->
+      <button onclick="bukaModalLainnya()" id="nav-lainnya" class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400 hover:text-emerald-500 transition py-1">
+        <i class="fa-solid fa-ellipsis text-xl"></i>
+        <span class="text-[10px] font-medium">Lainnya</span>
+      </button>
+
     </div>
   </nav>
 
@@ -739,6 +827,13 @@
       loadKelasOptions();
     };
 
+    // MODAL SYSTEM
+    function bukaModalLainnya() { document.getElementById('modal-lainnya').classList.remove('hidden'); }
+    function tutupModalLainnya() { document.getElementById('modal-lainnya').classList.add('hidden'); }
+
+    function bukaModalSetoranChoice() { document.getElementById('modal-setoran-choice').classList.remove('hidden'); }
+    function tutupModalSetoranChoice() { document.getElementById('modal-setoran-choice').classList.add('hidden'); }
+
     // 1. LOGIN & LOGOUT
     async function prosesLogin() {
       var u = document.getElementById('login-user').value.trim();
@@ -770,18 +865,15 @@
         document.getElementById('app-main').classList.remove('hidden');
         document.getElementById('app-nav').classList.remove('hidden');
 
-        var navBox = document.getElementById('nav-container');
-        var navAkun = document.getElementById('nav-akun');
         var cardAkun = document.getElementById('card-shortcut-akun');
+        var modalMenuAkun = document.getElementById('modal-menu-akun');
 
         if (data.role === 'Admin Utama') {
-          navBox.className = 'max-w-md mx-auto grid grid-cols-4 text-center text-[10px] font-medium';
-          navAkun.classList.remove('hidden');
           if(cardAkun) { cardAkun.classList.remove('hidden'); cardAkun.classList.add('flex'); }
+          if(modalMenuAkun) { modalMenuAkun.classList.remove('hidden'); }
         } else {
-          navBox.className = 'max-w-md mx-auto grid grid-cols-3 text-center text-[10px] font-medium';
-          navAkun.classList.add('hidden');
           if(cardAkun) { cardAkun.classList.add('hidden'); cardAkun.classList.remove('flex'); }
+          if(modalMenuAkun) { modalMenuAkun.classList.add('hidden'); }
         }
 
         bukaTab('dashboard');
@@ -813,11 +905,25 @@
 
       ['dashboard', 'absensi', 'setoran', 'tasmi', 'disiplin', 'cekdata', 'laporan', 'akun'].forEach(function(t) {
         if(document.getElementById('view-' + t)) document.getElementById('view-' + t).classList.add('hidden');
-        if (document.getElementById('nav-' + t)) document.getElementById('nav-' + t).className = 'space-y-1 text-gray-400 hover:text-[#1A98FF] transition';
+        if (document.getElementById('nav-' + t)) document.getElementById('nav-' + t).className = 'flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400 hover:text-emerald-500 transition py-1';
       });
 
       if(document.getElementById('view-' + tabName)) document.getElementById('view-' + tabName).classList.remove('hidden');
-      if (document.getElementById('nav-' + tabName)) document.getElementById('nav-' + tabName).className = 'space-y-1 nav-active';
+      
+      // Highlight Active Bottom Nav Button
+      if (tabName === 'dashboard') {
+        document.getElementById('nav-dashboard-btn').className = 'w-14 h-14 bg-emerald-500 text-white rounded-full flex items-center justify-center shadow-lg border-4 border-white scale-105 transition';
+        document.getElementById('nav-dashboard-txt').className = 'text-[10px] font-bold text-emerald-600 mt-1';
+      } else {
+        document.getElementById('nav-dashboard-btn').className = 'w-14 h-14 bg-emerald-500 text-white rounded-full flex items-center justify-center shadow-md border-4 border-white hover:bg-emerald-600 transition';
+        document.getElementById('nav-dashboard-txt').className = 'text-[10px] font-medium text-gray-500 mt-1';
+        
+        var navTarget = tabName === 'tasmi' ? 'setoran' : tabName;
+        if (document.getElementById('nav-' + navTarget)) {
+          document.getElementById('nav-' + navTarget).className = 'flex-1 flex flex-col items-center justify-center space-y-1 nav-btn-active transition py-1';
+        }
+      }
+
       currentTab = tabName;
 
       if (tabName === 'akun') loadDaftarUser();
