@@ -1750,10 +1750,9 @@ async function loadRekapBulanan() {
 
       box.innerHTML = '<p class="text-xs text-center text-gray-500 font-semibold py-4">⏳ Memuat rekap bulanan sekelas...</p>';
 
-      // Buat format tanggal awal dan akhir bulan yang presisi
       var strBulan = String(bulan).padStart(2, '0');
       var tglAwalBulan = tahun + '-' + strBulan + '-01';
-      var lastDay = new Date(tahun, bulan, 0).getDate(); // Mendapatkan jumlah hari di bulan tsb
+      var lastDay = new Date(tahun, bulan, 0).getDate();
       var tglAkhirBulan = tahun + '-' + strBulan + '-' + String(lastDay).padStart(2, '0');
 
       const { data: siswaList } = await db.from('siswa').select('*').eq('kelas', kls).order('nama', { ascending: true });
@@ -1767,8 +1766,8 @@ async function loadRekapBulanan() {
       document.getElementById('btn-cetak-rekap').classList.remove('hidden');
 
       for (let s of siswaList) {
-        // Query Absensi, Setoran, Tasmi, & Kedisiplinan Menggunakan Rentang Tanggal yang Tepat
-        const { data: abs } = await db.from('absensi').select('*').eq('siswa_id', s.id).gte('tanggal', tglAwalBulan).lte('tanggal', tglAkhirBulan);
+        // Query Absensi, Setoran, Tasmi, & Kedisiplinan
+        const { data: abs } = await db.from('absensi').select('*').eq('siswa_id', s.id).gte('tanggal', tglAwalBulan).lte('tanggal', tglAkhirBulan).order('tanggal', { ascending: true });
         const { data: set } = await db.from('tahfidz').select('*').eq('siswa_id', s.id).gte('tanggal', tglAwalBulan).lte('tanggal', tglAkhirBulan).order('tanggal', { ascending: true });
         const { data: tasmi } = await db.from('ujian').select('*').eq('siswa_id', s.id).gte('tanggal', tglAwalBulan).lte('tanggal', tglAkhirBulan).order('tanggal', { ascending: true });
         const { data: disiplin } = await db.from('kedisiplinan').select('*').eq('siswa_id', s.id).gte('tanggal', tglAwalBulan).lte('tanggal', tglAkhirBulan).order('tanggal', { ascending: true });
@@ -1777,6 +1776,23 @@ async function loadRekapBulanan() {
         let cIzin = abs ? abs.filter(a => a.status === 'Izin').length : 0;
         let cSakit = abs ? abs.filter(a => a.status === 'Sakit').length : 0;
         let cAlpha = abs ? abs.filter(a => a.status === 'Alpha' || a.status === 'Alfa').length : 0;
+
+        // Html Detail Absensi
+        let htmlDetailAbsen = '';
+        if (abs && abs.length > 0) {
+          abs.forEach(a => {
+            var stBadge = a.status === 'Hadir' ? 'bg-blue-100 text-blue-800' : (a.status === 'Izin' ? 'bg-sky-100 text-sky-800' : (a.status === 'Sakit' ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-800'));
+            htmlDetailAbsen += '<div class="bg-gray-50 p-1.5 px-2 rounded-lg border flex justify-between items-center text-[11px]">' +
+              '<span>📅 <b>' + a.tanggal + '</b></span>' +
+              '<div class="flex items-center gap-1.5">' +
+                '<span class="' + stBadge + ' font-bold px-2 py-0.5 rounded text-[10px]">' + a.status + '</span>' +
+                '<button onclick="hapusAbsensiData(' + a.id + ')" class="text-rose-600 hover:text-rose-800 font-bold"><i class="fa-solid fa-trash"></i></button>' +
+              '</div>' +
+            '</div>';
+          });
+        } else {
+          htmlDetailAbsen = '<p class="text-gray-400 italic text-[11px]">Belum ada data kehadiran bulan ini.</p>';
+        }
 
         // Html Setoran
         let htmlSetoran = '';
@@ -1835,12 +1851,19 @@ async function loadRekapBulanan() {
           '</div>' +
           
           '<div>' +
-            '<span class="font-bold text-gray-700 block mb-1">A. Kehadiran Bulanan</span>' +
-            '<div class="grid grid-cols-4 gap-1 text-center font-semibold text-[10px] bg-gray-50 p-2 rounded-xl border">' +
+            '<div class="flex justify-between items-center mb-1">' +
+              '<span class="font-bold text-gray-700">A. Kehadiran Bulanan</span>' +
+              '<button onclick="document.getElementById(\'box-absen-detail-' + s.id + '\').classList.toggle(\'hidden\')" class="text-[10px] text-blue-600 font-bold hover:underline"><i class="fa-solid fa-list-check mr-1"></i>Detail / Hapus Absen</button>' +
+            '</div>' +
+            '<div class="grid grid-cols-4 gap-1 text-center font-semibold text-[10px] bg-gray-50 p-2 rounded-xl border mb-2">' +
               '<div>Hadir<br><b class="text-blue-600 text-xs">' + cHadir + '</b></div>' +
               '<div>Izin<br><b class="text-sky-600 text-xs">' + cIzin + '</b></div>' +
               '<div>Sakit<br><b class="text-amber-600 text-xs">' + cSakit + '</b></div>' +
               '<div>Alpha<br><b class="text-rose-600 text-xs">' + cAlpha + '</b></div>' +
+            '</div>' +
+            '<div id="box-absen-detail-' + s.id + '" class="hidden space-y-1 bg-blue-50/50 p-2 rounded-xl border border-blue-100">' +
+              '<p class="font-bold text-blue-900 text-[10px] mb-1">Rincian Kehadiran Per Tanggal:</p>' +
+              htmlDetailAbsen +
             '</div>' +
           '</div>' +
 
