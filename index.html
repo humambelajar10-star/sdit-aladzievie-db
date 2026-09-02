@@ -1770,7 +1770,7 @@
       }
     }
 
-    // 8. LAPORAN & WA
+    // 8. LAPORAN & WA (LENGKAP DENGAN SETORAN, TASMI', & DISIPLIN)
     async function buatLaporanSantri() {
       var valSiswa = document.getElementById('lap-nama').value.split('|');
       var sId = valSiswa[0];
@@ -1786,21 +1786,123 @@
       document.getElementById('out-kelas').innerText = kls;
       document.getElementById('out-periode').innerText = tglAwal + " s/d " + tglAkhir;
 
+      // 1. Fetch Absensi
       const { data: abs } = await db.from('absensi').select('*').eq('siswa_id', sId).gte('tanggal', tglAwal).lte('tanggal', tglAkhir);
-      const { data: set } = await db.from('tahfidz').select('*').eq('siswa_id', sId).gte('tanggal', tglAwal).lte('tanggal', tglAkhir);
-
       document.getElementById('out-hadir').innerText = abs ? abs.filter(a => a.status==='Hadir').length : 0;
       document.getElementById('out-izin').innerText = abs ? abs.filter(a => a.status==='Izin').length : 0;
       document.getElementById('out-sakit').innerText = abs ? abs.filter(a => a.status==='Sakit').length : 0;
       document.getElementById('out-alpha').innerText = abs ? abs.filter(a => a.status==='Alpha'||a.status==='Alfa').length : 0;
 
-      currentLaporanData = { nama: sNama, kls: kls, periode: tglAwal + " s/d " + tglAkhir, set: set };
+      // 2. Fetch Setoran (Tahfidz/Tilawah)
+      const { data: set } = await db.from('tahfidz').select('*').eq('siswa_id', sId).gte('tanggal', tglAwal).lte('tanggal', tglAkhir).order('tanggal', { ascending: true });
+      var boxSetor = document.getElementById('out-list-setoran');
+      boxSetor.innerHTML = '';
+      if (!set || set.length === 0) {
+        boxSetor.innerHTML = '<p class="text-gray-400 italic">Belum ada catatan setoran pada periode ini.</p>';
+      } else {
+        set.forEach(function(s) {
+          boxSetor.innerHTML += '<div class="bg-gray-50 p-2 rounded-xl border flex justify-between items-center text-xs">' +
+            '<div><b class="text-blue-900">' + (s.jenis || 'Setoran') + '</b>: ' + (s.surah_jilid || '-') + ' (' + (s.ayat_halaman || '-') + ')<br><span class="text-[10px] text-gray-400">' + s.tanggal + '</span></div>' +
+            '<span class="bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded-lg text-[10px]">' + (s.nilai || 'Mumtaz') + '</span>' +
+          '</div>';
+        });
+      }
+
+      // 3. Fetch Tasmi' & Ujian
+      const { data: tasmi } = await db.from('ujian').select('*').eq('siswa_id', sId).gte('tanggal', tglAwal).lte('tanggal', tglAkhir).order('tanggal', { ascending: true });
+      var boxTasmi = document.getElementById('out-list-tasmi');
+      boxTasmi.innerHTML = '';
+      if (!tasmi || tasmi.length === 0) {
+        boxTasmi.innerHTML = '<p class="text-gray-400 italic">Belum ada ujian/tasmi\' pada periode ini.</p>';
+      } else {
+        tasmi.forEach(function(u) {
+          var bgStatus = u.status === 'LULUS' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800';
+          boxTasmi.innerHTML += '<div class="bg-purple-50/50 p-2 rounded-xl border border-purple-100 flex justify-between items-center text-xs">' +
+            '<div><b class="text-purple-900">' + (u.jenis_ujian || 'Ujian') + '</b>: ' + (u.materi_juz || '-') + '<br><span class="text-[10px] text-gray-400">' + u.tanggal + ' • Penguji: ' + (u.penguji || '-') + '</span></div>' +
+            '<span class="' + bgStatus + ' font-bold px-2.5 py-1 rounded-lg text-[10px]">' + (u.status || 'LULUS') + '</span>' +
+          '</div>';
+        });
+      }
+
+      // 4. Fetch Kedisiplinan
+      const { data: disiplin } = await db.from('kedisiplinan').select('*').eq('siswa_id', sId).gte('tanggal', tglAwal).lte('tanggal', tglAkhir).order('tanggal', { ascending: true });
+      var boxDisiplin = document.getElementById('out-list-disiplin');
+      boxDisiplin.innerHTML = '';
+      if (!disiplin || disiplin.length === 0) {
+        boxDisiplin.innerHTML = '<p class="text-gray-400 italic">Tidak ada catatan pelanggaran/prestasi pada periode ini (Nihil).</p>';
+      } else {
+        disiplin.forEach(function(d) {
+          var bgJenis = d.jenis === 'Prestasi' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800';
+          boxDisiplin.innerHTML += '<div class="bg-gray-50 p-2 rounded-xl border flex justify-between items-center text-xs">' +
+            '<div><b class="text-gray-800">' + d.catatan + '</b><br><span class="text-[10px] text-gray-400">' + d.tanggal + '</span></div>' +
+            '<span class="' + bgJenis + ' font-bold px-2 py-0.5 rounded-lg text-[10px]">' + d.jenis + '</span>' +
+          '</div>';
+        });
+      }
+
+      // Simpan data lengkap untuk WA
+      currentLaporanData = { 
+        nama: sNama, 
+        kls: kls, 
+        periode: tglAwal + " s/d " + tglAkhir, 
+        abs: abs, 
+        set: set, 
+        tasmi: tasmi, 
+        disiplin: disiplin 
+      };
     }
 
     function kirimWaOrtu() {
       if (!currentLaporanData) return;
       var d = currentLaporanData;
-      var txt = "Assalamu'alaikum\nLaporan Perkembangan Siswa *SDIT ALADZIEVIE*\nNama: *" + d.nama + "* (" + d.kls + ")\nPeriode: " + d.periode;
+      
+      var textHadir = d.abs ? d.abs.filter(a => a.status==='Hadir').length : 0;
+      var textIzin = d.abs ? d.abs.filter(a => a.status==='Izin').length : 0;
+      var textSakit = d.abs ? d.abs.filter(a => a.status==='Sakit').length : 0;
+      var textAlpha = d.abs ? d.abs.filter(a => a.status==='Alpha'||a.status==='Alfa').length : 0;
+
+      var txt = "Assalamu'alaikum Warahmatullah Wabarakatuh\n\n" +
+        "📋 *LAPORAN PERKEMBANGAN SISWA*\n" +
+        "🏫 *SDIT ALADZIEVIE*\n" +
+        "----------------------------------------\n" +
+        "👤 *Nama*: " + d.nama + "\n" +
+        "🏫 *Kelas*: " + d.kls + "\n" +
+        "📅 *Periode*: " + d.periode + "\n\n" +
+        "📌 *A. KEHADIRAN*\n" +
+        "• Hadir: " + textHadir + " hari\n" +
+        "• Izin: " + textIzin + " hari\n" +
+        "• Sakit: " + textSakit + " hari\n" +
+        "• Alpha: " + textAlpha + " hari\n\n" +
+        "📖 *B. CAPAIAN SETORAN HAFALAN*\n";
+
+      if (d.set && d.set.length > 0) {
+        d.set.forEach(function(s) {
+          txt += "• " + (s.jenis||'Setor') + ": " + (s.surah_jilid||'-') + " (" + (s.ayat_halaman||'-') + ") - Nilai: " + (s.nilai||'Mumtaz') + "\n";
+        });
+      } else {
+        txt += "• Belum ada setoran pada periode ini.\n";
+      }
+
+      txt += "\n🎓 *C. HASIL TASMI' & UJIAN*\n";
+      if (d.tasmi && d.tasmi.length > 0) {
+        d.tasmi.forEach(function(u) {
+          txt += "• " + (u.jenis_ujian||'Ujian') + ": " + (u.materi_juz||'-') + " [" + (u.status||'LULUS') + "]\n";
+        });
+      } else {
+        txt += "• Belum ada ujian pada periode ini.\n";
+      }
+
+      txt += "\n🛡️ *D. CATATAN KEDISIPLINAN*\n";
+      if (d.disiplin && d.disiplin.length > 0) {
+        d.disiplin.forEach(function(c) {
+          txt += "• " + c.catatan + " (" + c.jenis + ")\n";
+        });
+      } else {
+        txt += "• Tertib / Nihil Pelanggaran.\n";
+      }
+
+      txt += "\nJazakumullahu Khairan.\n_Wassalamu'alaikum Warahmatullah Wabarakatuh_";
+
       window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(txt), "_blank");
     }
 
