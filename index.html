@@ -173,7 +173,7 @@
           <h3 class="font-extrabold text-xs uppercase tracking-wider text-gray-700 flex items-center gap-2">
             <i class="fa-solid fa-calendar-check text-[#1A98FF]"></i> Agenda Sekolah Terdekat
           </h3>
-          <button onclick="bukaTab('informasi')" class="text-[11px] text-[#1A98FF] font-bold hover:underline">
+          <button onclick="bukaTab('informasi'); switchSubInformasi('kaldik');" class="text-[11px] text-[#1A98FF] font-bold hover:underline">
             Lihat Kaldik <i class="fa-solid fa-arrow-right ml-0.5"></i>
           </button>
         </div>
@@ -410,7 +410,7 @@
         </div>
       </div>
 
-      <!-- SUB 4: TUGAS & PR (BARU) -->
+      <!-- SUB 4: TUGAS & PR -->
       <div id="sub-box-tugas" class="hidden space-y-4">
         
         <!-- FORM INPUT TUGAS -->
@@ -540,7 +540,7 @@
       </div>
     </div>
 
-    <!-- TAB 4: INFORMASI (PENGUMUMAN & KALDIK) -->
+    <!-- TAB 4: INFORMASI (PENGUMUMAN & KALDIK VISUAL) -->
     <div id="view-informasi" class="hidden space-y-4">
       
       <!-- SUB-NAV INFORMASI -->
@@ -567,8 +567,8 @@
         </div>
       </div>
 
-      <!-- TAMPILAN KALDIK -->
-      <div id="sub-info-box-kaldik" class="hidden space-y-3">
+      <!-- TAMPILAN KALDIK VISUAL INTERAKTIF -->
+      <div id="sub-info-box-kaldik" class="hidden space-y-4">
         <div class="flex justify-between items-center">
           <h3 class="font-extrabold text-xs uppercase tracking-wider text-gray-600">Kalender Pendidikan (Kaldik)</h3>
           <!-- TOMBOL KHUSUS ADMIN UTAMA -->
@@ -576,8 +576,51 @@
             + Tambah Agenda
           </button>
         </div>
-        <div id="list-informasi-kaldik" class="space-y-2 text-xs">
-          <p class="text-gray-400 italic">⏳ Memuat agenda sekolah...</p>
+
+        <!-- CONTAINER KALENDER VISUAL -->
+        <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
+          <!-- NAVIGASI BULAN -->
+          <div class="flex justify-between items-center text-xs font-bold border-b pb-2">
+            <button onclick="changeKaldikMonth(-1)" class="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700">
+              <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <span id="kaldik-month-year" class="text-sm font-extrabold text-blue-900">Bulan Tahun</span>
+            <button onclick="changeKaldikMonth(1)" class="p-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700">
+              <i class="fa-solid fa-chevron-right"></i>
+            </button>
+          </div>
+
+          <!-- GRID HARI (MINGGU - SABTU) -->
+          <div class="grid grid-cols-7 gap-1 text-center font-bold text-[10px] text-gray-400">
+            <div class="text-rose-500">Min</div>
+            <div>Sen</div>
+            <div>Sel</div>
+            <div>Rab</div>
+            <div>Kam</div>
+            <div>Jum</div>
+            <div class="text-blue-500">Sab</div>
+          </div>
+
+          <!-- GRID TANGGAL -->
+          <div id="kaldik-calendar-grid" class="grid grid-cols-7 gap-1 text-center text-xs"></div>
+
+          <!-- LEGENDA WARNA -->
+          <div class="flex justify-center items-center gap-3 pt-2 border-t text-[10px] font-semibold text-gray-600">
+            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-500"></span> Acara</span>
+            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-500"></span> Ujian</span>
+            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-rose-500"></span> Libur</span>
+          </div>
+        </div>
+
+        <!-- DAFTAR DETAIL KETERANGAN AGENDA DI BAWAH KALENDER -->
+        <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
+          <h4 class="font-extrabold text-xs text-gray-700 flex items-center justify-between border-b pb-2">
+            <span><i class="fa-solid fa-list-ul text-[#1A98FF] mr-1"></i> Keterangan Agenda</span>
+            <button onclick="renderKaldikCalendar()" class="text-[10px] text-blue-600 font-bold hover:underline">Reset Filter</button>
+          </h4>
+          <div id="list-informasi-kaldik" class="space-y-2 text-xs">
+            <p class="text-gray-400 italic">⏳ Memuat agenda sekolah...</p>
+          </div>
         </div>
       </div>
 
@@ -902,6 +945,9 @@
     var currentSessionUser = '';
     var currentSessionRole = '';
     var currentLaporanData = null;
+
+    var kaldikCurrentDate = new Date();
+    var kaldikDataCache = [];
 
     window.onload = function() {
       var today = new Date().toISOString().split('T')[0];
@@ -1347,7 +1393,7 @@
       }
     }
 
-    // 5. FITUR MODUL BARU (TUGAS, PENGUMUMAN, KALDIK)
+    // 5. FITUR MODUL BARU (TUGAS, PENGUMUMAN, KALDIK VISUAL)
     async function simpanTugasBaru() {
       var kls = document.getElementById('tugas-kelas').value;
       var mapel = document.getElementById('tugas-mapel').value.trim();
@@ -1469,6 +1515,12 @@
       }
     }
 
+    // FUNGSI KALDIK VISUAL CALENDAR
+    function changeKaldikMonth(delta) {
+      kaldikCurrentDate.setMonth(kaldikCurrentDate.getMonth() + delta);
+      renderKaldikCalendar();
+    }
+
     async function loadFeedInformasi() {
       // 1. Pengumuman
       var boxP = document.getElementById('list-informasi-pengumuman');
@@ -1488,23 +1540,89 @@
         });
       }
 
-      // 2. Kaldik
-      var boxK = document.getElementById('list-informasi-kaldik');
+      // 2. Fetch Kaldik Data & Render Kalender Visual
       const { data: kData } = await db.from('kaldik').select('*').order('tanggal', { ascending: true });
-      boxK.innerHTML = '';
-      if (!kData || kData.length === 0) boxK.innerHTML = '<p class="text-gray-400 italic py-2">Belum ada agenda Kaldik.</p>';
-      else {
-        kData.forEach(function(k) {
-          var katBadge = k.kategori === 'Libur Sekolah' ? 'bg-rose-100 text-rose-800' : (k.kategori === 'Ujian / Tasmi' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800');
-          boxK.innerHTML += '<div class="bg-gray-50 p-3 rounded-xl border flex justify-between items-center">' +
-            '<div>' +
-              '<div class="font-bold text-gray-800">📅 ' + k.tanggal + '</div>' +
-              '<div class="text-gray-700 mt-0.5">' + k.kegiatan + '</div>' +
-            '</div>' +
-            '<span class="' + katBadge + ' text-[10px] font-bold px-2 py-1 rounded-lg">' + k.kategori + '</span>' +
-          '</div>';
-        });
+      kaldikDataCache = kData || [];
+      renderKaldikCalendar();
+    }
+
+    function renderKaldikCalendar(filterDate = null) {
+      var grid = document.getElementById('kaldik-calendar-grid');
+      var labelMonth = document.getElementById('kaldik-month-year');
+      if(!grid) return;
+
+      grid.innerHTML = '';
+      
+      var year = kaldikCurrentDate.getFullYear();
+      var month = kaldikCurrentDate.getMonth();
+
+      labelMonth.innerText = new Date(year, month).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+
+      var firstDay = new Date(year, month, 1).getDay();
+      var totalDays = new Date(year, month + 1, 0).getDate();
+
+      // Hari kosong awal bulan
+      for (let i = 0; i < firstDay; i++) {
+        grid.innerHTML += '<div class="h-9"></div>';
       }
+
+      // Tampilkan Tanggal
+      for (let d = 1; d <= totalDays; d++) {
+        var dateStr = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+        var isToday = dateStr === new Date().toISOString().split('T')[0];
+        
+        // Cek apakah ada agenda di tanggal ini
+        var events = kaldikDataCache.filter(e => e.tanggal === dateStr);
+        var dotHtml = '';
+        
+        if(events.length > 0) {
+          var dotColor = 'bg-blue-500';
+          if(events.some(e => e.kategori === 'Libur Sekolah')) dotColor = 'bg-rose-500';
+          else if(events.some(e => e.kategori === 'Ujian / Tasmi')) dotColor = 'bg-amber-500';
+          dotHtml = '<span class="w-1.5 h-1.5 rounded-full ' + dotColor + ' block mx-auto mt-0.5"></span>';
+        }
+
+        var bgClass = isToday ? 'bg-blue-600 text-white font-black shadow' : (events.length > 0 ? 'bg-blue-50 font-bold border border-blue-200' : 'hover:bg-gray-100');
+
+        grid.innerHTML += '<div onclick="filterKaldikByDate(\'' + dateStr + '\')" class="h-9 flex flex-col items-center justify-center rounded-xl cursor-pointer transition ' + bgClass + '">' +
+          '<span>' + d + '</span>' + dotHtml +
+        '</div>';
+      }
+
+      // Render Keterangan List
+      renderKaldikList(filterDate);
+    }
+
+    function filterKaldikByDate(dateStr) {
+      renderKaldikCalendar(dateStr);
+    }
+
+    function renderKaldikList(filterDate = null) {
+      var boxK = document.getElementById('list-informasi-kaldik');
+      boxK.innerHTML = '';
+
+      var monthStr = kaldikCurrentDate.getFullYear() + '-' + String(kaldikCurrentDate.getMonth() + 1).padStart(2, '0');
+      
+      var filtered = kaldikDataCache.filter(k => k.tanggal.startsWith(monthStr));
+      if(filterDate) {
+        filtered = kaldikDataCache.filter(k => k.tanggal === filterDate);
+      }
+
+      if (filtered.length === 0) {
+        boxK.innerHTML = '<p class="text-gray-400 italic py-2 text-center">' + (filterDate ? 'Tidak ada agenda di tanggal ' + filterDate : 'Belum ada agenda bulan ini.') + '</p>';
+        return;
+      }
+
+      filtered.forEach(function(k) {
+        var katBadge = k.kategori === 'Libur Sekolah' ? 'bg-rose-100 text-rose-800 border-rose-200' : (k.kategori === 'Ujian / Tasmi' ? 'bg-amber-100 text-amber-800 border-amber-200' : 'bg-blue-100 text-blue-800 border-blue-200');
+        boxK.innerHTML += '<div class="bg-gray-50 p-3 rounded-xl border flex justify-between items-center shadow-sm">' +
+          '<div>' +
+            '<div class="font-bold text-gray-800"><i class="fa-solid fa-calendar-day mr-1.5 text-gray-500"></i>' + k.tanggal + '</div>' +
+            '<div class="text-gray-700 font-medium mt-0.5">' + k.kegiatan + '</div>' +
+          '</div>' +
+          '<span class="' + katBadge + ' border text-[10px] font-bold px-2.5 py-1 rounded-lg">' + k.kategori + '</span>' +
+        '</div>';
+      });
     }
 
     // 6. DASHBOARD INFORMATION FEED
