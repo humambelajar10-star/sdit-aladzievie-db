@@ -1740,18 +1740,21 @@
       });
     }
 
-    async function loadRekapBulanan() {
+async function loadRekapBulanan() {
       var kls = document.getElementById('cek-kelas').value;
-      var bulan = document.getElementById('cek-bulan').value;
-      var tahun = document.getElementById('cek-tahun').value;
+      var bulan = parseInt(document.getElementById('cek-bulan').value, 10);
+      var tahun = parseInt(document.getElementById('cek-tahun').value, 10);
       var box = document.getElementById('hasil-rekap-box');
       
       if (!kls) { alert("Pilih kelas terlebih dahulu!"); return; }
 
       box.innerHTML = '<p class="text-xs text-center text-gray-500 font-semibold py-4">⏳ Memuat rekap bulanan sekelas...</p>';
 
+      // Buat format tanggal awal dan akhir bulan yang presisi
       var strBulan = String(bulan).padStart(2, '0');
-      var prefixPeriode = tahun + '-' + strBulan;
+      var tglAwalBulan = tahun + '-' + strBulan + '-01';
+      var lastDay = new Date(tahun, bulan, 0).getDate(); // Mendapatkan jumlah hari di bulan tsb
+      var tglAkhirBulan = tahun + '-' + strBulan + '-' + String(lastDay).padStart(2, '0');
 
       const { data: siswaList } = await db.from('siswa').select('*').eq('kelas', kls).order('nama', { ascending: true });
       box.innerHTML = '';
@@ -1764,11 +1767,11 @@
       document.getElementById('btn-cetak-rekap').classList.remove('hidden');
 
       for (let s of siswaList) {
-        // Query Absensi, Setoran, Tasmi, & Kedisiplinan Bulan Terkait
-        const { data: abs } = await db.from('absensi').select('*').eq('siswa_id', s.id).like('tanggal', prefixPeriode + '%');
-        const { data: set } = await db.from('tahfidz').select('*').eq('siswa_id', s.id).like('tanggal', prefixPeriode + '%').order('tanggal', { ascending: true });
-        const { data: tasmi } = await db.from('ujian').select('*').eq('siswa_id', s.id).like('tanggal', prefixPeriode + '%').order('tanggal', { ascending: true });
-        const { data: disiplin } = await db.from('kedisiplinan').select('*').eq('siswa_id', s.id).like('tanggal', prefixPeriode + '%').order('tanggal', { ascending: true });
+        // Query Absensi, Setoran, Tasmi, & Kedisiplinan Menggunakan Rentang Tanggal yang Tepat
+        const { data: abs } = await db.from('absensi').select('*').eq('siswa_id', s.id).gte('tanggal', tglAwalBulan).lte('tanggal', tglAkhirBulan);
+        const { data: set } = await db.from('tahfidz').select('*').eq('siswa_id', s.id).gte('tanggal', tglAwalBulan).lte('tanggal', tglAkhirBulan).order('tanggal', { ascending: true });
+        const { data: tasmi } = await db.from('ujian').select('*').eq('siswa_id', s.id).gte('tanggal', tglAwalBulan).lte('tanggal', tglAkhirBulan).order('tanggal', { ascending: true });
+        const { data: disiplin } = await db.from('kedisiplinan').select('*').eq('siswa_id', s.id).gte('tanggal', tglAwalBulan).lte('tanggal', tglAkhirBulan).order('tanggal', { ascending: true });
 
         let cHadir = abs ? abs.filter(a => a.status === 'Hadir').length : 0;
         let cIzin = abs ? abs.filter(a => a.status === 'Izin').length : 0;
