@@ -1726,47 +1726,186 @@
 
       var filteredData = klsFilter ? data.filter(d => d.siswa && d.siswa.kelas === klsFilter) : data;
       filteredData.forEach(function(d) {
-        box.innerHTML += '<div class="bg-gray-50 p-3 rounded-xl border text-xs space-y-1 mb-1.5">' +
-          '<div class="flex items-center gap-2 font-bold">' +
-            '<span>' + d.siswa.nama + ' (' + d.siswa.kelas + ')</span>' +
-            '<span class="bg-amber-100 text-amber-800 text-[10px] px-2 py-0.5 rounded-full">' + d.jenis + '</span>' +
+        box.innerHTML += '<div class="bg-gray-50 p-3 rounded-xl border text-xs space-y-1 mb-1.5 flex justify-between items-start">' +
+          '<div class="space-y-0.5">' +
+            '<div class="flex items-center gap-2 font-bold">' +
+              '<span>' + d.siswa.nama + ' (' + d.siswa.kelas + ')</span>' +
+              '<span class="bg-amber-100 text-amber-800 text-[10px] px-2 py-0.5 rounded-full">' + d.jenis + '</span>' +
+            '</div>' +
+            '<div class="text-gray-700"><b>Catatan:</b> ' + d.catatan + '</div>' +
+            '<div class="text-[10px] text-gray-400">📅 ' + d.tanggal + '</div>' +
           '</div>' +
-          '<div class="text-gray-700"><b>Catatan:</b> ' + d.catatan + '</div>' +
+          '<button onclick="hapusKedisiplinanData(' + d.id + ')" class="text-rose-600 hover:text-rose-800 font-bold text-[10px]"><i class="fa-solid fa-trash"></i></button>' +
         '</div>';
       });
     }
 
     async function loadRekapBulanan() {
       var kls = document.getElementById('cek-kelas').value;
+      var bulan = document.getElementById('cek-bulan').value;
+      var tahun = document.getElementById('cek-tahun').value;
       var box = document.getElementById('hasil-rekap-box');
-      box.innerHTML = '<p class="text-xs text-center text-gray-500 font-semibold py-4">⏳ Mengambil data rekap...</p>';
+      
+      if (!kls) { alert("Pilih kelas terlebih dahulu!"); return; }
 
-      const { data: siswaList } = await db.from('siswa').select('*').eq('kelas', kls);
+      box.innerHTML = '<p class="text-xs text-center text-gray-500 font-semibold py-4">⏳ Memuat rekap bulanan sekelas...</p>';
+
+      var strBulan = String(bulan).padStart(2, '0');
+      var prefixPeriode = tahun + '-' + strBulan;
+
+      const { data: siswaList } = await db.from('siswa').select('*').eq('kelas', kls).order('nama', { ascending: true });
       box.innerHTML = '';
+
       if (!siswaList || siswaList.length === 0) {
-        box.innerHTML = '<p class="text-xs text-center text-gray-400 py-4">Tidak ada data siswa.</p>';
+        box.innerHTML = '<p class="text-xs text-center text-gray-400 py-4">Tidak ada data siswa pada kelas ini.</p>';
         return;
       }
 
+      document.getElementById('btn-cetak-rekap').classList.remove('hidden');
+
       for (let s of siswaList) {
-        const { data: abs } = await db.from('absensi').select('*').eq('siswa_id', s.id);
-        const { data: set } = await db.from('tahfidz').select('*').eq('siswa_id', s.id);
+        // Query Absensi, Setoran, Tasmi, & Kedisiplinan Bulan Terkait
+        const { data: abs } = await db.from('absensi').select('*').eq('siswa_id', s.id).like('tanggal', prefixPeriode + '%');
+        const { data: set } = await db.from('tahfidz').select('*').eq('siswa_id', s.id).like('tanggal', prefixPeriode + '%').order('tanggal', { ascending: true });
+        const { data: tasmi } = await db.from('ujian').select('*').eq('siswa_id', s.id).like('tanggal', prefixPeriode + '%').order('tanggal', { ascending: true });
+        const { data: disiplin } = await db.from('kedisiplinan').select('*').eq('siswa_id', s.id).like('tanggal', prefixPeriode + '%').order('tanggal', { ascending: true });
 
         let cHadir = abs ? abs.filter(a => a.status === 'Hadir').length : 0;
         let cIzin = abs ? abs.filter(a => a.status === 'Izin').length : 0;
         let cSakit = abs ? abs.filter(a => a.status === 'Sakit').length : 0;
         let cAlpha = abs ? abs.filter(a => a.status === 'Alpha' || a.status === 'Alfa').length : 0;
 
-        box.innerHTML += '<div class="bg-white p-4 rounded-2xl border text-xs space-y-2">' +
-          '<h4 class="font-bold text-blue-900 text-sm">' + s.nama + '</h4>' +
-          '<div class="grid grid-cols-4 gap-1 text-center font-semibold text-[10px] bg-gray-50 p-2 rounded-xl border">' +
-            '<div>Hadir<br><b>' + cHadir + '</b></div>' +
-            '<div>Izin<br><b>' + cIzin + '</b></div>' +
-            '<div>Sakit<br><b>' + cSakit + '</b></div>' +
-            '<div>Alpha<br><b>' + cAlpha + '</b></div>' +
+        // Html Setoran
+        let htmlSetoran = '';
+        if (set && set.length > 0) {
+          set.forEach(st => {
+            htmlSetoran += '<div class="bg-gray-50 p-2 rounded-xl border flex justify-between items-center text-xs mt-1">' +
+              '<div><b>' + (st.jenis || 'Setor') + '</b>: ' + (st.surah_jilid || '-') + ' (' + (st.ayat_halaman || '-') + ') <span class="text-[10px] text-gray-400">(' + st.tanggal + ')</span></div>' +
+              '<div class="flex items-center gap-1.5">' +
+                '<span class="bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded text-[10px]">' + (st.nilai || 'Mumtaz') + '</span>' +
+                '<button onclick="hapusSetoranData(' + st.id + ')" class="text-rose-600 hover:text-rose-800 text-[10px] font-bold"><i class="fa-solid fa-trash"></i></button>' +
+              '</div>' +
+            '</div>';
+          });
+        } else {
+          htmlSetoran = '<p class="text-gray-400 italic text-[11px] mt-1">Belum ada setoran bulan ini.</p>';
+        }
+
+        // Html Tasmi
+        let htmlTasmi = '';
+        if (tasmi && tasmi.length > 0) {
+          tasmi.forEach(u => {
+            let bgSt = u.status === 'LULUS' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800';
+            htmlTasmi += '<div class="bg-purple-50/50 p-2 rounded-xl border border-purple-100 flex justify-between items-center text-xs mt-1">' +
+              '<div><b>' + (u.jenis_ujian || 'Ujian') + '</b>: ' + (u.materi_juz || '-') + ' <span class="text-[10px] text-gray-400">(' + u.tanggal + ')</span></div>' +
+              '<div class="flex items-center gap-1.5">' +
+                '<span class="' + bgSt + ' font-bold px-2 py-0.5 rounded text-[10px]">' + (u.status || 'LULUS') + '</span>' +
+                '<button onclick="hapusTasmiData(' + u.id + ')" class="text-rose-600 hover:text-rose-800 text-[10px] font-bold"><i class="fa-solid fa-trash"></i></button>' +
+              '</div>' +
+            '</div>';
+          });
+        } else {
+          htmlTasmi = '<p class="text-gray-400 italic text-[11px] mt-1">Belum ada ujian bulan ini.</p>';
+        }
+
+        // Html Kedisiplinan
+        let htmlDisiplin = '';
+        if (disiplin && disiplin.length > 0) {
+          disiplin.forEach(d => {
+            let bgJ = d.jenis === 'Prestasi' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800';
+            htmlDisiplin += '<div class="bg-gray-50 p-2 rounded-xl border flex justify-between items-center text-xs mt-1">' +
+              '<div><b>' + d.catatan + '</b> <span class="text-[10px] text-gray-400">(' + d.tanggal + ')</span></div>' +
+              '<div class="flex items-center gap-1.5">' +
+                '<span class="' + bgJ + ' font-bold px-2 py-0.5 rounded text-[10px]">' + d.jenis + '</span>' +
+                '<button onclick="hapusKedisiplinanData(' + d.id + ')" class="text-rose-600 hover:text-rose-800 text-[10px] font-bold"><i class="fa-solid fa-trash"></i></button>' +
+              '</div>' +
+            '</div>';
+          });
+        } else {
+          htmlDisiplin = '<p class="text-gray-400 italic text-[11px] mt-1">Nihil pelanggaran (Tertib).</p>';
+        }
+
+        box.innerHTML += '<div class="bg-white p-4 rounded-2xl border text-xs space-y-3 shadow-sm">' +
+          '<div class="flex justify-between items-center border-b pb-2">' +
+            '<h4 class="font-extrabold text-blue-900 text-sm">' + s.nama + '</h4>' +
+            '<span class="text-gray-400 text-[11px]">' + kls + '</span>' +
           '</div>' +
-          '<div class="text-gray-600">Total Setoran: <b>' + (set ? set.length : 0) + ' kali</b></div>' +
+          
+          '<div>' +
+            '<span class="font-bold text-gray-700 block mb-1">A. Kehadiran Bulanan</span>' +
+            '<div class="grid grid-cols-4 gap-1 text-center font-semibold text-[10px] bg-gray-50 p-2 rounded-xl border">' +
+              '<div>Hadir<br><b class="text-blue-600 text-xs">' + cHadir + '</b></div>' +
+              '<div>Izin<br><b class="text-sky-600 text-xs">' + cIzin + '</b></div>' +
+              '<div>Sakit<br><b class="text-amber-600 text-xs">' + cSakit + '</b></div>' +
+              '<div>Alpha<br><b class="text-rose-600 text-xs">' + cAlpha + '</b></div>' +
+            '</div>' +
+          '</div>' +
+
+          '<div>' +
+            '<span class="font-bold text-gray-700 block">B. Capaian Setoran (Total: ' + (set ? set.length : 0) + ' kali)</span>' +
+            htmlSetoran +
+          '</div>' +
+
+          '<div>' +
+            '<span class="font-bold text-purple-900 block">C. Hasil Ujian & Tasmi\'</span>' +
+            htmlTasmi +
+          '</div>' +
+
+          '<div>' +
+            '<span class="font-bold text-gray-700 block">D. Catatan Kedisiplinan</span>' +
+            htmlDisiplin +
+          '</div>' +
         '</div>';
+      }
+    }
+
+    // FUNGSI HAPUS DATA REAL-TIME
+    async function hapusSetoranData(id) {
+      if (confirm("Hapus data setoran ini?")) {
+        const { error } = await db.from('tahfidz').delete().eq('id', id);
+        if (error) alert("Error: " + error.message);
+        else {
+          alert("🗑️ Data setoran berhasil dihapus!");
+          if (currentTab === 'cekdata') loadRekapBulanan();
+          if (currentTab === 'laporan') buatLaporanSantri();
+        }
+      }
+    }
+
+    async function hapusTasmiData(id) {
+      if (confirm("Hapus data ujian/tasmi' ini?")) {
+        const { error } = await db.from('ujian').delete().eq('id', id);
+        if (error) alert("Error: " + error.message);
+        else {
+          alert("🗑️ Data tasmi'/ujian berhasil dihapus!");
+          if (currentTab === 'cekdata') loadRekapBulanan();
+          if (currentTab === 'laporan') buatLaporanSantri();
+        }
+      }
+    }
+
+    async function hapusKedisiplinanData(id) {
+      if (confirm("Hapus catatan kedisiplinan ini?")) {
+        const { error } = await db.from('kedisiplinan').delete().eq('id', id);
+        if (error) alert("Error: " + error.message);
+        else {
+          alert("🗑️ Catatan kedisiplinan berhasil dihapus!");
+          if (currentTab === 'disiplin') loadRiwayatKedisiplinan();
+          if (currentTab === 'cekdata') loadRekapBulanan();
+          if (currentTab === 'laporan') buatLaporanSantri();
+        }
+      }
+    }
+
+    async function hapusAbsensiData(id) {
+      if (confirm("Hapus entri kehadiran ini?")) {
+        const { error } = await db.from('absensi').delete().eq('id', id);
+        if (error) alert("Error: " + error.message);
+        else {
+          alert("🗑️ Data kehadiran berhasil dihapus!");
+          if (currentTab === 'cekdata') loadRekapBulanan();
+          if (currentTab === 'laporan') buatLaporanSantri();
+        }
       }
     }
 
@@ -1803,7 +1942,10 @@
         set.forEach(function(s) {
           boxSetor.innerHTML += '<div class="bg-gray-50 p-2 rounded-xl border flex justify-between items-center text-xs">' +
             '<div><b class="text-blue-900">' + (s.jenis || 'Setoran') + '</b>: ' + (s.surah_jilid || '-') + ' (' + (s.ayat_halaman || '-') + ')<br><span class="text-[10px] text-gray-400">' + s.tanggal + '</span></div>' +
-            '<span class="bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded-lg text-[10px]">' + (s.nilai || 'Mumtaz') + '</span>' +
+            '<div class="flex items-center gap-1.5">' +
+              '<span class="bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded-lg text-[10px]">' + (s.nilai || 'Mumtaz') + '</span>' +
+              '<button onclick="hapusSetoranData(' + s.id + ')" class="text-rose-600 hover:text-rose-800 text-[10px] font-bold"><i class="fa-solid fa-trash"></i></button>' +
+            '</div>' +
           '</div>';
         });
       }
@@ -1819,7 +1961,10 @@
           var bgStatus = u.status === 'LULUS' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800';
           boxTasmi.innerHTML += '<div class="bg-purple-50/50 p-2 rounded-xl border border-purple-100 flex justify-between items-center text-xs">' +
             '<div><b class="text-purple-900">' + (u.jenis_ujian || 'Ujian') + '</b>: ' + (u.materi_juz || '-') + '<br><span class="text-[10px] text-gray-400">' + u.tanggal + ' • Penguji: ' + (u.penguji || '-') + '</span></div>' +
-            '<span class="' + bgStatus + ' font-bold px-2.5 py-1 rounded-lg text-[10px]">' + (u.status || 'LULUS') + '</span>' +
+            '<div class="flex items-center gap-1.5">' +
+              '<span class="' + bgStatus + ' font-bold px-2.5 py-1 rounded-lg text-[10px]">' + (u.status || 'LULUS') + '</span>' +
+              '<button onclick="hapusTasmiData(' + u.id + ')" class="text-rose-600 hover:text-rose-800 text-[10px] font-bold"><i class="fa-solid fa-trash"></i></button>' +
+            '</div>' +
           '</div>';
         });
       }
@@ -1835,7 +1980,10 @@
           var bgJenis = d.jenis === 'Prestasi' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800';
           boxDisiplin.innerHTML += '<div class="bg-gray-50 p-2 rounded-xl border flex justify-between items-center text-xs">' +
             '<div><b class="text-gray-800">' + d.catatan + '</b><br><span class="text-[10px] text-gray-400">' + d.tanggal + '</span></div>' +
-            '<span class="' + bgJenis + ' font-bold px-2 py-0.5 rounded-lg text-[10px]">' + d.jenis + '</span>' +
+            '<div class="flex items-center gap-1.5">' +
+              '<span class="' + bgJenis + ' font-bold px-2 py-0.5 rounded-lg text-[10px]">' + d.jenis + '</span>' +
+              '<button onclick="hapusKedisiplinanData(' + d.id + ')" class="text-rose-600 hover:text-rose-800 text-[10px] font-bold"><i class="fa-solid fa-trash"></i></button>' +
+            '</div>' +
           '</div>';
         });
       }
