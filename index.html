@@ -860,7 +860,7 @@
         </div>
       </div>
     </div>
-  </nav>
+  </div>
 
   <!-- ================= 4. FLOATING BOTTOM NAVIGATION ================= -->
   <nav id="app-nav" class="hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 z-40 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
@@ -917,19 +917,19 @@
 
     window.onload = function() {
       var today = new Date().toISOString().split('T')[0];
-      document.getElementById('absen-tgl').value = today;
-      document.getElementById('setor-tgl').value = today;
-      document.getElementById('bulk-setor-tgl').value = today;
-      document.getElementById('tasmi-tgl').value = today;
-      document.getElementById('disiplin-tgl').value = today;
-      document.getElementById('tugas-deadline').value = today;
-      document.getElementById('kaldik-tgl').value = today;
-      document.getElementById('lap-tgl-awal').value = today;
-      document.getElementById('lap-tgl-akhir').value = today;
+      if(document.getElementById('absen-tgl')) document.getElementById('absen-tgl').value = today;
+      if(document.getElementById('setor-tgl')) document.getElementById('setor-tgl').value = today;
+      if(document.getElementById('bulk-setor-tgl')) document.getElementById('bulk-setor-tgl').value = today;
+      if(document.getElementById('tasmi-tgl')) document.getElementById('tasmi-tgl').value = today;
+      if(document.getElementById('disiplin-tgl')) document.getElementById('disiplin-tgl').value = today;
+      if(document.getElementById('tugas-deadline')) document.getElementById('tugas-deadline').value = today;
+      if(document.getElementById('kaldik-tgl')) document.getElementById('kaldik-tgl').value = today;
+      if(document.getElementById('lap-tgl-awal')) document.getElementById('lap-tgl-awal').value = today;
+      if(document.getElementById('lap-tgl-akhir')) document.getElementById('lap-tgl-akhir').value = today;
       
       var now = new Date();
       var dateStr = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-      document.getElementById('header-date-badge').innerText = dateStr;
+      if(document.getElementById('header-date-badge')) document.getElementById('header-date-badge').innerText = dateStr;
 
       loadKelasOptions();
       startDigitalClock();
@@ -960,6 +960,38 @@
 
     function bukaModalInputKaldik() { document.getElementById('modal-input-kaldik').classList.remove('hidden'); }
     function tutupModalInputKaldik() { document.getElementById('modal-input-kaldik').classList.add('hidden'); }
+
+    function switchSubAkademik(sub) {
+      ['absensi', 'setor', 'tasmi', 'tugas'].forEach(function(s) {
+        if(document.getElementById('sub-box-' + s)) document.getElementById('sub-box-' + s).classList.add('hidden');
+        if(document.getElementById('sub-btn-' + s)) document.getElementById('sub-btn-' + s).className = 'flex-1 py-2 rounded-lg text-gray-600';
+      });
+      if(document.getElementById('sub-box-' + sub)) document.getElementById('sub-box-' + sub).classList.remove('hidden');
+      if(document.getElementById('sub-btn-' + sub)) document.getElementById('sub-btn-' + sub).className = 'flex-1 py-2 rounded-xl bg-white text-[#1A98FF] shadow';
+    }
+
+    function switchSubInformasi(sub) {
+      ['pengumuman', 'kaldik'].forEach(function(s) {
+        if(document.getElementById('sub-info-box-' + s)) document.getElementById('sub-info-box-' + s).classList.add('hidden');
+        if(document.getElementById('sub-info-btn-' + s)) document.getElementById('sub-info-btn-' + s).className = 'flex-1 py-2 rounded-lg text-gray-600';
+      });
+      if(document.getElementById('sub-info-box-' + sub)) document.getElementById('sub-info-box-' + sub).classList.remove('hidden');
+      if(document.getElementById('sub-info-btn-' + sub)) document.getElementById('sub-info-btn-' + sub).className = 'flex-1 py-2 rounded-xl bg-white text-[#1A98FF] shadow';
+    }
+
+    function switchModeSetoran(mode) {
+      if (mode === 'single') {
+        document.getElementById('box-setor-single').classList.remove('hidden');
+        document.getElementById('box-setor-bulk').classList.add('hidden');
+        document.getElementById('btn-mode-single').className = 'flex-1 py-1.5 rounded-lg bg-white text-[#1A98FF] shadow';
+        document.getElementById('btn-mode-bulk').className = 'flex-1 py-1.5 rounded-lg text-gray-600';
+      } else {
+        document.getElementById('box-setor-single').classList.add('hidden');
+        document.getElementById('box-setor-bulk').classList.remove('hidden');
+        document.getElementById('btn-mode-single').className = 'flex-1 py-1.5 rounded-lg text-gray-600';
+        document.getElementById('btn-mode-bulk').className = 'flex-1 py-1.5 rounded-lg bg-white text-[#1A98FF] shadow';
+      }
+    }
 
     // LOGIN & LOGOUT
     async function prosesLogin() {
@@ -1123,12 +1155,9 @@
     // FUNGSI PROSES ACC & TOLAK PERIZINAN ORTU
     async function accPerizinanOrtu(izId, siswaId, tglMulai, tglSelesai, jenisIzin, kls) {
       if (confirm(`Setujui pengajuan ${jenisIzin} ini dan otomatis masukkan ke rekap absensi?`)) {
-        // 1. Update status di perizinan_ortu -> 'Disetujui'
         const { error: errUpdate } = await db.from('perizinan_ortu').update({ status: 'Disetujui', disetujui_oleh: currentSessionUser }).eq('id', izId);
         if (errUpdate) { alert("Error: " + errUpdate.message); return; }
 
-        // 2. Insert Otomatis Ke Tabel Absensi
-        // Generate tanggal dari tglMulai sampai tglSelesai
         var start = new Date(tglMulai);
         var end = new Date(tglSelesai);
         var insertsAbsen = [];
@@ -1139,7 +1168,7 @@
             tanggal: dateStr,
             kelas: kls,
             siswa_id: siswaId,
-            status: jenisIzin // 'Sakit' / 'Izin'
+            status: jenisIzin
           });
         }
 
