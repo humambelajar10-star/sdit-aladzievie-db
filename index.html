@@ -1722,10 +1722,84 @@
     }
 
     function kirimWaOrtu() {
-      if (!currentLaporanData) return;
+      if (!currentLaporanData) {
+        alert("Buat laporan terlebih dahulu sebelum mengirim WA!");
+        return;
+      }
+      
       var d = currentLaporanData;
-      var txt = `*LAPORAN PERKEMBANGAN SISWA*\nSDIT ALADZIEVIE\nNama: ${d.nama}\nKelas: ${d.kls}\nPeriode: ${d.periode}`;
-      window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(txt), "_blank");
+
+      // 1. Rekap Absensi
+      var h = d.abs ? d.abs.filter(a => a.status === 'Hadir').length : 0;
+      var i = d.abs ? d.abs.filter(a => a.status === 'Izin').length : 0;
+      var s = d.abs ? d.abs.filter(a => a.status === 'Sakit').length : 0;
+      var a = d.abs ? d.abs.filter(a => a.status === 'Alpha' || a.status === 'Alfa').length : 0;
+
+      // 2. Rekap Setoran Tahfidz / Tilawah
+      var txtSetor = "";
+      if (d.set && d.set.length > 0) {
+        d.set.forEach((st, idx) => {
+          txtSetor += `${idx + 1}. *${st.jenis || 'Setor'}*: ${st.surah_jilid || '-'} (${st.ayat_halaman || '-'}) - Nilai: _${st.nilai || 'Mumtaz'}_\n`;
+        });
+      } else {
+        txtSetor = "_Belum ada catatan setoran pada periode ini._\n";
+      }
+
+      // 3. Rekap Ujian / Tasmi'
+      var txtTasmi = "";
+      if (d.tasmi && d.tasmi.length > 0) {
+        d.tasmi.forEach((u, idx) => {
+          txtTasmi += `${idx + 1}. *${u.jenis_ujian || 'Ujian'}*: ${u.materi_juz || '-'} - Status: *${u.status || 'LULUS'}*\n`;
+        });
+      } else {
+        txtTasmi = "_Belum ada catatan ujian pada periode ini._\n";
+      }
+
+      // 4. Rekap Kedisiplinan
+      var txtDisiplin = "";
+      if (d.disiplin && d.disiplin.length > 0) {
+        d.disiplin.forEach((ds, idx) => {
+          txtDisiplin += `${idx + 1}. [${ds.jenis}] ${ds.catatan}\n`;
+        });
+      } else {
+        txtDisiplin = "_Alhamdulillah, ananda tertib dan tidak ada catatan pelanggaran._\n";
+      }
+
+      // Susun Pesan WA Formal & Sopan
+      var pesan = `Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\n` +
+        `Kepada Yth. Bapak/Ibu Wali Murid dari *${d.nama}*,\n` +
+        `Semoga Bapak/Ibu beserta keluarga senantiasa berada dalam keadaan sehat wal'afiat dan selalu dalam lindungan Allah SWT.\n\n` +
+        `Berikut kami sampaikan *Laporan Perkembangan Akademik & Kedisiplinan Siswa* SDIT Aladzievie:\n\n` +
+        `-----------------------------------------\n` +
+        `👤 *Nama Siswa:* ${d.nama}\n` +
+        `🏫 *Kelas:* ${d.kls}\n` +
+        `📅 *Periode Laporan:* ${d.periode}\n` +
+        `-----------------------------------------\n\n` +
+
+        `📋 *A. REKAPITULASI KEHADIRAN*\n` +
+        `• Hadir: ${h} hari\n` +
+        `• Izin: ${i} hari\n` +
+        `• Sakit: ${s} hari\n` +
+        `• Alpha: ${a} hari\n\n` +
+
+        `📖 *B. CAPAIAN TAHFIDZ & TILAWAH*\n` +
+        `${txtSetor}\n` +
+
+        `🎓 *C. HASIL UJIAN & TASMI'*\n` +
+        `${txtTasmi}\n` +
+
+        `🛡️ *D. CATATAN KEDISIPLINAN*\n` +
+        `${txtDisiplin}\n` +
+        `-----------------------------------------\n\n` +
+        `Demikian laporan perkembangan ini kami sampaikan. Terima kasih banyak atas kerja sama dan bimbingan Bapak/Ibu di rumah.\n\n` +
+        `_Jazakumullahu khairan wa barakallahu fiikum._\n\n` +
+        `Wassalamu'alaikum Warahmatullahi Wabarakatuh.\n\n` +
+        `*Wali Kelas / Guru Pembimbing*\n` +
+        `*SDIT Aladzievie*`;
+
+      // Buka aplikasi WhatsApp
+      var urlWA = "https://api.whatsapp.com/send?text=" + encodeURIComponent(pesan);
+      window.open(urlWA, "_blank");
     }
 
     // UBAH PASS & USER
