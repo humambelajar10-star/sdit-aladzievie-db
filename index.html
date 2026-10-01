@@ -332,7 +332,7 @@
         </div>
       </div>
 
-      <!-- SUB 3: TASMI' & UJIAN -->
+      <!-- SUB 3: TASMI' & UJIAN (BEBAS PILIH KELAS) -->
       <div id="sub-box-tasmi" class="hidden space-y-4">
         <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
           <h3 class="font-bold text-sm text-gray-800 flex items-center gap-2">
@@ -393,7 +393,7 @@
         </div>
       </div>
 
-      <!-- SUB 4: TUGAS & PR -->
+      <!-- SUB 4: TUGAS & PR (BEBAS PILIH KELAS) -->
       <div id="sub-box-tugas" class="hidden space-y-4">
         <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
           <h3 class="font-bold text-sm text-gray-800 flex items-center gap-2">
@@ -731,6 +731,10 @@
             </select>
           </div>
         </div>
+        <div>
+          <label class="block text-[11px] text-gray-500 mb-1">Kelas Diampu (Khusus Wali Kelas / Guru)</label>
+          <input type="text" id="new-kelas-diampu" placeholder="Misal: Kelas 6" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
+        </div>
         <button type="button" onclick="prosesTambahUser()" class="w-full bg-[#1A98FF] hover:bg-blue-600 text-white font-bold py-2.5 rounded-xl text-xs shadow">
           ➕ Tambahkan Akun Pengguna
         </button>
@@ -903,7 +907,6 @@
 
   <!-- JAVASCRIPT SYSTEM WITH SUPABASE BACKEND -->
   <script>
-    // Inisialisasi Supabase diletakkan paling atas agar variabel 'db' selalu siap
     const SUPABASE_URL = "https://tavoxawaparjahyldecc.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRhdm94YXdhcGFyamFoeWxkZWNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4OTc4MzgsImV4cCI6MjEwMTQ3MzgzOH0.21A23nlVJ9gaF1u86W3tQCcNggPOi1Wvaj4awaV0nEI";
     var db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -911,6 +914,7 @@
     var currentTab = 'dashboard';
     var currentSessionUser = '';
     var currentSessionRole = '';
+    var currentSessionKelas = ''; // Menyimpan kelas diampu
     var currentLaporanData = null;
 
     var kaldikCurrentDate = new Date();
@@ -932,7 +936,6 @@
       var dateStr = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
       if(document.getElementById('header-date-badge')) document.getElementById('header-date-badge').innerText = dateStr;
 
-      loadKelasOptions();
       startDigitalClock();
     };
 
@@ -1016,8 +1019,9 @@
 
         currentSessionUser = data.username;
         currentSessionRole = data.role;
+        currentSessionKelas = data.kelas_diampu || ''; // Menyimpan kelas diampu
 
-        document.getElementById('session-info').innerText = data.nama + ' (' + data.role + ')';
+        document.getElementById('session-info').innerText = data.nama + ' (' + data.role + (data.kelas_diampu ? ' - ' + data.kelas_diampu : '') + ')';
         document.getElementById('welcome-user-name').innerText = data.nama + ' (' + data.role + ')';
         
         document.getElementById('view-login').classList.add('hidden');
@@ -1038,6 +1042,9 @@
           if(btnPengumuman) btnPengumuman.classList.add('hidden');
           if(btnKaldik) btnKaldik.classList.add('hidden');
         }
+
+        // Muat opsi kelas berdasarkan hak akses pengguna
+        await loadKelasOptions();
 
         bukaTab('dashboard');
       } catch (err) {
@@ -1093,7 +1100,14 @@
       var boxIz = document.getElementById('feed-perizinan-ortu');
       var badgeIz = document.getElementById('badge-count-izin');
       
-      const { data: izData } = await db.from('perizinan_ortu').select('*, siswa!inner(nama, kelas)').eq('status', 'Pending').order('created_at', { ascending: false });
+      let queryIz = db.from('perizinan_ortu').select('*, siswa!inner(nama, kelas)').eq('status', 'Pending').order('created_at', { ascending: false });
+      
+      // Jika Wali Kelas/Guru, filter perizinan sesuai kelasnya saja
+      if (currentSessionRole !== 'Admin Utama' && currentSessionKelas) {
+        queryIz = queryIz.eq('siswa.kelas', currentSessionKelas);
+      }
+
+      const { data: izData } = await queryIz;
       
       if (izData && izData.length > 0) {
         badgeIz.innerText = izData.length + ' Pending';
@@ -1194,10 +1208,38 @@
       const { data } = await db.from('siswa').select('kelas');
       var list = data ? [...new Set(data.map(item => item.kelas))] : ['Kelas 1', 'Kelas 2', 'Kelas 3', 'Kelas 4', 'Kelas 5', 'Kelas 6'];
 
-      ['absen-kelas', 'setor-kelas', 'bulk-setor-kelas', 'tasmi-kelas', 'disiplin-kelas', 'filter-disiplin-kelas', 'tugas-kelas', 'filter-tugas-kelas', 'pengumuman-target', 'cek-kelas', 'lap-kelas'].forEach(function(id) {
+      var isGuru = currentSessionRole !== 'Admin Utama' && currentSessionKelas !== '';
+
+      // 1. Dropdown KELAS TERKUNCI (Absensi & Setoran Halaqoh)
+      ['absen-kelas', 'setor-kelas', 'bulk-setor-kelas'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if(el) {
+          el.innerHTML = '';
+          if (isGuru) {
+            // Hanya muncul kelas yang diampu saja
+            el.innerHTML = '<option value="' + currentSessionKelas + '" selected>' + currentSessionKelas + '</option>';
+            el.disabled = true; // Kunci input agar tidak bisa diubah
+          } else {
+            el.disabled = false;
+            el.innerHTML = '<option value="">Pilih Kelas</option>';
+            list.forEach(function(k) { el.innerHTML += '<option value="' + k + '">' + k + '</option>'; });
+          }
+        }
+      });
+
+      // Otomatis load siswa untuk Guru/Wali Kelas
+      if (isGuru) {
+        loadSiswaAbsen();
+        loadSiswaSetor();
+        loadSiswaBulkSetor();
+      }
+
+      // 2. Dropdown KELAS BEBAS (Tasmi, Tugas, Kedisiplinan, Rekap, Laporan, Pengumuman)
+      ['tasmi-kelas', 'disiplin-kelas', 'filter-disiplin-kelas', 'tugas-kelas', 'filter-tugas-kelas', 'pengumuman-target', 'cek-kelas', 'lap-kelas'].forEach(function(id) {
         var el = document.getElementById(id);
         if(el) {
           var defaultLabel = id.startsWith('filter-') ? 'Semua Kelas' : (id === 'pengumuman-target' ? 'Semua Kelas' : 'Pilih Kelas');
+          el.disabled = false;
           el.innerHTML = '<option value="">' + defaultLabel + '</option>';
           if(id === 'pengumuman-target') el.innerHTML = '<option value="Semua Kelas">Semua Kelas</option>';
           list.forEach(function(k) { el.innerHTML += '<option value="' + k + '">' + k + '</option>'; });
@@ -1214,6 +1256,7 @@
     async function loadSiswaAbsen() {
       var kls = document.getElementById('absen-kelas').value;
       var box = document.getElementById('list-siswa-absen');
+      if(!kls) { box.innerHTML = ''; return; }
       box.innerHTML = 'Loading...';
       const siswa = await getSiswaByKelasData(kls);
       box.innerHTML = '';
@@ -1229,6 +1272,7 @@
     async function loadSiswaSetor() {
       var kls = document.getElementById('setor-kelas').value;
       var el = document.getElementById('setor-nama');
+      if(!kls) { el.innerHTML = '<option value="">Pilih Siswa</option>'; return; }
       const siswa = await getSiswaByKelasData(kls);
       el.innerHTML = '<option value="">Pilih Siswa</option>';
       siswa.forEach(function(s) { el.innerHTML += '<option value="' + s.id + '|' + s.nama + '">' + s.nama + '</option>'; });
@@ -1237,6 +1281,7 @@
     async function loadSiswaBulkSetor() {
       var kls = document.getElementById('bulk-setor-kelas').value;
       var box = document.getElementById('list-siswa-bulk');
+      if(!kls) { box.innerHTML = '<p class="text-xs text-gray-400 italic">Pilih kelas di atas untuk menampilkan daftar siswa.</p>'; return; }
       box.innerHTML = '<p class="text-xs text-gray-400">⏳ Mengambil data siswa...</p>';
 
       const siswa = await getSiswaByKelasData(kls);
@@ -1830,7 +1875,7 @@
       document.getElementById('out-sakit').innerText = abs ? abs.filter(a => a.status==='Sakit').length : 0;
       document.getElementById('out-alpha').innerText = abs ? abs.filter(a => a.status==='Alpha'||a.status==='Alfa').length : 0;
 
-      // 2. Fetch Setoran (Ada Tanggal)
+      // 2. Fetch Setoran
       const { data: set } = await db.from('tahfidz').select('*').eq('siswa_id', sId).gte('tanggal', tglAwal).lte('tanggal', tglAkhir).order('tanggal', { ascending: true });
       var boxSetor = document.getElementById('out-list-setoran');
       boxSetor.innerHTML = '';
@@ -1845,7 +1890,7 @@
         boxSetor.innerHTML = '<p class="text-gray-400 italic text-xs">Belum ada catatan setoran pada periode ini.</p>';
       }
 
-      // 3. Fetch Tasmi' / Ujian (Ada Tanggal)
+      // 3. Fetch Tasmi' / Ujian
       const { data: tasmi } = await db.from('ujian').select('*').eq('siswa_id', sId).gte('tanggal', tglAwal).lte('tanggal', tglAkhir).order('tanggal', { ascending: true });
       var boxTasmi = document.getElementById('out-list-tasmi');
       boxTasmi.innerHTML = '';
@@ -1861,7 +1906,7 @@
         boxTasmi.innerHTML = '<p class="text-gray-400 italic text-xs">Belum ada catatan ujian pada periode ini.</p>';
       }
 
-      // 4. Fetch Kedisiplinan (Ada Tanggal)
+      // 4. Fetch Kedisiplinan
       const { data: disiplin } = await db.from('kedisiplinan').select('*').eq('siswa_id', sId).gte('tanggal', tglAwal).lte('tanggal', tglAkhir).order('tanggal', { ascending: true });
       var boxDis = document.getElementById('out-list-disiplin');
       boxDis.innerHTML = '';
@@ -1975,10 +2020,18 @@
       var p = document.getElementById('new-pass').value.trim();
       var n = document.getElementById('new-nama').value.trim();
       var r = document.getElementById('new-role').value;
+      var k = document.getElementById('new-kelas-diampu').value.trim();
 
-      const { error } = await db.from('users').insert([{ username: u, password: p, nama: n, role: r }]);
+      const { error } = await db.from('users').insert([{ username: u, password: p, nama: n, role: r, kelas_diampu: k }]);
       if(error) alert("Error: " + error.message);
-      else { alert("✅ User ditambahkan!"); loadDaftarUser(); }
+      else { 
+        alert("✅ User ditambahkan!"); 
+        document.getElementById('new-user').value = '';
+        document.getElementById('new-pass').value = '';
+        document.getElementById('new-nama').value = '';
+        document.getElementById('new-kelas-diampu').value = '';
+        loadDaftarUser(); 
+      }
     }
 
     async function loadDaftarUser() {
@@ -1987,7 +2040,7 @@
       box.innerHTML = '';
       if (data) {
         data.forEach(function(u) {
-          box.innerHTML += '<div class="bg-gray-50 p-2.5 rounded-xl border text-xs flex justify-between"><div><b>' + u.nama + '</b> (' + u.role + ')</div></div>';
+          box.innerHTML += '<div class="bg-gray-50 p-2.5 rounded-xl border text-xs flex justify-between"><div><b>' + u.nama + '</b> (' + u.role + (u.kelas_diampu ? ' - ' + u.kelas_diampu : '') + ')</div></div>';
         });
       }
     }
