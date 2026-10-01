@@ -446,7 +446,7 @@
     <!-- TAB 3: KEDISIPLINAN -->
     <div id="view-disiplin" class="hidden space-y-4">
       
-      <!-- FORM CATATAN KEDISIPLINAN (DENGAN STATUS & TINDAKAN WALI KELAS) -->
+      <!-- FORM CATATAN KEDISIPLINAN -->
       <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
         <h3 class="font-bold text-sm text-gray-800 flex items-center gap-2">
           <i class="fa-solid fa-shield-halved text-amber-500"></i> Form Catatan Kedisiplinan Siswa
@@ -495,7 +495,6 @@
           <input type="text" id="disiplin-keterangan" placeholder="Keterangan rincian kejadian..." class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
         </div>
         
-        <!-- TAMBAHAN FIELD STATUS TINDAKAN & DESKRIPSI TINDAKAN -->
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block text-[11px] text-gray-500 mb-1">Status Tindakan Wali Kelas</label>
@@ -520,7 +519,7 @@
         </div>
       </div>
 
-      <!-- LEGGER KEDISIPLINAN LENGKAP -->
+      <!-- LEGGER KEDISIPLINAN -->
       <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3 no-print">
         <h3 class="font-bold text-sm text-gray-800 flex items-center gap-2">
           <i class="fa-solid fa-table-list text-amber-500"></i> Legger Kedisiplinan Sekelas
@@ -659,8 +658,8 @@
             <select id="cek-bulan" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
               <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
               <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
-              <option value="7">Juli</option><option value="8">Agustus</option><option value="9 font-bold" selected>September</option>
-              <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
+              <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
+              <option value="10" selected>Oktober</option><option value="11">November</option><option value="12">Desember</option>
             </select>
           </div>
           <div>
@@ -935,7 +934,7 @@
         <span class="text-[10px] font-medium">Disiplin</span>
       </button>
 
-      <!-- 3. BERANDA (MELAYANG DI TENGAH) -->
+      <!-- 3. BERANDA -->
       <div class="flex-1 flex flex-col items-center justify-center -mt-8 z-10">
         <button onclick="bukaTab('dashboard')" id="nav-dashboard-btn" class="w-14 h-14 bg-[#1A98FF] text-white rounded-full flex items-center justify-center shadow-lg border-4 border-white hover:bg-blue-600 transition active:scale-90">
           <i class="fa-solid fa-house text-xl"></i>
@@ -2041,7 +2040,7 @@
       }
     }
 
-    // LAPORAN & WA
+    // LAPORAN & WA (FUNGSI SUDAH BERSIH DAN BEBAS DARI ERROR TYPO)
     async function buatLaporanSantri() {
       var valSiswa = document.getElementById('lap-nama').value.split('|');
       var sId = valSiswa[0];
@@ -2113,81 +2112,81 @@
     }
 
     function kirimWaOrtu() {
-  if (!currentLaporanData) {
-    alert("Buat laporan terlebih dahulu sebelum mengirim WA!");
-    return;
-  }
-  
-  var d = currentLaporanData;
+      if (!currentLaporanData) {
+        alert("Buat laporan terlebih dahulu sebelum mengirim WA!");
+        return;
+      }
+      
+      var d = currentLaporanData;
 
-  var h = d.abs ? d.abs.filter(a => a.status === 'Hadir').length : 0;
-  var i = d.abs ? d.abs.filter(a => a.status === 'Izin').length : 0;
-  var s = d.abs ? d.abs.filter(a => a.status === 'Sakit').length : 0;
-  var a = d.abs ? d.abs.filter(a => a.status === 'Alpha' || a.status === 'Alfa').length : 0;
+      var h = d.abs ? d.abs.filter(a => a.status === 'Hadir').length : 0;
+      var i = d.abs ? d.abs.filter(a => a.status === 'Izin').length : 0;
+      var s = d.abs ? d.abs.filter(a => a.status === 'Sakit').length : 0;
+      var a = d.abs ? d.abs.filter(a => a.status === 'Alpha' || a.status === 'Alfa').length : 0;
 
-  var txtSetor = "";
-  if (d.set && d.set.length > 0) {
-    d.set.forEach((st, idx) => {
-      var tgl = st.tanggal ? `_(${st.tanggal})_` : '';
-      txtSetor += `${idx + 1}. *${st.jenis || 'Setor'}* ${tgl}: ${st.surah_jilid || '-'} (${st.ayat_halaman || '-'}) - Nilai: _${st.nilai || 'Mumtaz'}_\n`;
-    });
-  } else {
-    txtSetor = "_Belum ada catatan setoran pada periode ini._\n";
-  }
+      var txtSetor = "";
+      if (d.set && d.set.length > 0) {
+        d.set.forEach((st, idx) => {
+          var tgl = st.tanggal ? `_(${st.tanggal})_` : '';
+          txtSetor += `${idx + 1}. *${st.jenis || 'Setor'}* ${tgl}: ${st.surah_jilid || '-'} (${st.ayat_halaman || '-'}) - Nilai: _${st.nilai || 'Mumtaz'}_\n`;
+        });
+      } else {
+        txtSetor = "_Belum ada catatan setoran pada periode ini._\n";
+      }
 
-  var txtTasmi = "";
-  if (d.tasmi && d.tasmi.length > 0) {
-    d.tasmi.forEach((u, idx) => {
-      var tgl = u.tanggal ? `_(${u.tanggal})_` : '';
-      txtTasmi += `${idx + 1}. *${u.jenis_ujian || 'Ujian'}* ${tgl}: ${u.materi_juz || '-'} - Status: *${u.status || 'LULUS'}*\n`;
-    });
-  } else {
-    txtTasmi = "_Belum ada catatan ujian pada periode ini._\n";
-  }
+      var txtTasmi = "";
+      if (d.tasmi && d.tasmi.length > 0) {
+        d.tasmi.forEach((u, idx) => {
+          var tgl = u.tanggal ? `_(${u.tanggal})_` : '';
+          txtTasmi += `${idx + 1}. *${u.jenis_ujian || 'Ujian'}* ${tgl}: ${u.materi_juz || '-'} - Status: *${u.status || 'LULUS'}*\n`;
+        });
+      } else {
+        txtTasmi = "_Belum ada catatan ujian pada periode ini._\n";
+      }
 
-  var txtDisiplin = "";
-  if (d.disiplin && d.disiplin.length > 0) {
-    d.disiplin.forEach((ds, idx) => {
-      var tgl = ds.tanggal ? `_(${ds.tanggal})_` : '';
-      txtDisiplin += `${idx + 1}. [${ds.jenis}] ${tgl} ${ds.catatan}\n   - Status: *${ds.status_tindakan || 'Belum Ditindak'}*\n   - Tindakan: _${ds.tindakan_walikelas || '-' logic}_\n`;
-    });
-  } else {
-    txtDisiplin = "_Alhamdulillah, ananda tertib dan tidak ada catatan pelanggaran._\n";
-  }
+      var txtDisiplin = "";
+      if (d.disiplin && d.disiplin.length > 0) {
+        d.disiplin.forEach((ds, idx) => {
+          var tgl = ds.tanggal ? `_(${ds.tanggal})_` : '';
+          txtDisiplin += `${idx + 1}. [${ds.jenis}] ${tgl} ${ds.catatan}\n   - Status: *${ds.status_tindakan || 'Belum Ditindak'}*\n   - Tindakan: _${ds.tindakan_walikelas || '-' logic}_\n`;
+        });
+      } else {
+        txtDisiplin = "_Alhamdulillah, ananda tertib dan tidak ada catatan pelanggaran._\n";
+      }
 
-  var pesan = `Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\n` +
-    `Kepada Yth. Bapak/Ibu Wali Murid dari *${d.nama}*,\n` +
-    `Semoga Bapak/Ibu beserta keluarga senantiasa berada dalam keadaan sehat wal'afiat dan selalu dalam lindungan Allah SWT.\n\n` +
-    `Berikut kami sampaikan *Laporan Perkembangan Akademik & Kedisiplinan Siswa* SDIT Aladzievie:\n\n` +
-    `-----------------------------------------\n` +
-    `👤 *Nama Siswa:* ${d.nama}\n` +
-    `🏫 *Kelas:* ${d.kls}\n` +
-    `📅 *Periode Laporan:* ${d.periode}\n` +
-    `-----------------------------------------\n\n` +
+      var pesan = `Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\n` +
+        `Kepada Yth. Bapak/Ibu Wali Murid dari *${d.nama}*,\n` +
+        `Semoga Bapak/Ibu beserta keluarga senantiasa berada dalam keadaan sehat wal'afiat dan selalu dalam lindungan Allah SWT.\n\n` +
+        `Berikut kami sampaikan *Laporan Perkembangan Akademik & Kedisiplinan Siswa* SDIT Aladzievie:\n\n` +
+        `-----------------------------------------\n` +
+        `👤 *Nama Siswa:* ${d.nama}\n` +
+        `🏫 *Kelas:* ${d.kls}\n` +
+        `📅 *Periode Laporan:* ${d.periode}\n` +
+        `-----------------------------------------\n\n` +
 
-    `📋 *A. REKAPITULASI KEHADIRAN*\n` +
-    `• Hadir: ${h} hari\n` +
-    `• Izin: ${i} hari\n` +
-    `• Sakit: ${s} hari\n` +
-    `• Alpha: ${a} hari\n\n` +
+        `📋 *A. REKAPITULASI KEHADIRAN*\n` +
+        `• Hadir: ${h} hari\n` +
+        `• Izin: ${i} hari\n` +
+        `• Sakit: ${s} hari\n` +
+        `• Alpha: ${a} hari\n\n` +
 
-    `📖 *B. CAPAIAN TAHFIDZ & TILAWAH*\n` +
-    `${txtSetor}\n` +
+        `📖 *B. CAPAIAN TAHFIDZ & TILAWAH*\n` +
+        `${txtSetor}\n` +
 
-    `🎓 *C. HASIL UJIAN & TASMI'*\n` +
-    `${txtTasmi}\n` +
+        `🎓 *C. HASIL UJIAN & TASMI'*\n` +
+        `${txtTasmi}\n` +
 
-    `🛡️ *D. CATATAN KEDISIPLINAN & TINDAKAN GURU*\n` +
-    `${txtDisiplin}\n` +
-    `-----------------------------------------\n\n` +
-    `Demikian laporan perkembangan ini kami sampaikan. Terima kasih banyak atas kerja sama dan bimbingan Bapak/Ibu di rumah.\n\n` +
-    `_Jazakumullahu khairan wa barakallahu fiikum._\n\n` +
-    `*Wali Kelas / Guru Pembimbing*\n` +
-    `*SDIT Aladzievie*`;
+        `🛡️ *D. CATATAN KEDISIPLINAN & TINDAKAN GURU*\n` +
+        `${txtDisiplin}\n` +
+        `-----------------------------------------\n\n` +
+        `Demikian laporan perkembangan ini kami sampaikan. Terima kasih banyak atas kerja sama dan bimbingan Bapak/Ibu di rumah.\n\n` +
+        `_Jazakumullahu khairan wa barakallahu fiikum._\n\n` +
+        `*Wali Kelas / Guru Pembimbing*\n` +
+        `*SDIT Aladzievie*`;
 
-  var urlWA = "https://api.whatsapp.com/send?text=" + encodeURIComponent(pesan);
-  window.open(urlWA, "_blank");
-}
+      var urlWA = "https://api.whatsapp.com/send?text=" + encodeURIComponent(pesan);
+      window.open(urlWA, "_blank");
+    }
 
     // UBAH PASS & USER
     function bukaModalPass() { document.getElementById('modal-pass').classList.remove('hidden'); }
