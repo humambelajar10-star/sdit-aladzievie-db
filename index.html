@@ -2148,7 +2148,7 @@
       if (d.disiplin && d.disiplin.length > 0) {
         d.disiplin.forEach((ds, idx) => {
           var tgl = ds.tanggal ? `_(${ds.tanggal})_` : '';
-          txtDisiplin += `${idx + 1}. [${ds.jenis}] ${tgl} ${ds.catatan}\n   - Status: *${ds.status_tindakan || 'Belum Ditindak'}*\n   - Tindakan: _${ds.tindakan_walikelas || '-' logic}_\n`;
+          txtDisiplin += `${idx + 1}. [${ds.jenis}] ${tgl} ${ds.catatan}\n - Status: *${ds.status_tindakan || 'Belum Ditindak'}*\n - Tindakan: _${ds.tindakan_walikelas || '-'}\n`;
         });
       } else {
         txtDisiplin = "_Alhamdulillah, ananda tertib dan tidak ada catatan pelanggaran._\n";
