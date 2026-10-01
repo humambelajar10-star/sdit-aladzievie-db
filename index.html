@@ -119,7 +119,7 @@
           <span class="flex items-center gap-1.5">
             <i class="fa-solid fa-building text-blue-200"></i> Gedung Utama
           </span>
-          <span class="italic opacity-90">Versi 3.0</span>
+          <span class="italic opacity-90">Versi 3.1</span>
         </div>
       </div>
 
@@ -332,7 +332,7 @@
         </div>
       </div>
 
-      <!-- SUB 3: TASMI' & UJIAN (BEBAS PILIH KELAS) -->
+      <!-- SUB 3: TASMI' & UJIAN -->
       <div id="sub-box-tasmi" class="hidden space-y-4">
         <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
           <h3 class="font-bold text-sm text-gray-800 flex items-center gap-2">
@@ -393,7 +393,7 @@
         </div>
       </div>
 
-      <!-- SUB 4: TUGAS & PR (BEBAS PILIH KELAS) -->
+      <!-- SUB 4: TUGAS & PR -->
       <div id="sub-box-tugas" class="hidden space-y-4">
         <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
           <h3 class="font-bold text-sm text-gray-800 flex items-center gap-2">
@@ -445,8 +445,12 @@
 
     <!-- TAB 3: KEDISIPLINAN -->
     <div id="view-disiplin" class="hidden space-y-4">
+      
+      <!-- FORM CATATAN KEDISIPLINAN (DENGAN STATUS & TINDAKAN WALI KELAS) -->
       <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
-        <h3 class="font-bold text-sm text-gray-800"><i class="fa-solid fa-shield-halved text-amber-500 mr-2"></i>Form Catatan Kedisiplinan Siswa</h3>
+        <h3 class="font-bold text-sm text-gray-800 flex items-center gap-2">
+          <i class="fa-solid fa-shield-halved text-amber-500"></i> Form Catatan Kedisiplinan Siswa
+        </h3>
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block text-[11px] text-gray-500 mb-1">Tanggal</label>
@@ -490,10 +494,22 @@
           <label class="block text-[11px] text-gray-500 mb-1">Detail Kejadian</label>
           <input type="text" id="disiplin-keterangan" placeholder="Keterangan rincian kejadian..." class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
         </div>
-        <div>
-          <label class="block text-[11px] text-gray-500 mb-1">Tindakan / Apresiasi Guru</label>
-          <input type="text" id="disiplin-tindakan" placeholder="Nasihat, hukuman mendidik, dll." class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
+        
+        <!-- TAMBAHAN FIELD STATUS TINDAKAN & DESKRIPSI TINDAKAN -->
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[11px] text-gray-500 mb-1">Status Tindakan Wali Kelas</label>
+            <select id="disiplin-status-tindakan" class="w-full bg-gray-50 border rounded-xl p-2 text-xs font-semibold">
+              <option value="Belum Ditindak">⏳ Belum Ditindak</option>
+              <option value="Sudah Ditindak">✅ Sudah Ditindak</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] text-gray-500 mb-1">Tindakan Wali Kelas / Guru</label>
+            <input type="text" id="disiplin-tindakan" placeholder="Misal: Pemanggilan ortu, teguran lisan, dll." class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
+          </div>
         </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-2 pt-1">
           <button type="button" onclick="simpanKedisiplinanData()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2.5 rounded-xl text-xs shadow">
             💾 Simpan Catatan Kedisiplinan
@@ -504,6 +520,43 @@
         </div>
       </div>
 
+      <!-- LEGGER KEDISIPLINAN LENGKAP -->
+      <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3 no-print">
+        <h3 class="font-bold text-sm text-gray-800 flex items-center gap-2">
+          <i class="fa-solid fa-table-list text-amber-500"></i> Legger Kedisiplinan Sekelas
+        </h3>
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="block text-[11px] text-gray-500 mb-1">Kelas</label>
+            <select id="legger-disiplin-kelas" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
+              <option value="">-- Pilih Kelas --</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] text-gray-500 mb-1">Dari Tanggal</label>
+            <input type="date" id="legger-tgl-awal" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
+          </div>
+          <div>
+            <label class="block text-[11px] text-gray-500 mb-1">Sampai Tanggal</label>
+            <input type="date" id="legger-tgl-akhir" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
+          </div>
+        </div>
+        <button type="button" onclick="generateLeggerDisiplin()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2.5 rounded-xl text-xs shadow">
+          📊 Tampilkan Legger Kedisiplinan
+        </button>
+      </div>
+
+      <!-- CONTAINER HASIL LEGGER -->
+      <div id="container-legger-disiplin" class="hidden space-y-3">
+        <div class="no-print text-right">
+          <button onclick="window.print()" class="bg-gray-800 hover:bg-black text-white font-bold px-4 py-2 rounded-xl text-xs shadow inline-flex items-center gap-2">
+            <i class="fa-solid fa-print"></i> Cetak Legger (PDF)
+          </button>
+        </div>
+        <div id="hasil-legger-table" class="bg-white p-4 rounded-2xl border shadow-sm overflow-x-auto"></div>
+      </div>
+
+      <!-- RIWAYAT KEDISIPLINAN -->
       <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
         <h3 class="font-bold text-sm text-gray-800">Cek Riwayat Kedisiplinan</h3>
         <div>
@@ -606,7 +659,7 @@
             <select id="cek-bulan" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
               <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
               <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
-              <option value="7">Juli</option><option value="8">Agustus</option><option value="9" selected>September</option>
+              <option value="7">Juli</option><option value="8">Agustus</option><option value="9 font-bold" selected>September</option>
               <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
             </select>
           </div>
@@ -689,7 +742,7 @@
           <div id="out-list-tasmi" class="space-y-1.5"></div>
         </div>
         <div class="space-y-2 border-t pt-2">
-          <h4 class="font-bold text-gray-800">D. Catatan Kedisiplinan</h4>
+          <h4 class="font-bold text-gray-800">D. Catatan Kedisiplinan & Tindakan Wali Kelas</h4>
           <div id="out-list-disiplin" class="space-y-1.5"></div>
         </div>
         <div class="grid grid-cols-2 gap-2 pt-2 no-print">
@@ -914,7 +967,7 @@
     var currentTab = 'dashboard';
     var currentSessionUser = '';
     var currentSessionRole = '';
-    var currentSessionKelas = ''; // Menyimpan kelas diampu
+    var currentSessionKelas = '';
     var currentLaporanData = null;
 
     var kaldikCurrentDate = new Date();
@@ -931,6 +984,8 @@
       if(document.getElementById('kaldik-tgl')) document.getElementById('kaldik-tgl').value = today;
       if(document.getElementById('lap-tgl-awal')) document.getElementById('lap-tgl-awal').value = today;
       if(document.getElementById('lap-tgl-akhir')) document.getElementById('lap-tgl-akhir').value = today;
+      if(document.getElementById('legger-tgl-awal')) document.getElementById('legger-tgl-awal').value = today;
+      if(document.getElementById('legger-tgl-akhir')) document.getElementById('legger-tgl-akhir').value = today;
       
       var now = new Date();
       var dateStr = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -1019,7 +1074,7 @@
 
         currentSessionUser = data.username;
         currentSessionRole = data.role;
-        currentSessionKelas = data.kelas_diampu || ''; // Menyimpan kelas diampu
+        currentSessionKelas = data.kelas_diampu || '';
 
         document.getElementById('session-info').innerText = data.nama + ' (' + data.role + (data.kelas_diampu ? ' - ' + data.kelas_diampu : '') + ')';
         document.getElementById('welcome-user-name').innerText = data.nama + ' (' + data.role + ')';
@@ -1043,7 +1098,6 @@
           if(btnKaldik) btnKaldik.classList.add('hidden');
         }
 
-        // Muat opsi kelas berdasarkan hak akses pengguna
         await loadKelasOptions();
 
         bukaTab('dashboard');
@@ -1096,13 +1150,11 @@
 
     // DASHBOARD FEEDS
     async function loadDashboardFeeds() {
-      // 1. Feed Pengajuan Perizinan Ortu Pending
       var boxIz = document.getElementById('feed-perizinan-ortu');
       var badgeIz = document.getElementById('badge-count-izin');
       
       let queryIz = db.from('perizinan_ortu').select('*, siswa!inner(nama, kelas)').eq('status', 'Pending').order('created_at', { ascending: false });
       
-      // Jika Wali Kelas/Guru, filter perizinan sesuai kelasnya saja
       if (currentSessionRole !== 'Admin Utama' && currentSessionKelas) {
         queryIz = queryIz.eq('siswa.kelas', currentSessionKelas);
       }
@@ -1137,7 +1189,6 @@
         boxIz.innerHTML = '<p class="text-gray-500 italic text-[11px]">Belum ada pengajuan izin ortu yang pending.</p>';
       }
 
-      // 2. Feed Pengumuman
       var fP = document.getElementById('feed-pengumuman');
       const { data: pData } = await db.from('pengumuman').select('*').order('created_at', { ascending: false }).limit(2);
       fP.innerHTML = '';
@@ -1151,7 +1202,6 @@
         });
       }
 
-      // 3. Feed Kaldik
       var fK = document.getElementById('feed-kaldik');
       var today = new Date().toISOString().split('T')[0];
       const { data: kData } = await db.from('kaldik').select('*').gte('tanggal', today).order('tanggal', { ascending: true }).limit(2);
@@ -1167,7 +1217,6 @@
       }
     }
 
-    // ACC & TOLAK PERIZINAN ORTU
     async function accPerizinanOrtu(izId, siswaId, tglMulai, tglSelesai, jenisIzin, kls) {
       if (confirm(`Setujui pengajuan ${jenisIzin} ini dan otomatis masukkan ke rekap absensi?`)) {
         const { error: errUpdate } = await db.from('perizinan_ortu').update({ status: 'Disetujui', disetujui_oleh: currentSessionUser }).eq('id', izId);
@@ -1210,15 +1259,13 @@
 
       var isGuru = currentSessionRole !== 'Admin Utama' && currentSessionKelas !== '';
 
-      // 1. Dropdown KELAS TERKUNCI (Absensi & Setoran Halaqoh)
       ['absen-kelas', 'setor-kelas', 'bulk-setor-kelas'].forEach(function(id) {
         var el = document.getElementById(id);
         if(el) {
           el.innerHTML = '';
           if (isGuru) {
-            // Hanya muncul kelas yang diampu saja
             el.innerHTML = '<option value="' + currentSessionKelas + '" selected>' + currentSessionKelas + '</option>';
-            el.disabled = true; // Kunci input agar tidak bisa diubah
+            el.disabled = true;
           } else {
             el.disabled = false;
             el.innerHTML = '<option value="">Pilih Kelas</option>';
@@ -1227,18 +1274,16 @@
         }
       });
 
-      // Otomatis load siswa untuk Guru/Wali Kelas
       if (isGuru) {
         loadSiswaAbsen();
         loadSiswaSetor();
         loadSiswaBulkSetor();
       }
 
-      // 2. Dropdown KELAS BEBAS (Tasmi, Tugas, Kedisiplinan, Rekap, Laporan, Pengumuman)
-      ['tasmi-kelas', 'disiplin-kelas', 'filter-disiplin-kelas', 'tugas-kelas', 'filter-tugas-kelas', 'pengumuman-target', 'cek-kelas', 'lap-kelas'].forEach(function(id) {
+      ['tasmi-kelas', 'disiplin-kelas', 'filter-disiplin-kelas', 'legger-disiplin-kelas', 'tugas-kelas', 'filter-tugas-kelas', 'pengumuman-target', 'cek-kelas', 'lap-kelas'].forEach(function(id) {
         var el = document.getElementById(id);
         if(el) {
-          var defaultLabel = id.startsWith('filter-') ? 'Semua Kelas' : (id === 'pengumuman-target' ? 'Semua Kelas' : 'Pilih Kelas');
+          var defaultLabel = id.startsWith('filter-') || id.startsWith('legger-') ? '-- Pilih Kelas --' : (id === 'pengumuman-target' ? 'Semua Kelas' : 'Pilih Kelas');
           el.disabled = false;
           el.innerHTML = '<option value="">' + defaultLabel + '</option>';
           if(id === 'pengumuman-target') el.innerHTML = '<option value="Semua Kelas">Semua Kelas</option>';
@@ -1438,22 +1483,34 @@
       }
     }
 
+    // SIMPAN CATATAN KEDISIPLINAN DENGAN STATUS & TINDAKAN WALI KELAS
     async function simpanKedisiplinanData() {
       var valSiswa = document.getElementById('disiplin-nama').value.split('|');
       if(!valSiswa[0]) { alert("Pilih nama siswa terlebih dahulu!"); return; }
 
+      var jenis = document.getElementById('disiplin-jenis').value;
+      var statusTindakan = document.getElementById('disiplin-status-tindakan').value;
+      var tindakanWalikelas = document.getElementById('disiplin-tindakan').value.trim();
+
+      if (jenis === 'Prestasi') {
+        statusTindakan = 'Sudah Ditindak';
+        if (!tindakanWalikelas) tindakanWalikelas = 'Apresiasi / Penghargaan Diberikan';
+      }
+
       var payload = {
         tanggal: document.getElementById('disiplin-tgl').value,
         siswa_id: valSiswa[0],
-        jenis: document.getElementById('disiplin-jenis').value,
-        catatan: document.getElementById('disiplin-kategori').value + " - " + document.getElementById('disiplin-keterangan').value + (document.getElementById('disiplin-tindakan').value ? " (Tindakan: "+document.getElementById('disiplin-tindakan').value+")" : ""),
+        jenis: jenis,
+        catatan: document.getElementById('disiplin-kategori').value + " - " + document.getElementById('disiplin-keterangan').value,
+        status_tindakan: statusTindakan,
+        tindakan_walikelas: tindakanWalikelas || '-',
         pencatat: currentSessionUser
       };
 
       const { error } = await db.from('kedisiplinan').insert([payload]);
       if(error) alert("Error: " + error.message);
       else {
-        alert("✅ Catatan Kedisiplinan Berhasil Disimpan!");
+        alert("✅ Catatan Kedisiplinan & Tindakan Wali Kelas Berhasil Disimpan!");
         document.getElementById('disiplin-keterangan').value = '';
         document.getElementById('disiplin-tindakan').value = '';
         loadRiwayatKedisiplinan();
@@ -1474,6 +1531,8 @@
           siswa_id: s.id,
           jenis: 'Prestasi',
           catatan: 'Kedisiplinan - Tertib Harian (Nihil Pelanggaran)',
+          status_tindakan: 'Sudah Ditindak',
+          tindakan_walikelas: 'Apresiasi Kelas Tertib',
           pencatat: currentSessionUser
         }));
 
@@ -1484,6 +1543,132 @@
           loadRiwayatKedisiplinan();
         }
       }
+    }
+
+    // GENERATE LEGGER KEDISIPLINAN DENGAN STATUS & TINDAKAN WALI KELAS
+    async function generateLeggerDisiplin() {
+      var kls = document.getElementById('legger-disiplin-kelas').value;
+      var tglAwal = document.getElementById('legger-tgl-awal').value;
+      var tglAkhir = document.getElementById('legger-tgl-akhir').value;
+      var boxContainer = document.getElementById('container-legger-disiplin');
+      var boxTable = document.getElementById('hasil-legger-table');
+
+      if (!kls) { alert("Pilih kelas terlebih dahulu!"); return; }
+
+      boxContainer.classList.remove('hidden');
+      boxTable.innerHTML = '<p class="text-xs text-center text-gray-500 py-4 font-semibold">⏳ Mengolah Legger Kedisiplinan...</p>';
+
+      const { data: siswaList } = await db.from('siswa').select('*').eq('kelas', kls).order('nama', { ascending: true });
+      if (!siswaList || siswaList.length === 0) {
+        boxTable.innerHTML = '<p class="text-xs text-center text-gray-400 py-4">Tidak ada data siswa di kelas ini.</p>';
+        return;
+      }
+
+      var query = db.from('kedisiplinan').select('*, siswa!inner(nama, kelas)').eq('siswa.kelas', kls);
+      if (tglAwal) query = query.gte('tanggal', tglAwal);
+      if (tglAkhir) query = query.lte('tanggal', tglAkhir);
+
+      const { data: records, error } = await query;
+      if (error) {
+        boxTable.innerHTML = `<p class="text-xs text-red-500">Error: ${error.message}</p>`;
+        return;
+      }
+
+      let tableHtml = `
+        <div class="text-center mb-4">
+          <h3 class="font-extrabold text-sm text-gray-900 uppercase">LEGGER CATATAN KEDISIPLINAN & TINDAKAN WALI KELAS</h3>
+          <p class="text-xs text-gray-600">SDIT ALADZIEVIE — KELAS: <b>${kls}</b></p>
+          <p class="text-[11px] text-gray-500">Periode: ${tglAwal || 'Awal'} s/d ${tglAkhir || 'Hari Ini'}</p>
+        </div>
+
+        <table class="w-full text-[11px] text-left border-collapse border border-gray-300">
+          <thead>
+            <tr class="bg-gray-100 text-gray-800 text-center font-bold border-b border-gray-300">
+              <th class="p-2 border border-gray-300 w-8">No</th>
+              <th class="p-2 border border-gray-300 text-left min-w-[120px]">Nama Siswa</th>
+              <th class="p-1 border border-gray-300 w-10 text-rose-700">Terlambat</th>
+              <th class="p-1 border border-gray-300 w-10 text-rose-700">Seragam</th>
+              <th class="p-1 border border-gray-300 w-10 text-rose-700">Adab</th>
+              <th class="p-1 border border-gray-300 w-10 text-rose-700">Ibadah</th>
+              <th class="p-1 border border-gray-300 w-10 text-rose-700">Kebersihan</th>
+              <th class="p-1 border border-gray-300 w-10 text-rose-700">Ketertiban</th>
+              <th class="p-1 border border-gray-300 w-10 text-rose-700">Lainnya</th>
+              <th class="p-1 border border-gray-300 w-12 bg-rose-50 text-rose-900">Total Pelanggaran</th>
+              <th class="p-1 border border-gray-300 w-12 bg-emerald-50 text-emerald-900">Prestasi</th>
+              <th class="p-2 border border-gray-300 text-left min-w-[180px]">Rincian Kejadian</th>
+              <th class="p-2 border border-gray-300 w-28 text-center">Status Tindakan Wali Kelas</th>
+              <th class="p-2 border border-gray-300 text-left min-w-[160px]">Tindakan Wali Kelas</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      siswaList.forEach((s, idx) => {
+        let sRecs = records ? records.filter(r => r.siswa_id === s.id) : [];
+
+        let cTerlambat = sRecs.filter(r => r.jenis === 'Pelanggaran' && r.catatan.includes('Keterlambatan')).length;
+        let cSeragam = sRecs.filter(r => r.jenis === 'Pelanggaran' && r.catatan.includes('Kerapihan')).length;
+        let cAdab = sRecs.filter(r => r.jenis === 'Pelanggaran' && r.catatan.includes('Adab/Akhlaq')).length;
+        let cIbadah = sRecs.filter(r => r.jenis === 'Pelanggaran' && r.catatan.includes('Ibadah')).length;
+        let cKebersihan = sRecs.filter(r => r.jenis === 'Pelanggaran' && r.catatan.includes('Kebersihan')).length;
+        let cKetertiban = sRecs.filter(r => r.jenis === 'Pelanggaran' && r.catatan.includes('Ketertiban')).length;
+        let cLainnya = sRecs.filter(r => r.jenis === 'Pelanggaran' && r.catatan.includes('Lainnya')).length;
+
+        let totPelanggaran = cTerlambat + cSeragam + cAdab + cIbadah + cKebersihan + cKetertiban + cLainnya;
+        let totPrestasi = sRecs.filter(r => r.jenis === 'Prestasi').length;
+
+        let rincianTxt = "";
+        let statusTxt = "";
+        let tindakanTxt = "";
+
+        if (sRecs.length > 0) {
+          sRecs.forEach(r => {
+            let color = r.jenis === 'Prestasi' ? 'text-emerald-700' : 'text-rose-700';
+            rincianTxt += `<div class="mb-1"><b class="${color}">[${r.tanggal}]</b> ${r.catatan}</div>`;
+
+            let stColor = r.status_tindakan === 'Sudah Ditindak' 
+              ? 'bg-emerald-100 text-emerald-800 border-emerald-200' 
+              : 'bg-rose-100 text-rose-800 border-rose-200';
+            
+            statusTxt += `<div class="mb-1"><span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold border ${stColor}">${r.status_tindakan || 'Belum Ditindak'}</span></div>`;
+
+            tindakanTxt += `<div class="mb-1 text-gray-700">• ${r.tindakan_walikelas || '-'}</div>`;
+          });
+        } else {
+          rincianTxt = `<span class="text-gray-400 italic">Nihil (Tertib)</span>`;
+          statusTxt = `<span class="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-[10px] font-semibold">Tertib (Nihil)</span>`;
+          tindakanTxt = `<span class="text-gray-400 italic">-</span>`;
+        }
+
+        tableHtml += `
+          <tr class="border-b border-gray-200 hover:bg-gray-50">
+            <td class="p-2 border border-gray-300 text-center font-semibold">${idx + 1}</td>
+            <td class="p-2 border border-gray-300 font-bold text-gray-800">${s.nama}</td>
+            <td class="p-1 border border-gray-300 text-center ${cTerlambat > 0 ? 'bg-rose-50 font-bold text-rose-700' : 'text-gray-400'}">${cTerlambat || '-'}</td>
+            <td class="p-1 border border-gray-300 text-center ${cSeragam > 0 ? 'bg-rose-50 font-bold text-rose-700' : 'text-gray-400'}">${cSeragam || '-'}</td>
+            <td class="p-1 border border-gray-300 text-center ${cAdab > 0 ? 'bg-rose-50 font-bold text-rose-700' : 'text-gray-400'}">${cAdab || '-'}</td>
+            <td class="p-1 border border-gray-300 text-center ${cIbadah > 0 ? 'bg-rose-50 font-bold text-rose-700' : 'text-gray-400'}">${cIbadah || '-'}</td>
+            <td class="p-1 border border-gray-300 text-center ${cKebersihan > 0 ? 'bg-rose-50 font-bold text-rose-700' : 'text-gray-400'}">${cKebersihan || '-'}</td>
+            <td class="p-1 border border-gray-300 text-center ${cKetertiban > 0 ? 'bg-rose-50 font-bold text-rose-700' : 'text-gray-400'}">${cKetertiban || '-'}</td>
+            <td class="p-1 border border-gray-300 text-center ${cLainnya > 0 ? 'bg-rose-50 font-bold text-rose-700' : 'text-gray-400'}">${cLainnya || '-'}</td>
+            <td class="p-1 border border-gray-300 text-center font-black bg-rose-100/50 text-rose-900">${totPelanggaran}</td>
+            <td class="p-1 border border-gray-300 text-center font-black bg-emerald-100/50 text-emerald-900">${totPrestasi}</td>
+            <td class="p-2 border border-gray-300 text-[10px] leading-snug">${rincianTxt}</td>
+            <td class="p-2 border border-gray-300 text-center">${statusTxt}</td>
+            <td class="p-2 border border-gray-300 text-[10px] leading-snug">${tindakanTxt}</td>
+          </tr>
+        `;
+      });
+
+      tableHtml += `
+          </tbody>
+        </table>
+        <div class="mt-4 text-[10px] text-gray-500 italic text-right">
+          Dicetak dari Aplikasi Data Siswa SDIT Aladzievie pada ${new Date().toLocaleDateString('id-ID')}
+        </div>
+      `;
+
+      boxTable.innerHTML = tableHtml;
     }
 
     // MODUL TUGAS, PENGUMUMAN, KALDIK
@@ -1671,7 +1856,12 @@
 
       var filteredData = klsFilter ? data.filter(d => d.siswa && d.siswa.kelas === klsFilter) : data;
       filteredData.forEach(function(d) {
-        box.innerHTML += '<div class="bg-gray-50 p-3 rounded-xl border text-xs flex justify-between"><div><b>' + d.siswa.nama + ' (' + d.siswa.kelas + ')</b><br>' + d.catatan + '</div><button onclick="hapusKedisiplinanData(' + d.id + ')" class="text-rose-600 font-bold"><i class="fa-solid fa-trash"></i></button></div>';
+        let stColor = d.status_tindakan === 'Sudah Ditindak' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800';
+        box.innerHTML += '<div class="bg-gray-50 p-3 rounded-xl border text-xs flex justify-between items-start"><div>' +
+          '<b>' + d.siswa.nama + ' (' + d.siswa.kelas + ')</b><br>' + d.catatan + '<br>' +
+          '<span class="text-[10px] font-bold ' + stColor + ' px-1.5 py-0.5 rounded mt-1 inline-block">' + (d.status_tindakan || 'Belum Ditindak') + '</span> ' +
+          '<span class="text-[10px] text-gray-500 italic">Tindakan: ' + (d.tindakan_walikelas || '-') + '</span>' +
+          '</div><button onclick="hapusKedisiplinanData(' + d.id + ')" class="text-rose-600 font-bold"><i class="fa-solid fa-trash"></i></button></div>';
       });
     }
 
@@ -1701,7 +1891,6 @@
       document.getElementById('btn-cetak-rekap').classList.remove('hidden');
 
       for (let s of siswaList) {
-        // Query Data
         const { data: abs } = await db.from('absensi').select('*').eq('siswa_id', s.id).gte('tanggal', tglAwalBulan).lte('tanggal', tglAkhirBulan).order('tanggal', { ascending: true });
         const { data: set } = await db.from('tahfidz').select('*').eq('siswa_id', s.id).gte('tanggal', tglAwalBulan).lte('tanggal', tglAkhirBulan).order('tanggal', { ascending: true });
         const { data: tasmi } = await db.from('ujian').select('*').eq('siswa_id', s.id).gte('tanggal', tglAwalBulan).lte('tanggal', tglAkhirBulan).order('tanggal', { ascending: true });
@@ -1712,7 +1901,6 @@
         let cSakit = abs ? abs.filter(a => a.status === 'Sakit').length : 0;
         let cAlpha = abs ? abs.filter(a => a.status === 'Alpha' || a.status === 'Alfa').length : 0;
 
-        // Detail Absen + Tombol Hapus
         let htmlDetailAbsen = '';
         if (abs && abs.length > 0) {
           abs.forEach(a => {
@@ -1729,7 +1917,6 @@
           htmlDetailAbsen = '<p class="text-gray-400 italic text-[11px]">Belum ada data kehadiran bulan ini.</p>';
         }
 
-        // Setoran + Tombol Hapus
         let htmlSetoran = '';
         if (set && set.length > 0) {
           set.forEach(st => {
@@ -1745,7 +1932,6 @@
           htmlSetoran = '<p class="text-gray-400 italic text-[11px] mt-1">Belum ada setoran bulan ini.</p>';
         }
 
-        // Tasmi + Tombol Hapus
         let htmlTasmi = '';
         if (tasmi && tasmi.length > 0) {
           tasmi.forEach(u => {
@@ -1762,13 +1948,16 @@
           htmlTasmi = '<p class="text-gray-400 italic text-[11px] mt-1">Belum ada ujian bulan ini.</p>';
         }
 
-        // Kedisiplinan + Tombol Hapus
         let htmlDisiplin = '';
         if (disiplin && disiplin.length > 0) {
           disiplin.forEach(d => {
             let bgJ = d.jenis === 'Prestasi' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800';
+            let stColor = d.status_tindakan === 'Sudah Ditindak' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800';
+            
             htmlDisiplin += '<div class="bg-gray-50 p-2 rounded-xl border flex justify-between items-center text-xs mt-1">' +
-              '<div><b>' + d.catatan + '</b> <span class="text-[10px] text-gray-400">(' + d.tanggal + ')</span></div>' +
+              '<div><b>' + d.catatan + '</b> <span class="text-[10px] text-gray-400">(' + d.tanggal + ')</span><br>' +
+              '<span class="text-[10px] font-bold ' + stColor + ' px-1.5 py-0.5 rounded mt-0.5 inline-block">' + (d.status_tindakan || 'Belum Ditindak') + '</span> ' +
+              '<span class="text-[10px] text-gray-600">Tindakan: ' + (d.tindakan_walikelas || '-') + '</span></div>' +
               '<div class="flex items-center gap-1.5">' +
                 '<span class="' + bgJ + ' font-bold px-2 py-0.5 rounded text-[10px]">' + d.jenis + '</span>' +
                 '<button onclick="hapusKedisiplinanData(' + d.id + ')" class="text-rose-600 hover:text-rose-800 text-[10px] font-bold px-1" title="Hapus"><i class="fa-solid fa-trash"></i></button>' +
@@ -1813,7 +2002,7 @@
           '</div>' +
 
           '<div>' +
-            '<span class="font-bold text-gray-700 block">D. Catatan Kedisiplinan</span>' +
+            '<span class="font-bold text-gray-700 block">D. Catatan Kedisiplinan & Tindakan Wali Kelas</span>' +
             htmlDisiplin +
           '</div>' +
         '</div>';
@@ -1868,14 +2057,12 @@
       document.getElementById('out-kelas').innerText = kls;
       document.getElementById('out-periode').innerText = tglAwal + " s/d " + tglAkhir;
 
-      // 1. Fetch Absensi
       const { data: abs } = await db.from('absensi').select('*').eq('siswa_id', sId).gte('tanggal', tglAwal).lte('tanggal', tglAkhir);
       document.getElementById('out-hadir').innerText = abs ? abs.filter(a => a.status==='Hadir').length : 0;
       document.getElementById('out-izin').innerText = abs ? abs.filter(a => a.status==='Izin').length : 0;
       document.getElementById('out-sakit').innerText = abs ? abs.filter(a => a.status==='Sakit').length : 0;
       document.getElementById('out-alpha').innerText = abs ? abs.filter(a => a.status==='Alpha'||a.status==='Alfa').length : 0;
 
-      // 2. Fetch Setoran
       const { data: set } = await db.from('tahfidz').select('*').eq('siswa_id', sId).gte('tanggal', tglAwal).lte('tanggal', tglAkhir).order('tanggal', { ascending: true });
       var boxSetor = document.getElementById('out-list-setoran');
       boxSetor.innerHTML = '';
@@ -1890,7 +2077,6 @@
         boxSetor.innerHTML = '<p class="text-gray-400 italic text-xs">Belum ada catatan setoran pada periode ini.</p>';
       }
 
-      // 3. Fetch Tasmi' / Ujian
       const { data: tasmi } = await db.from('ujian').select('*').eq('siswa_id', sId).gte('tanggal', tglAwal).lte('tanggal', tglAkhir).order('tanggal', { ascending: true });
       var boxTasmi = document.getElementById('out-list-tasmi');
       boxTasmi.innerHTML = '';
@@ -1906,15 +2092,16 @@
         boxTasmi.innerHTML = '<p class="text-gray-400 italic text-xs">Belum ada catatan ujian pada periode ini.</p>';
       }
 
-      // 4. Fetch Kedisiplinan
       const { data: disiplin } = await db.from('kedisiplinan').select('*').eq('siswa_id', sId).gte('tanggal', tglAwal).lte('tanggal', tglAkhir).order('tanggal', { ascending: true });
       var boxDis = document.getElementById('out-list-disiplin');
       boxDis.innerHTML = '';
       if (disiplin && disiplin.length > 0) {
         disiplin.forEach(d => { 
           let bgJ = d.jenis === 'Prestasi' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800';
+          let stColor = d.status_tindakan === 'Sudah Ditindak' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800';
+          
           boxDis.innerHTML += `<div class="bg-gray-50 p-2 rounded-xl border flex justify-between items-center text-xs">
-            <div>📅 <b class="text-gray-800">${d.tanggal || '-'}</b> | ${d.catatan}</div>
+            <div>📅 <b class="text-gray-800">${d.tanggal || '-'}</b> | ${d.catatan}<br><span class="text-[10px] font-bold ${stColor} px-1.5 py-0.5 rounded mt-0.5 inline-block">${d.status_tindakan || 'Belum Ditindak'}</span> <span class="text-[10px] text-gray-600">Tindakan: ${d.tindakan_walikelas || '-'}</span></div>
             <span class="${bgJ} px-2 py-0.5 rounded font-bold text-[10px]">${d.jenis}</span>
           </div>`; 
         });
@@ -1962,7 +2149,7 @@
       if (d.disiplin && d.disiplin.length > 0) {
         d.disiplin.forEach((ds, idx) => {
           var tgl = ds.tanggal ? `_(${ds.tanggal})_` : '';
-          txtDisiplin += `${idx + 1}. [${ds.jenis}] ${tgl} ${ds.catatan}\n`;
+          txtDisiplin += `${idx + 1}. [${ds.jenis}] ${tgl} ${ds.catatan}\n   - Status: *${ds.status_tindakan || 'Belum Ditindak'}*\n   - Tindakan: _${ds.tindakan_walikelas || '-' logic}_\n`;
         });
       } else {
         txtDisiplin = "_Alhamdulillah, ananda tertib dan tidak ada catatan pelanggaran._\n";
@@ -1990,12 +2177,11 @@
         `🎓 *C. HASIL UJIAN & TASMI'*\n` +
         `${txtTasmi}\n` +
 
-        `🛡️ *D. CATATAN KEDISIPLINAN*\n` +
+        `🛡️ *D. CATATAN KEDISIPLINAN & TINDAKAN GURU*\n` +
         `${txtDisiplin}\n` +
         `-----------------------------------------\n\n` +
         `Demikian laporan perkembangan ini kami sampaikan. Terima kasih banyak atas kerja sama dan bimbingan Bapak/Ibu di rumah.\n\n` +
         `_Jazakumullahu khairan wa barakallahu fiikum._\n\n` +
-        `Wassalamu'alaikum Warahmatullahi Wabarakatuh.\n\n` +
         `*Wali Kelas / Guru Pembimbing*\n` +
         `*SDIT Aladzievie*`;
 
