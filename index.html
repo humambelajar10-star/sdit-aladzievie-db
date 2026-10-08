@@ -445,79 +445,160 @@
 
     <!-- TAB 3: KEDISIPLINAN -->
     <div id="view-disiplin" class="hidden space-y-4">
+
+  <!-- NAVIGASI SUB-TAB -->
+  <div class="w-full bg-white p-2 rounded-2xl border shadow-sm">
+    <div class="flex space-x-2 border-b pb-2 overflow-x-auto">
+      <button onclick="switchSubTabKedisiplinan('sub-disiplin-form')" id="btn-sub-disiplin-form" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap bg-blue-600 text-white shadow-sm">
+        <i class="fa-solid fa-pen-to-square mr-1"></i> Form & Riwayat Catatan
+      </button>
+      <button onclick="switchSubTabKedisiplinan('sub-disiplin-legger')" id="btn-sub-disiplin-legger" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap bg-gray-100 text-gray-600 hover:bg-gray-200">
+        <i class="fa-solid fa-table-list mr-1"></i> Legger Kedisiplinan
+      </button>
+    </div>
+
+    <!-- AREA KONTEN SUB-TAB -->
+    <div class="mt-3">
       
-      <!-- FORM CATATAN KEDISIPLINAN -->
-      <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
-        <h3 class="font-bold text-sm text-gray-800 flex items-center gap-2">
-          <i class="fa-solid fa-shield-halved text-amber-500"></i> Form Catatan Kedisiplinan Siswa
-        </h3>
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block text-[11px] text-gray-500 mb-1">Tanggal</label>
-            <input type="date" id="disiplin-tgl" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
+      <!-- SUB-TAB 1: FORM & RIWAYAT -->
+      <div id="sub-disiplin-form" class="sub-tab-disiplin-content space-y-4">
+        <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
+          <h3 class="font-extrabold text-sm text-gray-800 flex items-center gap-2">
+            <i class="fa-solid fa-shield-halved text-amber-500"></i> Form Catatan Kedisiplinan Siswa
+          </h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+            <div>
+              <label class="font-bold text-gray-700">Tanggal</label>
+              <input type="date" id="disiplin-tgl" class="w-full p-2.5 border rounded-xl mt-1">
+            </div>
+            <div>
+              <label class="font-bold text-gray-700">Kelas</label>
+              <select id="disiplin-kelas" onchange="loadSiswaOption('disiplin-kelas', 'disiplin-nama')" class="w-full p-2.5 border rounded-xl mt-1">
+                <option value="">Pilih Kelas</option>
+                <option value="1A">Kelas 1A</option>
+                <option value="1B">Kelas 1B</option>
+                <option value="2A">Kelas 2A</option>
+              </select>
+            </div>
           </div>
-          <div>
-            <label class="block text-[11px] text-gray-500 mb-1">Kelas</label>
-            <select id="disiplin-kelas" onchange="loadSiswaDisiplin()" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
-              <option value="">Pilih Kelas</option>
+
+          <div class="text-xs">
+            <label class="font-bold text-gray-700">Nama Siswa</label>
+            <select id="disiplin-nama" class="w-full p-2.5 border rounded-xl mt-1">
+              <option value="">Pilih Siswa</option>
             </select>
           </div>
-        </div>
-        <div>
-          <label class="block text-[11px] text-gray-500 mb-1">Nama Siswa</label>
-          <select id="disiplin-nama" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
-            <option value="">Pilih Siswa</option>
-          </select>
-        </div>
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block text-[11px] text-gray-500 mb-1">Jenis Catatan</label>
-            <select id="disiplin-jenis" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
-              <option value="Pelanggaran">Pelanggaran</option>
-              <option value="Prestasi">Prestasi / Kebaikan</option>
-            </select>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+            <div>
+              <label class="font-bold text-gray-700">Jenis Catatan</label>
+              <select id="disiplin-jenis" class="w-full p-2.5 border rounded-xl mt-1">
+                <option value="Pelanggaran">Pelanggaran</option>
+                <option value="Prestasi">Prestasi / Apresiasi</option>
+              </select>
+            </div>
+            <div>
+              <label class="font-bold text-gray-700">Kategori</label>
+              <select id="disiplin-kategori" class="w-full p-2.5 border rounded-xl mt-1">
+                <option value="Keterlambatan">Keterlambatan</option>
+                <option value="Kerapian & Seragam">Kerapian & Seragam</option>
+                <option value="Sikap & Adab">Sikap & Adab</option>
+                <option value="Ibadah / Shalat">Ibadah / Shalat</option>
+                <option value="Lainnya">Lainnya</option>
+              </select>
+            </div>
           </div>
-          <div>
-            <label class="block text-[11px] text-gray-500 mb-1">Kategori</label>
-            <select id="disiplin-kategori" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
-              <option value="Keterlambatan">Keterlambatan</option>
-              <option value="Kerapihan">Kerapihan Seragam</option>
-              <option value="Adab/Akhlaq">Adab / Akhlaq</option>
-              <option value="Ibadah">Kedisiplinan Shalat</option>
-              <option value="Kebersihan">Kebersihan</option>
-              <option value="Ketertiban">Ketertiban Kelas</option>
-              <option value="Lainnya">Lainnya</option>
-            </select>
+
+          <!-- DETAIL KEJADIAN -->
+          <div class="text-xs">
+            <label class="font-bold text-gray-700">Detail Kejadian</label>
+            <input type="text" id="disiplin-catatan" placeholder="Keterangan rincian kejadian..." class="w-full p-2.5 border rounded-xl mt-1">
           </div>
-        </div>
-        <div>
-          <label class="block text-[11px] text-gray-500 mb-1">Detail Kejadian</label>
-          <input type="text" id="disiplin-keterangan" placeholder="Keterangan rincian kejadian..." class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
-        </div>
-        
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block text-[11px] text-gray-500 mb-1">Status Tindakan Wali Kelas</label>
-            <select id="disiplin-status-tindakan" class="w-full bg-gray-50 border rounded-xl p-2 text-xs font-semibold">
-              <option value="Belum Ditindak">⏳ Belum Ditindak</option>
-              <option value="Sudah Ditindak">✅ Sudah Ditindak</option>
-            </select>
+
+          <!-- TINDAKAN GURU (DI BAWAH DETAIL KEJADIAN) -->
+          <div class="text-xs">
+            <label class="font-bold text-gray-700">Tindakan Guru Pengajar / Penemu Kejadian</label>
+            <input type="text" id="disiplin-tindakan-guru" placeholder="Misal: Diberi teguran lisan, dinasihati di tempat, dll." class="w-full p-2.5 border rounded-xl mt-1">
           </div>
-          <div>
-            <label class="block text-[11px] text-gray-500 mb-1">Tindakan Wali Kelas / Guru</label>
-            <input type="text" id="disiplin-tindakan" placeholder="Misal: Pemanggilan ortu, teguran lisan, dll." class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
+
+          <!-- STATUS & TINDAKAN WALI KELAS -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+            <div>
+              <label class="font-bold text-gray-700">Status Tindakan Wali Kelas</label>
+              <select id="disiplin-status-walikelas" class="w-full p-2.5 border rounded-xl mt-1">
+                <option value="Belum Ditindak">⏳ Belum Ditindak</option>
+                <option value="Proses Tindak">🔄 Proses Tindak</option>
+                <option value="Selesai Ditindak">✅ Selesai Ditindak</option>
+              </select>
+            </div>
+            <div>
+              <label class="font-bold text-gray-700">Tindakan Wali Kelas</label>
+              <input type="text" id="disiplin-tindakan-walikelas" placeholder="Misal: Pemanggilan ortu, teguran tertulis, dll." class="w-full p-2.5 border rounded-xl mt-1">
+            </div>
+          </div>
+
+          <!-- TOMBOL AKSI -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-2 pt-2">
+            <button onclick="simpanCatatanKedisiplinan()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2.5 rounded-xl text-xs shadow flex items-center justify-center gap-1">
+              💾 Simpan Catatan Kedisiplinan
+            </button>
+            <button onclick="simpanSatuKelasTertib()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs shadow flex items-center justify-center gap-1">
+              ✔ Satu Kelas Tertib (Nihil)
+            </button>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 pt-1">
-          <button type="button" onclick="simpanKedisiplinanData()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2.5 rounded-xl text-xs shadow">
-            💾 Simpan Catatan Kedisiplinan
-          </button>
-          <button type="button" onclick="simpanSatuKelasTertib()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs shadow flex items-center justify-center gap-1.5">
-            <i class="fa-solid fa-circle-check"></i> Satu Kelas Tertib (Nihil)
-          </button>
+        <!-- RIWAYAT CATATAN KEDISIPLINAN -->
+        <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
+          <h4 class="font-bold text-xs text-gray-700">📋 Riwayat Catatan Kedisiplinan</h4>
+          <div id="list-riwayat-kedisiplinan" class="space-y-2">
+            <p class="text-xs text-gray-400 italic text-center py-2">Memuat data riwayat...</p>
+          </div>
         </div>
       </div>
+
+      <!-- SUB-TAB 2: LEGGER KEDISIPLINAN -->
+      <div id="sub-disiplin-legger" class="sub-tab-disiplin-content hidden space-y-4">
+        <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 border-b pb-2">
+            <h3 class="font-extrabold text-sm text-gray-800">📊 Legger Kedisiplinan Siswa (Acuan Kesiswaan)</h3>
+            <select id="legger-filter-kelas" onchange="loadLeggerKedisiplinan()" class="p-2 border rounded-xl text-xs">
+              <option value="">Semua Kelas</option>
+              <option value="1A">Kelas 1A</option>
+              <option value="1B">Kelas 1B</option>
+              <option value="2A">Kelas 2A</option>
+            </select>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left border-collapse border border-gray-200">
+              <thead>
+                <tr class="bg-gray-100 text-gray-700 text-center font-bold">
+                  <th class="p-2 border">Tgl</th>
+                  <th class="p-2 border text-left">Nama / Kelas</th>
+                  <th class="p-2 border">Jenis & Kategori</th>
+                  <th class="p-2 border text-left">Detail Kejadian</th>
+                  <th class="p-2 border text-left">Tindakan Guru</th>
+                  <th class="p-2 border">Status Wali Kelas</th>
+                  <th class="p-2 border text-left">Tindakan Wali Kelas</th>
+                  <th class="p-2 border">Aksi Kesiswaan</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-legger-kedisiplinan">
+                <tr>
+                  <td colspan="8" class="text-center py-4 text-gray-400 italic">Memuat data legger...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
 
       <!-- LEGGER KEDISIPLINAN -->
       <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3 no-print">
@@ -2229,6 +2310,8 @@
         });
       }
     }
+
+
   </script>
 </body>
 </html>
