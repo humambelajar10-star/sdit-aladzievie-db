@@ -2288,21 +2288,14 @@
       }
     }
 
-    async function loadDaftarUser() {
-      var box = document.getElementById('list-daftar-user');
-      const { data } = await db.from('users').select('*');
-      box.innerHTML = '';
-      if (data) {
-        data.forEach(function(u) {
-          box.innerHTML += '<div class="bg-gray-50 p-2.5 rounded-xl border text-xs flex justify-between"><div><b>' + u.nama + '</b> (' + u.role + (u.kelas_diampu ? ' - ' + u.kelas_diampu : '') + ')</div></div>';
-        });
-      }
-    }
-
-async function simpanCatatanKedisiplinan() {
+    async function simpanCatatanKedisiplinan() {
     const tanggal = document.getElementById('disiplin-tgl').value;
     const kelas = document.getElementById('disiplin-kelas').value;
-    const siswaId = document.getElementById('disiplin-nama').value;
+    
+    // Ambil ID siswanya saja (mengambil angka sebelum tanda '|')
+    const rawSiswaVal = document.getElementById('disiplin-nama').value;
+    const siswaId = rawSiswaVal ? rawSiswaVal.split('|')[0] : null;
+
     const jenis = document.getElementById('disiplin-jenis').value;
     const catatan = document.getElementById('disiplin-catatan').value;
 
@@ -2313,10 +2306,10 @@ async function simpanCatatanKedisiplinan() {
 
     const { error } = await db.from('kedisiplinan').insert([{
       tanggal: tanggal,
-      siswa_id: siswaId,
+      siswa_id: parseInt(siswaId), // Pastikan diubah jadi angka (integer/bigint)
       jenis: jenis,
       catatan: catatan,
-      pencatat: 'guru' // atau disesuaikan dengan user yang login
+      pencatat: 'guru'
     }]);
 
     if (error) {
@@ -2328,30 +2321,6 @@ async function simpanCatatanKedisiplinan() {
     }
   }
 
-  async function simpanSatuKelasTertib() {
-    const tanggal = document.getElementById('disiplin-tgl').value;
-    const kelas = document.getElementById('disiplin-kelas').value;
-
-    if (!kelas) {
-      alert("⚠️ Pilih kelas terlebih dahulu!");
-      return;
-    }
-
-    const { error } = await db.from('kedisiplinan').insert([{
-      tanggal: tanggal,
-      siswa_id: null, // atau sesuaikan jika butuh ID siswa
-      jenis: 'Prestasi',
-      catatan: 'Kedisiplinan - Tertib Harian (Nihil Pelanggaran)',
-      pencatat: 'kelas6'
-    }]);
-
-    if (error) {
-      alert("Gagal menyimpan: " + error.message);
-    } else {
-      alert("✅ Laporan kelas tertib berhasil disimpan!");
-      if (typeof loadRiwayatKedisiplinan === 'function') loadRiwayatKedisiplinan();
-    }
-  }
  </script>
 </body>
 </html>
