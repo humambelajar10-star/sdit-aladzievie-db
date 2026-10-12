@@ -2299,6 +2299,72 @@
       }
     }
 
+async function simpanCatatanKedisiplinan() {
+  const tanggal = document.getElementById('disiplin-tgl').value;
+  const kelas = document.getElementById('disiplin-kelas').value;
+  const siswaId = document.getElementById('disiplin-nama').value;
+  const jenis = document.getElementById('disiplin-jenis').value;
+  const kategori = document.getElementById('disiplin-kategori').value;
+  const catatan = document.getElementById('disiplin-catatan').value;
+  const tindakanGuru = document.getElementById('disiplin-tindakan-guru').value;
+  const statusWalikelas = document.getElementById('disiplin-status-walikelas').value;
+  const tindakanWalikelas = document.getElementById('disiplin-tindakan-walikelas').value;
+
+  if (!kelas || !siswaId || !catatan) {
+    alert("⚠️ Mohon lengkapi Kelas, Nama Siswa, dan Detail Kejadian!");
+    return;
+  }
+
+  const { error } = await db.from('kedisiplinan').insert([{
+    tanggal: tanggal,
+    kelas: kelas,
+    siswa_id: siswaId,
+    jenis_catatan: jenis,
+    kategori: kategori,
+    detail_kejadian: catatan,
+    tindakan_guru: tindakanGuru,
+    status_tindakan: statusWalikelas,
+    tindakan_walikelas: tindakanWalikelas
+  }]);
+
+  if (error) {
+    alert("Gagal menyimpan: " + error.message);
+  } else {
+    alert("✅ Catatan kedisiplinan berhasil disimpan!");
+    document.getElementById('disiplin-catatan').value = '';
+    document.getElementById('disiplin-tindakan-guru').value = '';
+    document.getElementById('disiplin-tindakan-walikelas').value = '';
+    if (typeof loadRiwayatKedisiplinan === 'function') loadRiwayatKedisiplinan();
+  }
+}
+
+async function simpanSatuKelasTertib() {
+  const kelas = document.getElementById('disiplin-kelas').value;
+  const tanggal = document.getElementById('disiplin-tgl').value;
+
+  if (!kelas) {
+    alert("⚠️ Pilih kelas terlebih dahulu!");
+    return;
+  }
+
+  const { error } = await db.from('kedisiplinan').insert([{
+    tanggal: tanggal,
+    kelas: kelas,
+    jenis_catatan: 'Prestasi',
+    kategori: 'Kondusif / Tertib',
+    detail_kejadian: 'Satu kelas terpantau tertib dan kondusif nihil pelanggaran.',
+    tindakan_guru: 'Apresiasi kelas',
+    status_tindakan: 'Selesai Ditindak',
+    tindakan_walikelas: 'Nihil pelanggaran'
+  }]);
+
+  if (error) {
+    alert("Gagal menyimpan: " + error.message);
+  } else {
+    alert("✅ Laporan kelas tertib berhasil disimpan!");
+    if (typeof loadRiwayatKedisiplinan === 'function') loadRiwayatKedisiplinan();
+  }
+}
 
   </script>
 </body>
