@@ -599,59 +599,7 @@
   </div>
 
 </div>
-
-      <!-- LEGGER KEDISIPLINAN -->
-      <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3 no-print">
-        <h3 class="font-bold text-sm text-gray-800 flex items-center gap-2">
-          <i class="fa-solid fa-table-list text-amber-500"></i> Legger Kedisiplinan Sekelas
-        </h3>
-        <div class="grid grid-cols-3 gap-2">
-          <div>
-            <label class="block text-[11px] text-gray-500 mb-1">Kelas</label>
-            <select id="legger-disiplin-kelas" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
-              <option value="">-- Pilih Kelas --</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-[11px] text-gray-500 mb-1">Dari Tanggal</label>
-            <input type="date" id="legger-tgl-awal" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
-          </div>
-          <div>
-            <label class="block text-[11px] text-gray-500 mb-1">Sampai Tanggal</label>
-            <input type="date" id="legger-tgl-akhir" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
-          </div>
-        </div>
-        <button type="button" onclick="generateLeggerDisiplin()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2.5 rounded-xl text-xs shadow">
-          📊 Tampilkan Legger Kedisiplinan
-        </button>
-      </div>
-
-      <!-- CONTAINER HASIL LEGGER -->
-      <div id="container-legger-disiplin" class="hidden space-y-3">
-        <div class="no-print text-right">
-          <button onclick="window.print()" class="bg-gray-800 hover:bg-black text-white font-bold px-4 py-2 rounded-xl text-xs shadow inline-flex items-center gap-2">
-            <i class="fa-solid fa-print"></i> Cetak Legger (PDF)
-          </button>
-        </div>
-        <div id="hasil-legger-table" class="bg-white p-4 rounded-2xl border shadow-sm overflow-x-auto"></div>
-      </div>
-
-      <!-- RIWAYAT KEDISIPLINAN -->
-      <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
-        <h3 class="font-bold text-sm text-gray-800">Cek Riwayat Kedisiplinan</h3>
-        <div>
-          <label class="block text-[11px] text-gray-500 mb-1">Filter Berdasarkan Kelas</label>
-          <select id="filter-disiplin-kelas" class="w-full bg-gray-50 border rounded-xl p-2 text-xs">
-            <option value="">-- Semua Kelas --</option>
-          </select>
-        </div>
-        <button type="button" onclick="loadRiwayatKedisiplinan()" class="w-full bg-gray-800 hover:bg-black text-white font-bold py-2.5 rounded-xl text-xs shadow">
-          <i class="fa-solid fa-magnifying-glass"></i> Tampilkan Catatan Kedisiplinan
-        </button>
-        <div id="list-riwayat-disiplin" class="space-y-2 pt-1 text-xs"></div>
-      </div>
-    </div>
-
+   
     <!-- TAB 4: INFORMASI -->
     <div id="view-informasi" class="hidden space-y-4">
       <div class="flex bg-gray-200 p-1 rounded-2xl text-xs font-bold text-center gap-1">
